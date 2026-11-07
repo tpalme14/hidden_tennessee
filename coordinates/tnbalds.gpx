@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="thd Sun Oct 26 10:54:04 2025" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensions/v3/GpxExtensionsv3.xsd http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<metadata><link href="http://tnlandforms.us/landforms"> <text>TN landforms</text></link></metadata>
+  <wpt lat="35.52064" lon="-83.866">
+    <name>BTB001</name>
+    <cmt>Gregory Bald 4949'</cmt>
+    <desc>Blount</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.5156" lon="-83.8835">
+    <name>BTB002</name>
+    <cmt>Parson Bald 4732'</cmt>
+    <desc>Blount</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.5646" lon="-83.7701">
+    <name>BTB003</name>
+    <cmt>Russell Field 4300'</cmt>
+    <desc>Blount</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.5642" lon="-83.7285">
+    <name>BTB004</name>
+    <cmt>Spence Field 4887'</cmt>
+    <desc>Blount</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.103857" lon="-82.08157">
+    <name>CTB001</name>
+    <cmt>Grassy Ridge Bald 6160'</cmt>
+    <desc>Carter</desc>
+    <link href="">
+      <text>CNF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.13156" lon="-82.02635">
+    <name>CTB002</name>
+    <cmt>Hump Mountain 5280'</cmt>
+    <desc>Carter</desc>
+    <link href="">
+      <text>CNF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.10645" lon="-82.09025">
+    <name>CTB003</name>
+    <cmt>Jane Bald 5750'</cmt>
+    <desc>Carter</desc>
+    <link href="">
+      <text>CNF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.12434" lon="-82.02927">
+    <name>CTB004</name>
+    <cmt>Little Hump Mountain 5440'</cmt>
+    <desc>Carter</desc>
+    <link href="">
+      <text>CNF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.10714" lon="-82.10388">
+    <name>CTB005</name>
+    <cmt>Round Bald 5800'</cmt>
+    <desc>Carter</desc>
+    <link href="">
+      <text>CNF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.066745" lon="-82.631632">
+    <name>GEB003</name>
+    <cmt>Ball Ground Bald 4780'</cmt>
+    <desc>Greene</desc>
+    <link href="">
+      <text>CNF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.0235" lon="-82.7154">
+    <name>GEB002</name>
+    <cmt>Camp Creek Bald 4844'</cmt>
+    <desc>Greene</desc>
+    <link href="">
+      <text>CNF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.06230" lon="-82.6447">
+    <name>GEB001</name>
+    <cmt>Coldspring Mountain 4800'</cmt>
+    <desc>Greene</desc>
+    <link href="">
+      <text>CNF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.5739" lon="-81.6777">
+    <name>JOB001</name>
+    <cmt>Rogers Ridge 4800'</cmt>
+    <desc>Johnson</desc>
+    <link href="">
+      <text>CNF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.249935" lon="-84.125078">
+    <name>MOB001</name>
+    <cmt>Beaverdam Bald 4259'</cmt>
+    <desc>Monroe</desc>
+    <link href="">
+      <text>CNF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.3098" lon="-84.0382">
+    <name>MOB002</name>
+    <cmt>Whigg Meadow 4960'</cmt>
+    <desc>Monroe</desc>
+    <link href="">
+      <text>CNF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.2034" lon="-84.3237">
+    <name>POB001</name>
+    <cmt>Buck Bald 2348'</cmt>
+    <desc>Polk</desc>
+    <link href="">
+      <text>CNF </text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.56633" lon="-83.6419">
+    <name>SVB001</name>
+    <cmt>Big Chestnut Bald 4880'</cmt>
+    <desc>Sevier</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.5643" lon="-83.5662">
+    <name>SVB002</name>
+    <cmt>Silers Bald 5607'</cmt>
+    <desc>Sevier</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.11685" lon="-82.332897">
+    <name>UCB001</name>
+    <cmt>Beauty Spot 4497'</cmt>
+    <desc>Unicoi</desc>
+    <link href="">
+      <text>CNF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.98997" lon="-82.49031">
+    <name>UCB003</name>
+    <cmt>Big Bald 5517'</cmt>
+    <desc>Unicoi</desc>
+    <link href="">
+      <text>CNF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.13405" lon="-82.309013">
+    <name>UCB002</name>
+    <cmt>Pleasant Garden 4840'</cmt>
+    <desc>Unicoi</desc>
+    <link href="">
+      <text>CNF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+</gpx>

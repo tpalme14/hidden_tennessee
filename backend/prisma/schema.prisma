@@ -1,0 +1,93 @@
+// Skeleton schema for M00-T04. No models yet — Landmark (M01-T02) and
+// User/Session/Account (M03-T01, via Better Auth's Prisma adapter) are added
+// in their respective milestones.
+//
+// PostGIS is deliberately NOT declared via the `postgresqlExtensions`
+// preview feature / datasource `extensions = [postgis]` syntax: that feature
+// was deprecated in Prisma ORM 6.16.0. Per Prisma's current documented
+// guidance, PostGIS will instead be enabled via a customized migration
+// (`CREATE EXTENSION IF NOT EXISTS postgis;` as raw SQL) when the first real
+// migration is created in M01-T03. Geometry/geography columns remain
+// `Unsupported(...)` types queried via parameterized raw SQL, consistent
+// with ADR-003.
+//
+// Prisma ORM 7 moved the connection URL out of this file's datasource block
+// (verified against current Prisma docs; `url = env(...)` here is rejected
+// at schema-validation time) and into `prisma.config.ts`, with `PrismaClient`
+// now requiring an explicit driver adapter (`@prisma/adapter-pg` for
+// PostgreSQL) rather than reading `datasource.url` implicitly at runtime.
+// See `prisma.config.ts` and `src/db/prisma.ts`.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Landmark data model, per M01-T02 (docs/IMPLEMENTATION_PLAN.md).
+//
+// `location` is declared `Unsupported` because it is a database-generated
+// column (`GENERATED ALWAYS AS (...) STORED`, computed from latitude/
+// longitude) — Prisma's schema language has no syntax for the GENERATED
+// modifier, so the real column definition is hand-written into the
+// migration SQL (see prisma/migrations/) rather than derived from this
+// declaration. Because the type is Unsupported, Prisma Client omits this
+// field entirely from generated types, so no application code path can
+// attempt to write to it directly; only raw SQL reads are possible, and
+// only the database itself (via the generated-column expression) ever
+// writes to it.
+//
+// CHECK constraints (latitude/longitude range, source_code format) and the
+// GiST spatial index on `location` are likewise hand-written into the
+// migration SQL, since Prisma's schema language has no declarative syntax
+// for either.
+
+enum LandmarkCategory {
+  ARCH
+  BALD
+  FALLS
+  LAKE
+  OTHER
+  PEAK
+  ROCK
+  SINK
+}
+
+enum LandmarkSourceFile {
+  TNARCHES
+  TNBALDS
+  TNFALLS
+  TNLAKES
+  TNOTHER
+  TNPEAKS
+  TNROCKS
+  TNSINKS
+}
+
+enum SensitivityReviewStatus {
+  UNREVIEWED
+  PUBLIC
+  SENSITIVE
+}
+
+model Landmark {
+  id                String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sourceCode        String                  @unique @map("source_code")
+  sourceFile        LandmarkSourceFile      @map("source_file")
+  category          LandmarkCategory
+  displayName       String                  @map("display_name")
+  latitude          Float
+  longitude         Float
+  location          Unsupported("geography(Point,4326)")? @default(dbgenerated())
+  sourceDescription String?                 @map("source_description")
+  sourceAccessLabel String?                 @map("source_access_label")
+  sourceUrl         String?                 @map("source_url")
+  isActive          Boolean                 @default(true) @map("is_active")
+  sensitivityStatus SensitivityReviewStatus @default(UNREVIEWED) @map("sensitivity_status")
+  createdAt         DateTime                @default(now()) @map("created_at")
+  updatedAt         DateTime                @updatedAt @map("updated_at")
+
+  @@map("landmarks")
+}

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="thd Sun Oct 26 10:54:04 2025" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensions/v3/GpxExtensionsv3.xsd http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<metadata><link href="http://tnlandforms.us/landforms"> <text>TN landforms</text></link></metadata>
+  <wpt lat="35.2494" lon="-85.2416">
+    <name>HMX001</name>
+    <cmt>North Chickamauga Cr. Gorge</cmt>
+    <desc>Hamilton</desc>
+    <link href="http://northchick.org">
+      <text>info</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.25197" lon="-85.7476">
+    <name>GUX001</name>
+    <cmt>Fiery Gizzard</cmt>
+    <desc>Grundy</desc>
+    <link href="http://www.friendsofscsra.org">
+      <text>trails</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.4583" lon="-85.5934">
+    <name>GUX002</name>
+    <cmt>Savage Gulf</cmt>
+    <desc>Grundy</desc>
+    <link href="http://www.tn.gov/environment/article/na-na-savage-gulf">
+      <text>TNNA</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.8313" lon="-85.2786">
+    <name>WHX001</name>
+    <cmt>Scott's Gulf</cmt>
+    <desc>White</desc>
+    <link href="http://www.tn.gov/environment/topic/na-natural-areas-by-region">
+      <text>TNNA</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="34.99004" lon="-86.10295">
+    <name>FRX001</name>
+    <cmt>Walls of Jericho</cmt>
+    <desc>Franklin</desc>
+    <link href="http://nature.org/wherewework/northamerica/states/tennessee/">
+      <text>TNC</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.8404" lon="-84.9185">
+    <name>CUX001</name>
+    <cmt>Grassy Cove</cmt>
+    <desc>Cumberland</desc>
+    <link href="http://www.state.tn.us/environment/conservationist/docs/blackmountain.pdf">
+      <text>BIG sinkhole</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.1200" lon="-85.909">
+    <name>FRX002</name>
+    <cmt>Buggytop Cave</cmt>
+    <desc>Franklin</desc>
+    <link href="http://www.tn.gov/environment/article/na-na-carter-harry-lee">
+      <text>TNNA</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.4177" lon="-85.3459">
+    <name>BLX001</name>
+    <cmt>Sequatchie Valley</cmt>
+    <desc>Bledsoe</desc>
+    <link href="http://www.utc.edu/~jmies/coc/faq/faq.html">
+      <text>anticline</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.3527" lon="-89.4234">
+    <name>LAX001</name>
+    <cmt>Reelfoot Lake</cmt>
+    <desc>Lake</desc>
+    <link href="http://tnstateparks.com/parks/about/reelfoot-lake">
+      <text>state park</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.350060" lon="-85.562747">
+    <name>JAX003</name>
+    <cmt>The Boils</cmt>
+    <desc>Jackson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.75501" lon="-85.39101">
+    <name>VBX001</name>
+    <cmt>Crusher Hole</cmt>
+    <desc>VanBuren</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.425840" lon="-82.955360">
+    <name>HWX001</name>
+    <cmt>Ebbing and Flowing Spring</cmt>
+    <desc>Hawkins</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.687713" lon="-83.409447">
+    <name>SVX002</name>
+    <cmt>Fittified Spring</cmt>
+    <desc>Sevier</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.37861" lon="-85.78056">
+    <name>JAX002</name>
+    <cmt>Dycus Crater</cmt>
+    <desc>Jackson</desc>
+    <link href="">
+      <text>private</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.2812" lon="-85.6689">
+    <name>JAX001</name>
+    <cmt>Flynn Creek Crater</cmt>
+    <desc>Jackson</desc>
+    <link href="http://www.uta.edu/paleomap/homepage/Schieberweb/craters.htm">
+      <text>study</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.2316" lon="-86.61">
+    <name>LIX001</name>
+    <cmt>Howell Crater</cmt>
+    <desc>Lincoln</desc>
+    <link href="http://www.utc.edu/~jonesobs/craters.html">
+      <text>info</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.3841" lon="-87.6555">
+    <name>STX001</name>
+    <cmt>Wells Creek Crater</cmt>
+    <desc>Stewart</desc>
+    <link href="http://www.utc.edu/Academic/JonesObservatory/craters.php">
+      <text>info</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.3005" lon="-83.8572">
+    <name>UNX001</name>
+    <cmt>Norris igneous rock</cmt>
+    <desc>Union</desc>
+    <link href="http://www.norrislakeinfo.com/index.html">
+      <text>Norris Lake</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.5814" lon="-83.4838">
+    <name>SVX001</name>
+    <cmt>Smoky Mtns igneous rock</cmt>
+    <desc>Sevier</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.3513" lon="-90.0514">
+    <name>SHX001</name>
+    <cmt>Chickasaw Bluffs</cmt>
+    <desc>Shelby</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+</gpx>

@@ -1,0 +1,66 @@
+.appShell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.skipLink {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 0.5rem 1rem;
+  background: #fff;
+  color: #111;
+  border-radius: 0 0 4px 0;
+}
+
+.skipLink:focus {
+  left: 0;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.title {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.navLink {
+  text-decoration: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+}
+
+.navLinkActive {
+  composes: navLink;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+@media (min-width: 48rem) {
+  .main {
+    padding: 2rem;
+  }
+}

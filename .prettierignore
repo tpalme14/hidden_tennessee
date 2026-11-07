@@ -1,0 +1,10 @@
+dist/
+build/
+node_modules/
+coverage/
+
+# Hand-authored planning/spec documentation under change control — not
+# auto-formatted by this project's code tooling.
+CLAUDE.md
+docs/
+specs/

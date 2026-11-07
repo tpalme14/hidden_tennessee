@@ -1,0 +1,52 @@
+/*
+ * Marker icon (M02-T08 Increment 3): `Marker` + `DivIcon` replacing the
+ * earlier `CircleMarker` (M02-T03). The outer `.icon` is the element Leaflet
+ * itself makes focusable (tabindex="0", role="button") and is deliberately
+ * larger (24px) than the visible 16px dot inside it, enlarging the hit/focus
+ * target without changing the visual design. Leaflet sets the icon's
+ * width/height/margins inline from the DivIcon's iconSize/iconAnchor.
+ */
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+}
+
+/* The visible dot: same 16px diameter, #1f2937 1px outline, and 0.85 fill
+ * opacity as the CircleMarker it replaces. The category fill color is set
+ * inline by the renderer from the fixed category palette. */
+.dot {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #1f2937;
+  border-radius: 50%;
+  opacity: 0.85;
+  box-sizing: border-box;
+}
+
+/* Keyboard focus indicator: the global `:focus-visible` outline (3px #1a5fb4)
+ * plus a white halo via box-shadow so the ring stays visible on dark or busy
+ * tiles. Leaflet's `preventOutline` suppresses inline outline-style after a
+ * mouse click; the box-shadow ring is unaffected by that, and the outline
+ * remains for Windows High Contrast mode, which drops box-shadow. */
+.icon:focus-visible {
+  outline: 3px solid #1a5fb4;
+  outline-offset: 2px;
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 5px #1a5fb4;
+}
+
+/* The popup content wrapper is focused programmatically when a popup opens
+ * (tabindex="-1"). It keeps the global `:focus-visible` ring so a keyboard
+ * user can see where focus landed; a small inset keeps the ring inside the
+ * popup's rounded box. */
+.popupContent:focus-visible {
+  outline: 3px solid #1a5fb4;
+  outline-offset: -3px;
+  border-radius: 4px;
+}

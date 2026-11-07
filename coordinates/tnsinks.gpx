@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="thd Sun Oct 26 10:54:04 2025" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensions/v3/GpxExtensionsv3.xsd http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<metadata><link href="http://tnlandforms.us/landforms"> <text>TN landforms</text></link></metadata>
+  <wpt lat="35.64432" lon="-83.80792">
+    <name>BTS001</name>
+    <cmt>Bull Sink 122'</cmt>
+    <desc>Blount</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.63623" lon="-83.74869">
+    <name>BTS002</name>
+    <cmt>Whiteoak Sink 199'</cmt>
+    <desc>Blount</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.410064" lon="-83.942542">
+    <name>CAS001</name>
+    <cmt>Bailey 120'</cmt>
+    <desc>Campbell</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.339228" lon="-82.293878">
+    <name>CTS001</name>
+    <cmt>Sinking Cr 104'</cmt>
+    <desc>Carter</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.339862" lon="-82.173300">
+    <name>CTS002</name>
+    <cmt>Siam Sink 102'</cmt>
+    <desc>Carter</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.54569" lon="-83.68924">
+    <name>CLS001</name>
+    <cmt>Arthur 102'</cmt>
+    <desc>Claiborne</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.44616" lon="-83.67464">
+    <name>CLS002</name>
+    <cmt>Atkins Sink 140'</cmt>
+    <desc>Claiborne</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.42406" lon="-83.73524">
+    <name>CLS003</name>
+    <cmt>Big Sink 165'</cmt>
+    <desc>Claiborne</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.45495" lon="-83.626">
+    <name>CLS004</name>
+    <cmt>Duncan Hollow 136'</cmt>
+    <desc>Claiborne</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.42363" lon="-83.71505">
+    <name>CLS005</name>
+    <cmt>Goin 100'</cmt>
+    <desc>Claiborne</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.43209" lon="-83.70582">
+    <name>CLS006</name>
+    <cmt>Miracle Pond 114'</cmt>
+    <desc>Claiborne</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.971864" lon="-83.103691">
+    <name>COS001</name>
+    <cmt>Good Hope 118'</cmt>
+    <desc>Cocke</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.855972" lon="-84.921713">
+    <name>CUS001</name>
+    <cmt>Grassy Cove 140'</cmt>
+    <desc>Cumberland</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.848818" lon="-84.894763">
+    <name>CUS002</name>
+    <cmt>Little Cove 130'</cmt>
+    <desc>Cumberland</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.12821" lon="-85.90545">
+    <name>FRS001</name>
+    <cmt>The Big Sink 111'</cmt>
+    <desc>Franklin</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.04955" lon="-86.01574">
+    <name>FRS002</name>
+    <cmt>Wolf Cove 242'</cmt>
+    <desc>Franklin</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.015371" lon="-85.991450">
+    <name>FRS003</name>
+    <cmt>Round Cove 104'</cmt>
+    <desc>Franklin</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.47196" lon="-85.68463">
+    <name>GUS001</name>
+    <cmt>Beersheba 105'</cmt>
+    <desc>Grundy</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.51777" lon="-85.65053">
+    <name>GUS002</name>
+    <cmt>Dykes 156'</cmt>
+    <desc>Grundy</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.399473" lon="-85.850874">
+    <name>GUS003</name>
+    <cmt>Sandstone 103'</cmt>
+    <desc>Grundy</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.441486" lon="-83.237973">
+    <name>HNS001</name>
+    <cmt>Yount Town 109'</cmt>
+    <desc>Hancock</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.574210" lon="-82.903208">
+    <name>HNS002</name>
+    <cmt>Snap 103'</cmt>
+    <desc>Hancock</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.17123" lon="-85.81966">
+    <name>MIS001</name>
+    <cmt>Mitchell Sink 109'</cmt>
+    <desc>Marion</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.21177" lon="-85.27079">
+    <name>OVS001</name>
+    <cmt>Cane Hollow 107'</cmt>
+    <desc>Overton</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.46084" lon="-85.32096">
+    <name>OVS002</name>
+    <cmt>Gore 111'</cmt>
+    <desc>Overton</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.46350" lon="-85.35740">
+    <name>OVS003</name>
+    <cmt>Hoss 133'</cmt>
+    <desc>Overton</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.45318" lon="-85.3364">
+    <name>OVS004</name>
+    <cmt>Hunter 160'</cmt>
+    <desc>Overton</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.28768" lon="-85.32032">
+    <name>OVS005</name>
+    <cmt>Staggs 141'</cmt>
+    <desc>Overton</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.42864" lon="-85.40893">
+    <name>OVS006</name>
+    <cmt>Wilson Mtn 119'</cmt>
+    <desc>Overton</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.06969" lon="-85.30270">
+    <name>PUS001</name>
+    <cmt>Davidson 123'</cmt>
+    <desc>Putnam</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.06017" lon="-85.29377">
+    <name>PUS002</name>
+    <cmt>Icy Cove 206'</cmt>
+    <desc>Putnam</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.07696" lon="-85.35308">
+    <name>PUS003</name>
+    <cmt>Round Cove 150'</cmt>
+    <desc>Putnam</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.179469" lon="-85.296601">
+    <name>PUS004</name>
+    <cmt>Walkers Hollow 100'</cmt>
+    <desc>Putnam</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.78619" lon="-85.35154">
+    <name>VBS001</name>
+    <cmt>Big Sink 123'</cmt>
+    <desc>VanBuren</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.68477" lon="-85.54989">
+    <name>VBS002</name>
+    <cmt>Hills Sink 140'</cmt>
+    <desc>VanBuren</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.77157" lon="-85.42419">
+    <name>VBS003</name>
+    <cmt>Millstone 102'</cmt>
+    <desc>VanBuren</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.75660" lon="-85.41786">
+    <name>VBS004</name>
+    <cmt>Turkey Cot Cove 141'</cmt>
+    <desc>VanBuren</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.58631" lon="-85.67731">
+    <name>WAS001</name>
+    <cmt>Big Sink 142'</cmt>
+    <desc>Warren</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.54578" lon="-85.62229">
+    <name>WAS002</name>
+    <cmt>Brown Mtn 182'</cmt>
+    <desc>Warren</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.03963" lon="-85.38797">
+    <name>WHS001</name>
+    <cmt>Big Sink 261'</cmt>
+    <desc>White</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.84737" lon="-85.37169">
+    <name>WHS002</name>
+    <cmt>Hell Hole 122'</cmt>
+    <desc>White</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.80904" lon="-85.35907">
+    <name>WHS003</name>
+    <cmt>Mill Hole 117'</cmt>
+    <desc>White</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.97842" lon="-85.36443">
+    <name>WHS004</name>
+    <cmt>Pass Cove 118'</cmt>
+    <desc>White</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+</gpx>

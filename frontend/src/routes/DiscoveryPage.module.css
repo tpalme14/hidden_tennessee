@@ -1,0 +1,15 @@
+/* Visually hidden until focused — same pattern as AppLayout's "Skip to content" link (M02-T01). */
+.skipLink {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 0.5rem 1rem;
+  background: #fff;
+  color: #111;
+  border-radius: 0 0 4px 0;
+}
+
+.skipLink:focus {
+  left: 0;
+}

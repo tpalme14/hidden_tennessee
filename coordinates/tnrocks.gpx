@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="thd Sun Oct 26 10:54:04 2025" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensions/v3/GpxExtensionsv3.xsd http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<metadata><link href="http://tnlandforms.us/landforms"> <text>TN landforms</text></link></metadata>
+  <wpt lat="36.2164" lon="-84.1289">
+    <name>ANR001</name>
+    <cmt>Savage Gardens Chimneys</cmt>
+    <desc>Anderson</desc>
+    <link href="">
+      <text>private</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.564096" lon="-83.714027">
+    <name>BTR001</name>
+    <cmt>Rocky Top</cmt>
+    <desc>Blount</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.6327" lon="-83.9429">
+    <name>BTR002</name>
+    <cmt>Look Rock</cmt>
+    <desc>Blount</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.448" lon="-84.0511">
+    <name>CAR001</name>
+    <cmt>Chimney Rocks (32) 100'</cmt>
+    <desc>Campbell</desc>
+    <link href="">
+      <text>CT</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.3298" lon="-84.2232">
+    <name>CAR002</name>
+    <cmt>Devil's Racetrack</cmt>
+    <desc>Campbell</desc>
+    <link href="http://www.cumberlandtrail.org/cumberland_mtn.html">
+      <text>CT</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.47095" lon="-84.0126">
+    <name>CAR003</name>
+    <cmt>Hangover Rock</cmt>
+    <desc>Campbell</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.8656" lon="-84.8949">
+    <name>CUR001</name>
+    <cmt>Black Mountain Rocks</cmt>
+    <desc>Cumberland</desc>
+    <link href="http://www.cumberlandtrail.org/grassy_cove.html">
+      <text>CT</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.873481" lon="-84.806442">
+    <name>CUR002</name>
+    <cmt>Umbrella Rock</cmt>
+    <desc>Cumberland</desc>
+    <link href="">
+      <text></text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.2794" lon="-82.1484">
+    <name>CTR001</name>
+    <cmt>Buckled Rock 150'</cmt>
+    <desc>Carter</desc>
+    <link href="http://nwps.wilderness.net/wild_view.cfm?WID=468">
+      <text>NWA</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.55444" lon="-83.76833">
+    <name>CLR001</name>
+    <cmt>Arch Rock</cmt>
+    <desc>Claiborne</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.82502" lon="-83.16951">
+    <name>COR001</name>
+    <cmt>Buzzard Roost</cmt>
+    <desc>Cocke</desc>
+    <link href="">
+      <text>CNF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.5462" lon="-84.9031">
+    <name>FER003</name>
+    <cmt>Black House Chimney 30'</cmt>
+    <desc>Fentress</desc>
+    <link href="">
+      <text>PSF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.521777" lon="-84.86578">
+    <name>FER009</name>
+    <cmt>Cave Hollow Chimney 30'</cmt>
+    <desc>Fentress</desc>
+    <link href="http://www.tn.gov/environment/article/na-na-pogue-creek-canyon">
+      <text>PogueCreek</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.45193" lon="-84.7512">
+    <name>FER002</name>
+    <cmt>Crossover Chimney 20'</cmt>
+    <desc>Fentress</desc>
+    <link href="">
+      <text>BSF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.5433" lon="-84.8628">
+    <name>FER006</name>
+    <cmt>Phillip Chimney NW 35'</cmt>
+    <desc>Fentress</desc>
+    <link href="http://www.tn.gov/environment/article/na-na-pogue-creek-canyon">
+      <text>PogueCreek</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.5411" lon="-84.8524">
+    <name>FER007</name>
+    <cmt>Phillip Chimney SE 30'</cmt>
+    <desc>Fentress</desc>
+    <link href="http://www.tn.gov/environment/article/na-na-pogue-creek-canyon">
+      <text>PogueCreek</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.5412" lon="-84.8521">
+    <name>FER004</name>
+    <cmt>Pogue Chimney 50'</cmt>
+    <desc>Fentress</desc>
+    <link href="http://www.tn.gov/environment/article/na-na-pogue-creek-canyon">
+      <text>PogueCreek</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.52881" lon="-84.84754">
+    <name>FER008</name>
+    <cmt>Pogue Mesa</cmt>
+    <desc>Fentress</desc>
+    <link href="http://www.tn.gov/environment/article/na-na-pogue-creek-canyon">
+      <text>PogueCreek</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.3842" lon="-85.0364">
+    <name>FER005</name>
+    <cmt>Skinner Mountain Chimney 40'</cmt>
+    <desc>Fentress</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.4539" lon="-84.7749">
+    <name>FER001</name>
+    <cmt>Top Hat 60'</cmt>
+    <desc>Fentress</desc>
+    <link href="">
+      <text>BSF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.4402" lon="-85.649">
+    <name>GUR001</name>
+    <cmt>Stone Door</cmt>
+    <desc>Grundy</desc>
+    <link href="http://www.friendsofscsra.org">
+      <text>SavageGulf</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.246115" lon="-85.75348">
+    <name>GUR002</name>
+    <cmt>Sycamore Falls Chimneys 30'</cmt>
+    <desc>Grundy</desc>
+    <link href="http://www.friendsofscsra.org">
+      <text>trails</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.00431" lon="-85.350291">
+    <name>HMR001</name>
+    <cmt>Bluff Trail Chimney 20'</cmt>
+    <desc>Hamilton</desc>
+    <link href="http://www.nps.gov/chch/">
+      <text>CCNMP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.42011" lon="-85.15279">
+    <name>HMR002</name>
+    <cmt>Rock Platform? 442'</cmt>
+    <desc>Hamilton</desc>
+    <link href="http://www.cumberlandtrail.org/rock.html">
+      <text>CT</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.01274" lon="-85.34347">
+    <name>HMR003</name>
+    <cmt>Umbrella Rock? 10'</cmt>
+    <desc>Hamilton</desc>
+    <link href="http://www.nps.gov/chch/">
+      <text>CCNMP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.92975" lon="-87.733">
+    <name>HUR001</name>
+    <cmt>Standing Rock 40'</cmt>
+    <desc>Humphreys</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.3153" lon="-85.5140">
+    <name>JAR001</name>
+    <cmt>Hardscrabble Pinnacle</cmt>
+    <desc>Jackson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.2309" lon="-85.5558">
+    <name>MIR001</name>
+    <cmt>The Chimneys 200'</cmt>
+    <desc>Marion</desc>
+    <link href="http://www.tn.gov/environment/article/na-na-chimneys">
+      <text>TNNA</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.548733" lon="-84.796147">
+    <name>MER001</name>
+    <cmt>Eaves Chimney</cmt>
+    <desc>Meigs</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.1457" lon="-84.4976">
+    <name>MGR004</name>
+    <cmt>Castle Rock 40'</cmt>
+    <desc>Morgan</desc>
+    <link href="http://tnstateparks.com/parks/about/frozen-head">
+      <text>FrozenHead</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.1052" lon="-84.49506">
+    <name>MGR001</name>
+    <cmt>Chimney Top 20'</cmt>
+    <desc>Morgan</desc>
+    <link href="http://tnstateparks.com/parks/about/frozen-head">
+      <text>FrozenHead</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.0597" lon="-84.7914">
+    <name>MGR002</name>
+    <cmt>Devil's Breakfast Table 40'</cmt>
+    <desc>Morgan</desc>
+    <link href="">
+      <text>CT OWSR Catoosa</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.12092" lon="-84.81112">
+    <name>MGR003</name>
+    <cmt>Hegler Chimney 30'</cmt>
+    <desc>Morgan</desc>
+    <link href="">
+      <text>OWSR</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.13930" lon="-84.51417">
+    <name>MGR005</name>
+    <cmt>Mushroom Rock 7'</cmt>
+    <desc>Morgan</desc>
+    <link href="http://www.cumberlandtrail.org/frozen_head.html">
+      <text>CT</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.8169" lon="-87.8049">
+    <name>PER001</name>
+    <cmt>Standing Rock</cmt>
+    <desc>Perry</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.6936" lon="-88.0239">
+    <name>PER002</name>
+    <cmt>Lady Finger Bluff</cmt>
+    <desc>Perry</desc>
+    <link href="">
+      <text>TVAWA</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.5462" lon="-84.75478">
+    <name>PIR001</name>
+    <cmt>Lost Chimney 15'</cmt>
+    <desc>Pickett</desc>
+    <link href="">
+      <text>BSF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.45655" lon="-85.11124">
+    <name>RHR001</name>
+    <cmt>Hoodoo 30'</cmt>
+    <desc>Rhea</desc>
+    <link href="">
+      <text>private </text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.1609" lon="-85.387">
+    <name>SQR001</name>
+    <cmt>Mushroom Rock 20'</cmt>
+    <desc>Sequatchie</desc>
+    <link href="http://www.cumberlandtrail.org/tn_river_gorge.html">
+      <text>CT</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.6393" lon="-83.3718">
+    <name>SVR004</name>
+    <cmt>Charlies Bunion</cmt>
+    <desc>Sevier</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.6301" lon="-83.4782">
+    <name>SVR001</name>
+    <cmt>Chimney Tops</cmt>
+    <desc>Sevier</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.652" lon="-83.5208">
+    <name>SVR002</name>
+    <cmt>Courthouse Rock 45'</cmt>
+    <desc>Sevier</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.6899" lon="-83.4262">
+    <name>SVR003</name>
+    <cmt>Turkey Rock</cmt>
+    <desc>Sevier</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.49635" lon="-84.65423">
+    <name>SCR003</name>
+    <cmt>Angel Falls Overlook 40'</cmt>
+    <desc>Scott</desc>
+    <link href="">
+      <text>BSF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.5205" lon="-84.6453">
+    <name>SCR009</name>
+    <cmt>Blevins Chimney 40'</cmt>
+    <desc>Scott</desc>
+    <link href="">
+      <text>BSF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.58" lon="-84.6776">
+    <name>SCR001</name>
+    <cmt>Cap Rock 45'</cmt>
+    <desc>Scott</desc>
+    <link href="">
+      <text>BSF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.4499" lon="-84.6531">
+    <name>SCR010</name>
+    <cmt>Devils Den</cmt>
+    <desc>Scott</desc>
+    <link href="">
+      <text>BSF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.5427" lon="-84.7223">
+    <name>SCR008</name>
+    <cmt>Grand Branch Chimney 9'</cmt>
+    <desc>Scott</desc>
+    <link href="">
+      <text>BSF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.5097" lon="-84.64">
+    <name>SCR011</name>
+    <cmt>Grand Gap Chimney 35'</cmt>
+    <desc>Scott</desc>
+    <link href="">
+      <text>BSF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.417649" lon="-84.603075">
+    <name>SCR013</name>
+    <cmt>Hoodoo 25'</cmt>
+    <desc>Scott</desc>
+    <link href="">
+      <text>BSF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.5794342" lon="-84.6654595">
+    <name>SCR002</name>
+    <cmt>Maude's Crack</cmt>
+    <desc>Scott</desc>
+    <link href="">
+      <text>BSF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.5844" lon="-84.669">
+    <name>SCR007</name>
+    <cmt>No Business Butte</cmt>
+    <desc>Scott</desc>
+    <link href="">
+      <text>BSF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.58462" lon="-84.66383">
+    <name>SCR014</name>
+    <cmt>Papaw's Column? 30'</cmt>
+    <desc>Scott</desc>
+    <link href="">
+      <text>BSF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.268603" lon="-84.430751">
+    <name>SCR012</name>
+    <cmt>Pillow Rock 20'</cmt>
+    <desc>Scott</desc>
+    <link href="http://www.cumberlandtrail.org/new_river.html">
+      <text>CT</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.5572055" lon="-84.6592281">
+    <name>SCR004</name>
+    <cmt>Station Camp Chimneys 25'</cmt>
+    <desc>Scott</desc>
+    <link href="">
+      <text>BSF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.56296" lon="-84.6588">
+    <name>SCR005</name>
+    <cmt>Station Camp N. Chimney 40'</cmt>
+    <desc>Scott</desc>
+    <link href="">
+      <text>BSF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.5476" lon="-84.6612">
+    <name>SCR006</name>
+    <cmt>Station Camp Rocks</cmt>
+    <desc>Scott</desc>
+    <link href="">
+      <text>BSF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.413665" lon="-87.936139">
+    <name>STR001</name>
+    <cmt>Standing Rock 50'</cmt>
+    <desc>Stewart</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.601458" lon="-84.006590">
+    <name>KYR002</name>
+    <cmt>KY Bottle Rock 12'</cmt>
+    <desc>KY</desc>
+    <link href="">
+      <text></text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.607579" lon="-84.853167">
+    <name>KYR001</name>
+    <cmt>KY Chimney Rock 160'</cmt>
+    <desc>KY</desc>
+    <link href="http://www.southernregion.fs.fed.us/boone/">
+      <text>DBNF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+</gpx>

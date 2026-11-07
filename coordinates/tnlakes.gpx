@@ -1,0 +1,1684 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="thd Sun Oct 26 10:54:04 2025" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensions/v3/GpxExtensionsv3.xsd http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<metadata><link href="http://tnlandforms.us/landforms"> <text>TN landforms</text></link></metadata>
+  <wpt lat="36.0279" lon="-84.1783">
+    <name>ANL001</name>
+    <cmt>Melton Hill Lake</cmt>
+    <desc>Anderson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.54" lon="-84.043">
+    <name>BTL001</name>
+    <cmt>Chilhowee Lake</cmt>
+    <desc>Blount</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.65423" lon="-83.90765">
+    <name>BTL002</name>
+    <cmt>Lake in the Sky</cmt>
+    <desc>Blount</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.637261" lon="-83.973344">
+    <name>BTL003</name>
+    <cmt>Lanier Lake</cmt>
+    <desc>Blount</desc>
+    <link href="">
+      <text>private</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.17222" lon="-84.86277">
+    <name>BRL001</name>
+    <cmt>Fillauer Lake</cmt>
+    <desc>Bradley</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="34.99972" lon="-84.8425">
+    <name>BRL002</name>
+    <cmt>Hughes Lake</cmt>
+    <desc>Bradley</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.3042" lon="-84.2171">
+    <name>CAL001</name>
+    <cmt>Cove Lake</cmt>
+    <desc>Campbell</desc>
+    <link href="http://tnstateparks.com/parks/about/cove-lake">
+      <text>state park</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.1375" lon="-88.44638">
+    <name>CRL001</name>
+    <cmt>Clear Lake</cmt>
+    <desc>Carroll</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.10055" lon="-88.43166">
+    <name>CRL002</name>
+    <cmt>Isabel Lake</cmt>
+    <desc>Carroll</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.01027" lon="-88.54861">
+    <name>CRL003</name>
+    <cmt>Presely Lake</cmt>
+    <desc>Carroll</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.89027" lon="-88.52666">
+    <name>CRL004</name>
+    <cmt>Twin Lakes</cmt>
+    <desc>Carroll</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.17916" lon="-82.13027">
+    <name>CTL001</name>
+    <cmt>Ripshin Lake</cmt>
+    <desc>Carter</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.330" lon="-82.068">
+    <name>CTL002</name>
+    <cmt>Watauga Lake</cmt>
+    <desc>Carter</desc>
+    <link href="http://www.mountaincityonline.com/story/5.html">
+      <text>story</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.3408" lon="-82.1203">
+    <name>CTL003</name>
+    <cmt>Wilbur Lake</cmt>
+    <desc>Carter</desc>
+    <link href="http://www.recreation.gov/detail.cfm?ID=(1896)">
+      <text>info</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.299" lon="-87.140">
+    <name>CHL001</name>
+    <cmt>Cheatham Lake</cmt>
+    <desc>Cheatham</desc>
+    <link href="http://www.lrn.usace.army.mil/Locations/Lakes/CheathamLake.aspx">
+      <text>info</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.5816" lon="-83.717">
+    <name>CLL001</name>
+    <cmt>Fern Lake</cmt>
+    <desc>Claiborne</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.594" lon="-85.358">
+    <name>CYL001</name>
+    <cmt>Dale Hollow Lake</cmt>
+    <desc>Clay</desc>
+    <link href="http://www.lrn.usace.army.mil/Locations/Lakes/DaleHollowLake.aspx">
+      <text>info</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.51861" lon="-86.09444">
+    <name>CFL001</name>
+    <cmt>Green Lake</cmt>
+    <desc>Coffee</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.64027" lon="-86.01555">
+    <name>CFL002</name>
+    <cmt>Ivy Lake</cmt>
+    <desc>Coffee</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.64222" lon="-86.03722">
+    <name>CFL003</name>
+    <cmt>Liberty Lake</cmt>
+    <desc>Coffee</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.467" lon="-86.22">
+    <name>CFL004</name>
+    <cmt>Normandy Lake</cmt>
+    <desc>Coffee</desc>
+    <link href="http://www.tva.gov/sites/normandy.htm">
+      <text>TVA</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.4090" lon="-86.2038">
+    <name>CFL007</name>
+    <cmt>Ovoca Lake</cmt>
+    <desc>Coffee</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.53416" lon="-86.09833">
+    <name>CFL005</name>
+    <cmt>Rigney Lake</cmt>
+    <desc>Coffee</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.57083" lon="-86.08305">
+    <name>CFL006</name>
+    <cmt>Shay Lake</cmt>
+    <desc>Coffee</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.3994" lon="-86.2070">
+    <name>CFL008</name>
+    <cmt>Tullahoma Lake</cmt>
+    <desc>Coffee</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.9775" lon="-85.04055">
+    <name>CUL001</name>
+    <cmt>Cumberland Mountain Lake</cmt>
+    <desc>Cumberland</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.984888" lon="-84.873405">
+    <name>CUL004</name>
+    <cmt>Glastowbuy Lake</cmt>
+    <desc>Cumberland</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.8965" lon="-85.1009">
+    <name>CUL002</name>
+    <cmt>Meadow Park Lake</cmt>
+    <desc>Cumberland</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.991029" lon="-84.912952">
+    <name>CUL005</name>
+    <cmt>Saint George Lake</cmt>
+    <desc>Cumberland</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.8685" lon="-85.0694">
+    <name>CUL003</name>
+    <cmt>Tanasi Lake</cmt>
+    <desc>Cumberland</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.19444" lon="-86.78944">
+    <name>DAL001</name>
+    <cmt>Bush Lake</cmt>
+    <desc>Davidson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.23972" lon="-86.71527">
+    <name>DAL002</name>
+    <cmt>Cheek Lake</cmt>
+    <desc>Davidson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.0943" lon="-86.5414">
+    <name>DAL009</name>
+    <cmt>Couchville Lake</cmt>
+    <desc>Davidson</desc>
+    <link href="http://tnstateparks.com/parks/about/long-hunter">
+      <text>state park</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.27444" lon="-86.89416">
+    <name>DAL003</name>
+    <cmt>Glen Echo Lake</cmt>
+    <desc>Davidson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.123" lon="-86.608">
+    <name>DAL004</name>
+    <cmt>J. Percy Priest Lake</cmt>
+    <desc>Davidson</desc>
+    <link href="http://www.lrn.usace.army.mil/Locations/Lakes/JPercyPriestLake.aspx">
+      <text>info</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.30249" lon="-86.92222">
+    <name>DAL005</name>
+    <cmt>Louise Lake</cmt>
+    <desc>Davidson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.30472" lon="-86.91277">
+    <name>DAL006</name>
+    <cmt>Marrowbone Lake</cmt>
+    <desc>Davidson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.15694" lon="-86.72361">
+    <name>DAL007</name>
+    <cmt>Meadowbrook Lake</cmt>
+    <desc>Davidson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.0607" lon="-86.8037">
+    <name>DAL008</name>
+    <cmt>Radnor Lake</cmt>
+    <desc>Davidson</desc>
+    <link href="http://tnstateparks.com/parks/about/radnor-lake">
+      <text>SNA</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.065" lon="-85.817">
+    <name>DKL001</name>
+    <cmt>Center Hill Lake</cmt>
+    <desc>DeKalb</desc>
+    <link href="http://www.lrn.usace.army.mil/Locations/Lakes/CenterHillLake.aspx">
+      <text>info</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.1004" lon="-87.2742">
+    <name>DIL006</name>
+    <cmt>Acorn Lake</cmt>
+    <desc>Dickson</desc>
+    <link href="http://tnstateparks.com/parks/about/montgomery-bell">
+      <text>state park</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.0870" lon="-87.2748">
+    <name>DIL005</name>
+    <cmt>Creech Hollow Lake</cmt>
+    <desc>Dickson</desc>
+    <link href="http://tnstateparks.com/parks/about/montgomery-bell">
+      <text>state park</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.16583" lon="-87.23138">
+    <name>DIL001</name>
+    <cmt>Hava-Lakatu Lakes</cmt>
+    <desc>Dickson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.14555" lon="-87.37777">
+    <name>DIL002</name>
+    <cmt>Stewarts Lake</cmt>
+    <desc>Dickson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.09972" lon="-87.30611">
+    <name>DIL003</name>
+    <cmt>Twin Lakes</cmt>
+    <desc>Dickson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.083" lon="-87.2866">
+    <name>DIL004</name>
+    <cmt>Woodhaven Lake</cmt>
+    <desc>Dickson</desc>
+    <link href="http://tnstateparks.com/parks/about/montgomery-bell">
+      <text>state park</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.00555" lon="-89.35583">
+    <name>DYL001</name>
+    <cmt>Bishops Lake</cmt>
+    <desc>Dyer</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.93111" lon="-89.59694">
+    <name>DYL002</name>
+    <cmt>Brackens Lake</cmt>
+    <desc>Dyer</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.9825" lon="-89.61666">
+    <name>DYL003</name>
+    <cmt>Dunham Lake</cmt>
+    <desc>Dyer</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.07083" lon="-89.65472">
+    <name>DYL004</name>
+    <cmt>Everett Lake</cmt>
+    <desc>Dyer</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.94888" lon="-89.59416">
+    <name>DYL005</name>
+    <cmt>Forked Lake</cmt>
+    <desc>Dyer</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.19166" lon="-89.28638">
+    <name>DYL006</name>
+    <cmt>Goose Lake</cmt>
+    <desc>Dyer</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.19916" lon="-89.26277">
+    <name>DYL007</name>
+    <cmt>Horseshoe Lake</cmt>
+    <desc>Dyer</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.94055" lon="-89.59361">
+    <name>DYL008</name>
+    <cmt>Hushpucket Lake</cmt>
+    <desc>Dyer</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.97222" lon="-89.62888">
+    <name>DYL009</name>
+    <cmt>Mitchell Lake</cmt>
+    <desc>Dyer</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.19527" lon="-89.29722">
+    <name>DYL010</name>
+    <cmt>Old River Lake</cmt>
+    <desc>Dyer</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.95305" lon="-89.59083">
+    <name>DYL011</name>
+    <cmt>Rhodes Lake</cmt>
+    <desc>Dyer</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.20138" lon="-89.30861">
+    <name>DYL012</name>
+    <cmt>Round Lake</cmt>
+    <desc>Dyer</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.554525" lon="-84.878418">
+    <name>FEL001</name>
+    <cmt>Mineral Lake</cmt>
+    <desc>Fentress</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.1337" lon="-89.6201">
+    <name>FAL001</name>
+    <cmt>Herb Parsons Lake</cmt>
+    <desc>Fayette</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.12694" lon="-89.62861">
+    <name>FAL002</name>
+    <cmt>Pine Lake</cmt>
+    <desc>Fayette</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.21" lon="-85.9317">
+    <name>FRL004</name>
+    <cmt>Cheston Lake</cmt>
+    <desc>Franklin</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.27305" lon="-86.07944">
+    <name>FRL001</name>
+    <cmt>Duncan Lake</cmt>
+    <desc>Franklin</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.223" lon="-86.224">
+    <name>FRL002</name>
+    <cmt>Tims Ford Lake</cmt>
+    <desc>Franklin</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.311" lon="-86.090">
+    <name>FRL003</name>
+    <cmt>Woods Reservoir</cmt>
+    <desc>Franklin</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.24611" lon="-86.88638">
+    <name>GLL001</name>
+    <cmt>Godfrey Lake</cmt>
+    <desc>Giles</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.29138" lon="-87.06555">
+    <name>GLL002</name>
+    <cmt>Sanders Lake</cmt>
+    <desc>Giles</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.075" lon="-82.86">
+    <name>GEL001</name>
+    <cmt>Davy Crockett Lake</cmt>
+    <desc>Greene</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.26856" lon="-85.7175">
+    <name>GUL001</name>
+    <cmt>Grundy Lakes</cmt>
+    <desc>Grundy</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.223" lon="-83.43">
+    <name>HAL001</name>
+    <cmt>Cherokee Lake</cmt>
+    <desc>Hamblen</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.17222" lon="-83.33777">
+    <name>HAL002</name>
+    <cmt>Masengill Lake</cmt>
+    <desc>Hamblen</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.08888" lon="-85.33694">
+    <name>HML001</name>
+    <cmt>Baylor Lake</cmt>
+    <desc>Hamilton</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.2439" lon="-85.2761">
+    <name>HML008</name>
+    <cmt>Boston Branch Lake</cmt>
+    <desc>Hamilton</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.116" lon="-85.19">
+    <name>HML002</name>
+    <cmt>Chickamauga Lake</cmt>
+    <desc>Hamilton</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.20055" lon="-85.15277">
+    <name>HML003</name>
+    <cmt>Dallas Lake</cmt>
+    <desc>Hamilton</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.09027" lon="-85.22194">
+    <name>HML004</name>
+    <cmt>Junior Lake</cmt>
+    <desc>Hamilton</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.02833" lon="-85.26305">
+    <name>HML005</name>
+    <cmt>McCallie Lake</cmt>
+    <desc>Hamilton</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.24055" lon="-85.22666">
+    <name>HML006</name>
+    <cmt>Montlake Lake</cmt>
+    <desc>Hamilton</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.13166" lon="-85.35888">
+    <name>HML007</name>
+    <cmt>Rainbow Lake</cmt>
+    <desc>Hamilton</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.41055" lon="-89.085">
+    <name>HRL001</name>
+    <cmt>Brush Lake</cmt>
+    <desc>Hardeman</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.38138" lon="-88.90833">
+    <name>HRL002</name>
+    <cmt>Butler Lake</cmt>
+    <desc>Hardeman</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.36722" lon="-89.04333">
+    <name>HRL003</name>
+    <cmt>Clover Lakes</cmt>
+    <desc>Hardeman</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.41361" lon="-89.08694">
+    <name>HRL004</name>
+    <cmt>Duncan Lake</cmt>
+    <desc>Hardeman</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.42166" lon="-89.08416">
+    <name>HRL005</name>
+    <cmt>Horseshoe Lake</cmt>
+    <desc>Hardeman</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.43083" lon="-89.08361">
+    <name>HRL006</name>
+    <cmt>Little Pigeon Lake</cmt>
+    <desc>Hardeman</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.42499" lon="-89.0825">
+    <name>HRL007</name>
+    <cmt>Pipkin Lake</cmt>
+    <desc>Hardeman</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.054" lon="-88.192">
+    <name>HDL001</name>
+    <cmt>Pickwick Lake</cmt>
+    <desc>Hardin</desc>
+    <link href="http://tnstateparks.com/parks/about/pickwick-landing">
+      <text>state park</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.59111" lon="-89.34444">
+    <name>HYL001</name>
+    <cmt>Berson Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.52305" lon="-89.38277">
+    <name>HYL002</name>
+    <cmt>Bond Cutoff Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.51833" lon="-89.35083">
+    <name>HYL003</name>
+    <cmt>Bradford Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.52638" lon="-89.27111">
+    <name>HYL004</name>
+    <cmt>Bullpen Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.72555" lon="-89.32305">
+    <name>HYL005</name>
+    <cmt>Cannon Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.51611" lon="-89.40833">
+    <name>HYL006</name>
+    <cmt>Chaney Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.48194" lon="-89.22638">
+    <name>HYL007</name>
+    <cmt>Coffee Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.57805" lon="-89.49333">
+    <name>HYL008</name>
+    <cmt>Cogshell Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.51583" lon="-89.40333">
+    <name>HYL009</name>
+    <cmt>Cutoff Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.51722" lon="-89.31611">
+    <name>HYL010</name>
+    <cmt>Drain Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.51805" lon="-89.25055">
+    <name>HYL011</name>
+    <cmt>Hart Lake 1</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.51694" lon="-89.24416">
+    <name>HYL012</name>
+    <cmt>Hart Lake 2</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.48777" lon="-89.16138">
+    <name>HYL013</name>
+    <cmt>Horseshoe Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.51916" lon="-89.29972">
+    <name>HYL014</name>
+    <cmt>Horseshoe Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.54972" lon="-89.46777">
+    <name>HYL015</name>
+    <cmt>Horseshoe Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.52111" lon="-89.32777">
+    <name>HYL016</name>
+    <cmt>Jacks Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.5775" lon="-89.31138">
+    <name>HYL017</name>
+    <cmt>Johnson Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.5175" lon="-89.30972">
+    <name>HYL018</name>
+    <cmt>Long Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.44305" lon="-89.07944">
+    <name>HYL019</name>
+    <cmt>Matthews Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.75222" lon="-89.25638">
+    <name>HYL020</name>
+    <cmt>Moody Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.52972" lon="-89.27694">
+    <name>HYL021</name>
+    <cmt>Moon Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.52416" lon="-89.33277">
+    <name>HYL022</name>
+    <cmt>Moores Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.48555" lon="-89.1575">
+    <name>HYL023</name>
+    <cmt>Powell Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.50888" lon="-89.19222">
+    <name>HYL024</name>
+    <cmt>Powell Lakes</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.54388" lon="-89.46638">
+    <name>HYL025</name>
+    <cmt>Round Hole Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.56888" lon="-89.29722">
+    <name>HYL026</name>
+    <cmt>Selaris Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.50555" lon="-89.38722">
+    <name>HYL027</name>
+    <cmt>Shepard Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.5225" lon="-89.28666">
+    <name>HYL028</name>
+    <cmt>Swan Lake</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.51361" lon="-89.36916">
+    <name>HYL029</name>
+    <cmt>Wesley Lakes</cmt>
+    <desc>Haywood</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.6737" lon="-88.4180">
+    <name>HEL001</name>
+    <cmt>Beech Lake</cmt>
+    <desc>Henderson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.7287" lon="-88.2938">
+    <name>HEL005</name>
+    <cmt>Brown's Lake</cmt>
+    <desc>Henderson</desc>
+    <link href="http://tnstateparks.com/parks/about/natchez-trace">
+      <text>state park</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.6794" lon="-88.3200">
+    <name>HEL002</name>
+    <cmt>Cedar Lake</cmt>
+    <desc>Henderson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.7816" lon="-88.2474">
+    <name>HEL007</name>
+    <cmt>Cub Creek Lake</cmt>
+    <desc>Henderson</desc>
+    <link href="http://tnstateparks.com/parks/about/natchez-trace">
+      <text>state park</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.7006" lon="-88.2379">
+    <name>HEL003</name>
+    <cmt>Dogwood Lake</cmt>
+    <desc>Henderson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.6902" lon="-88.2828">
+    <name>HEL004</name>
+    <cmt>Pin Oak Lake</cmt>
+    <desc>Henderson</desc>
+    <link href="http://tnstateparks.com/parks/about/natchez-trace">
+      <text>state park</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.6938" lon="-88.2593">
+    <name>HEL006</name>
+    <cmt>Redbud Lake</cmt>
+    <desc>Henderson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.30916" lon="-88.44805">
+    <name>HHL001</name>
+    <cmt>Briarpatch Lake</cmt>
+    <desc>Henry</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.419" lon="-88.065">
+    <name>HHL002</name>
+    <cmt>Kentucky Lake</cmt>
+    <desc>Henry</desc>
+    <link href="http://www.lbl.org">
+      <text>LBL</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.85388" lon="-87.72555">
+    <name>HUL001</name>
+    <cmt>Spring Lake</cmt>
+    <desc>Humphreys</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.96972" lon="-87.85305">
+    <name>HUL002</name>
+    <cmt>Whery Lake</cmt>
+    <desc>Humphreys</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.07" lon="-83.55777">
+    <name>JEL001</name>
+    <cmt>Ault Lake</cmt>
+    <desc>Jefferson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.972" lon="-83.431">
+    <name>JEL002</name>
+    <cmt>Douglas Lake</cmt>
+    <desc>Jefferson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.07388" lon="-83.64638">
+    <name>JEL003</name>
+    <cmt>Hodges Lake</cmt>
+    <desc>Jefferson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.02094" lon="-83.58394">
+    <name>JEL004</name>
+    <cmt>Tuckahoe Creek</cmt>
+    <desc>Jefferson</desc>
+    <link href="http://www.state.tn.us/environment/na/scenicrivers/">
+      <text>natural area</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.90999" lon="-83.99805">
+    <name>KNL001</name>
+    <cmt>Crystal Lake</cmt>
+    <desc>Knox</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.91944" lon="-84.10694">
+    <name>KNL002</name>
+    <cmt>Dead Horse Lake</cmt>
+    <desc>Knox</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.92027" lon="-84.12055">
+    <name>KNL003</name>
+    <cmt>Kirby Lake</cmt>
+    <desc>Knox</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.96694" lon="-84.06">
+    <name>KNL004</name>
+    <cmt>Mary Ella Lake</cmt>
+    <desc>Knox</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.89805" lon="-84.17222">
+    <name>KNL005</name>
+    <cmt>Twin Lakes</cmt>
+    <desc>Knox</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.36666" lon="-89.40805">
+    <name>LAL001</name>
+    <cmt>Blue Basin Lake</cmt>
+    <desc>Lake</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.41916" lon="-89.37555">
+    <name>LAL002</name>
+    <cmt>Gray Duck Hole Lake</cmt>
+    <desc>Lake</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.42305" lon="-89.37694">
+    <name>LAL003</name>
+    <cmt>Katies Gourd Lake</cmt>
+    <desc>Lake</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.365" lon="-89.40361">
+    <name>LAL004</name>
+    <cmt>Reelfoot Lake</cmt>
+    <desc>Lake</desc>
+    <link href="http://tnstateparks.com/parks/about/reelfoot-lake">
+      <text>state park</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.40361" lon="-89.40361">
+    <name>LAL005</name>
+    <cmt>Staen Hole Lake</cmt>
+    <desc>Lake</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.41694" lon="-89.38083">
+    <name>LAL006</name>
+    <cmt>Starve Pond</cmt>
+    <desc>Lake</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.69583" lon="-89.73277">
+    <name>LUL001</name>
+    <cmt>Bee Lake</cmt>
+    <desc>Lauderdale</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.85638" lon="-89.34638">
+    <name>LUL002</name>
+    <cmt>Bettis Lake</cmt>
+    <desc>Lauderdale</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.60166" lon="-89.86166">
+    <name>LUL003</name>
+    <cmt>Champion Lake</cmt>
+    <desc>Lauderdale</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.84944" lon="-89.61361">
+    <name>LUL004</name>
+    <cmt>Chisholm Lake</cmt>
+    <desc>Lauderdale</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.65888" lon="-89.76416">
+    <name>LUL005</name>
+    <cmt>Convict Lake</cmt>
+    <desc>Lauderdale</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.68083" lon="-89.87083">
+    <name>LUL006</name>
+    <cmt>Crutcher Lake</cmt>
+    <desc>Lauderdale</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.69277" lon="-89.89444">
+    <name>LUL007</name>
+    <cmt>Fletcher Lake</cmt>
+    <desc>Lauderdale</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.67083" lon="-89.81944">
+    <name>LUL008</name>
+    <cmt>Forked Lake</cmt>
+    <desc>Lauderdale</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.63107" lon="-89.84353">
+    <name>LUL018</name>
+    <cmt>Fort Pillow Lake</cmt>
+    <desc>Lauderdale</desc>
+    <link href="http://tnstateparks.com/parks/about/fort-pillow">
+      <text>state park</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.83555" lon="-89.68861">
+    <name>LUL009</name>
+    <cmt>Grassy Lake</cmt>
+    <desc>Lauderdale</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.74361" lon="-89.8125">
+    <name>LUL010</name>
+    <cmt>Johnson Lake</cmt>
+    <desc>Lauderdale</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.60805" lon="-89.85611">
+    <name>LUL011</name>
+    <cmt>Little Champion Lake</cmt>
+    <desc>Lauderdale</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.64972" lon="-89.84361">
+    <name>LUL012</name>
+    <cmt>Little Mud Lake</cmt>
+    <desc>Lauderdale</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.86138" lon="-89.6825">
+    <name>LUL013</name>
+    <cmt>Lost Lake</cmt>
+    <desc>Lauderdale</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.79499" lon="-89.69555">
+    <name>LUL014</name>
+    <cmt>Open Lake</cmt>
+    <desc>Lauderdale</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.715" lon="-89.73777">
+    <name>LUL015</name>
+    <cmt>Sunk Lake</cmt>
+    <desc>Lauderdale</desc>
+    <link href="http://www.state.tn.us/environment/natural-areas/natural-areas/sunklake/">
+      <text>TNA</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.87055" lon="-89.6425">
+    <name>LUL016</name>
+    <cmt>Swan Lake</cmt>
+    <desc>Lauderdale</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.90222" lon="-89.6025">
+    <name>LUL017</name>
+    <cmt>Wood Lake</cmt>
+    <desc>Lauderdale</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.2731" lon="-87.3635">
+    <name>LWL004</name>
+    <cmt>David Crockett Lake</cmt>
+    <desc>Lawrence</desc>
+    <link href="http://http://tnstateparks.com/parks/about/davy-crockett-birthplace">
+      <text>state park</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.3432" lon="-87.5414">
+    <name>LWL001</name>
+    <cmt>Laurel Hill Lake</cmt>
+    <desc>Lawrence</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.33305" lon="-87.47166">
+    <name>LWL002</name>
+    <cmt>Lourdes Lake</cmt>
+    <desc>Lawrence</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.35638" lon="-87.48194">
+    <name>LWL003</name>
+    <cmt>VFW Lake</cmt>
+    <desc>Lawrence</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.763" lon="-84.25">
+    <name>LOL001</name>
+    <cmt>Tellico Lake</cmt>
+    <desc>Loudon</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.788" lon="-84.231">
+    <name>LOL002</name>
+    <cmt>Fort Loudon Lake</cmt>
+    <desc>Loudon</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.73527" lon="-88.66611">
+    <name>MDL001</name>
+    <cmt>Blair Lake</cmt>
+    <desc>Madison</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.43499" lon="-89.055">
+    <name>MDL002</name>
+    <cmt>Silver Moon Lake</cmt>
+    <desc>Madison</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.0725" lon="-85.53166">
+    <name>MIL001</name>
+    <cmt>Bennett Lake</cmt>
+    <desc>Marion</desc>
+    <link href="http://www.chattanooga.gov/cpr/blueway/blueway_index.htm">
+      <text>blueway</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.02722" lon="-85.46611">
+    <name>MIL002</name>
+    <cmt>Browns Lake</cmt>
+    <desc>Marion</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.03861" lon="-85.4275">
+    <name>MIL003</name>
+    <cmt>Cummings Lake</cmt>
+    <desc>Marion</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.15888" lon="-85.48444">
+    <name>MIL004</name>
+    <cmt>Davis Lake</cmt>
+    <desc>Marion</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.018" lon="-85.568">
+    <name>MIL005</name>
+    <cmt>Nickajack Lake</cmt>
+    <desc>Marion</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.0409" lon="-85.4">
+    <name>MIL007</name>
+    <cmt>Raccoon Mtn Reservoir</cmt>
+    <desc>Marion</desc>
+    <link href="http://www.tva.gov/insidetva/may_21_02/how.htm">
+      <text>TVA</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.11305" lon="-85.79333">
+    <name>MIL006</name>
+    <cmt>Snake Pond</cmt>
+    <desc>Marion</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.51333" lon="-87.08388">
+    <name>MUL001</name>
+    <cmt>Brookside Lake</cmt>
+    <desc>Maury</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.72055" lon="-86.99194">
+    <name>MUL002</name>
+    <cmt>Quarry Lake</cmt>
+    <desc>Maury</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.0350" lon="-88.7250">
+    <name>MNL001</name>
+    <cmt>Big Hill Pond</cmt>
+    <desc>McNairy</desc>
+    <link href="http://tnstateparks.com/parks/about/big-hill-pond">
+      <text>state park</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.0499" lon="-88.7277">
+    <name>MNL002</name>
+    <cmt>Travis McNatt Lake</cmt>
+    <desc>McNairy</desc>
+    <link href="http://tnstateparks.com/parks/about/big-hill-pond">
+      <text>state park</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.494" lon="-83.965">
+    <name>MOL001</name>
+    <cmt>Calderwood Lake</cmt>
+    <desc>Monroe</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.53805" lon="-84.41972">
+    <name>MOL002</name>
+    <cmt>Craighead Lake</cmt>
+    <desc>Monroe</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.3472" lon="-84.2874">
+    <name>MOL003</name>
+    <cmt>Tellico Lake</cmt>
+    <desc>Monroe</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.3983" lon="-84.1140">
+    <name>MOL004</name>
+    <cmt>Indian Boundary Lake</cmt>
+    <desc>Monroe</desc>
+    <link href="">
+      <text>CNF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.5297" lon="-84.0582">
+    <name>MOL005</name>
+    <cmt>Mulberry Lake</cmt>
+    <desc>Monroe</desc>
+    <link href="">
+      <text>CNF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.53527" lon="-87.36805">
+    <name>MTL001</name>
+    <cmt>Barkley Lake</cmt>
+    <desc>Montgomery</desc>
+    <link href="http://www.lrn.usace.army.mil/Locations/Lakes/LakeBarkley.aspx">
+      <text>info</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.507175" lon="-87.513196">
+    <name>MTL003</name>
+    <cmt>Cunningham Broadbent Lake</cmt>
+    <desc>Montgomery</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.58204" lon="-87.48023">
+    <name>MTL002</name>
+    <cmt>Lake Taal</cmt>
+    <desc>Montgomery</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.25472" lon="-89.10944">
+    <name>OBL001</name>
+    <cmt>Big Lake</cmt>
+    <desc>Obion</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.21777" lon="-89.24916">
+    <name>OBL002</name>
+    <cmt>Guy Jones Lake</cmt>
+    <desc>Obion</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.26777" lon="-89.10722">
+    <name>OBL003</name>
+    <cmt>Horseshoe Lake</cmt>
+    <desc>Obion</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.26277" lon="-89.10916">
+    <name>OBL004</name>
+    <cmt>Long Lake</cmt>
+    <desc>Obion</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.4665" lon="-85.4162">
+    <name>OVL001</name>
+    <cmt>Standing Stone Lake</cmt>
+    <desc>Overton</desc>
+    <link href="http://tnstateparks.com/parks/about/standing-stone">
+      <text>state park</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.82023" lon="-87.80041">
+    <name>PEL001</name>
+    <cmt>Poole Lake</cmt>
+    <desc>Perry</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.55166" lon="-84.8025">
+    <name>PIL001</name>
+    <cmt>Pickett Lake</cmt>
+    <desc>Pickett</desc>
+    <link href="http://tnstateparks.com/parks/about/pickett">
+      <text>state park</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.07528" lon="-84.39719">
+    <name>POL003</name>
+    <cmt>Campbell Cove Lake</cmt>
+    <desc>Polk</desc>
+    <link href="">
+      <text>CNF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.1490" lon="-84.6099">
+    <name>POL002</name>
+    <cmt>McCamy Lake</cmt>
+    <desc>Polk</desc>
+    <link href="">
+      <text>CNF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.0954" lon="-84.615">
+    <name>POL001</name>
+    <cmt>Ocoee(Parksville) Lake</cmt>
+    <desc>Polk</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.16166" lon="-85.44305">
+    <name>PUL001</name>
+    <cmt>Buck Lake</cmt>
+    <desc>Putnam</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.0424" lon="-85.5899">
+    <name>PUL004</name>
+    <cmt>Burgess Falls Lake</cmt>
+    <desc>Putnam</desc>
+    <link href="http://tnstateparks.com/parks/about/burgess-falls">
+      <text>state park</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.164" lon="-85.544">
+    <name>PUL005</name>
+    <cmt>Cane Creek Lake</cmt>
+    <desc>Putnam</desc>
+    <link href="">
+      <text></text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.11194" lon="-85.25361">
+    <name>PUL002</name>
+    <cmt>Monterey Lake</cmt>
+    <desc>Putnam</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.21861" lon="-85.465">
+    <name>PUL003</name>
+    <cmt>Quinland Lake</cmt>
+    <desc>Putnam</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.681" lon="-84.842">
+    <name>RHL001</name>
+    <cmt>Watts Bar Lake</cmt>
+    <desc>Rhea</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.85777" lon="-84.33888">
+    <name>ROL001</name>
+    <cmt>Cherrolake Lake</cmt>
+    <desc>Roane</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.50416" lon="-86.85694">
+    <name>RBL001</name>
+    <cmt>Wartrace Lake</cmt>
+    <desc>Robertson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.96888" lon="-86.62111">
+    <name>RUL001</name>
+    <cmt>Blue Water Lake</cmt>
+    <desc>Rutherford</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.8403" lon="-86.5616">
+    <name>RUL002</name>
+    <cmt>Lockwood Lake</cmt>
+    <desc>Rutherford</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.425115" lon="-84.509580">
+    <name>SCL001</name>
+    <cmt>Huntsville Lake</cmt>
+    <desc>Scott</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.23388" lon="-89.90722">
+    <name>SHL001</name>
+    <cmt>Beaver Lake</cmt>
+    <desc>Shelby</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.00416" lon="-90.22277">
+    <name>SHL002</name>
+    <cmt>Cockleburr Lake</cmt>
+    <desc>Shelby</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.29694" lon="-90.08">
+    <name>SHL003</name>
+    <cmt>Eagle Lake</cmt>
+    <desc>Shelby</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.31805" lon="-90.07916">
+    <name>SHL004</name>
+    <cmt>Grassy Lake</cmt>
+    <desc>Shelby</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.33861" lon="-90.02333">
+    <name>SHL005</name>
+    <cmt>Lyles Lake</cmt>
+    <desc>Shelby</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.33083" lon="-90.03722">
+    <name>SHL006</name>
+    <cmt>Marie Lake</cmt>
+    <desc>Shelby</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.07666" lon="-90.12416">
+    <name>SHL007</name>
+    <cmt>McKellar Lake</cmt>
+    <desc>Shelby</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.12777" lon="-89.96138">
+    <name>SHL008</name>
+    <cmt>Memphis Lake</cmt>
+    <desc>Shelby</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.18861" lon="-90.11055">
+    <name>SHL009</name>
+    <cmt>Mosquito Lake</cmt>
+    <desc>Shelby</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="34.99583" lon="-90.20722">
+    <name>SHL010</name>
+    <cmt>Mud Lake</cmt>
+    <desc>Shelby</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.00305" lon="-90.1425">
+    <name>SHL011</name>
+    <cmt>North Horn Lake</cmt>
+    <desc>Shelby</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.33944" lon="-90.03833">
+    <name>SHL012</name>
+    <cmt>Piersol Lake</cmt>
+    <desc>Shelby</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.00388" lon="-90.12194">
+    <name>SHL013</name>
+    <cmt>Robco Lake</cmt>
+    <desc>Shelby</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.27138" lon="-90.01527">
+    <name>SHL014</name>
+    <cmt>Robertson Lake</cmt>
+    <desc>Shelby</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.09555" lon="-90.13333">
+    <name>SHL015</name>
+    <cmt>Round Lake</cmt>
+    <desc>Shelby</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.36444" lon="-89.85361">
+    <name>SHL016</name>
+    <cmt>Tanya Lake</cmt>
+    <desc>Shelby</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.29944" lon="-89.97222">
+    <name>SHL017</name>
+    <cmt>Williams Lake</cmt>
+    <desc>Shelby</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.29194" lon="-90.08888">
+    <name>SHL018</name>
+    <cmt>Willow Lake</cmt>
+    <desc>Shelby</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.299" lon="-85.866">
+    <name>SML001</name>
+    <cmt>Cordell Hull Lake</cmt>
+    <desc>Smith</desc>
+    <link href="http://www.lrn.usace.army.mil/Locations/Lakes/CordellHullLake.aspx">
+      <text>info</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.556" lon="-87.892">
+    <name>STL001</name>
+    <cmt>Barkley Lake</cmt>
+    <desc>Stewart</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.57914" lon="-87.65682">
+    <name>STL002</name>
+    <cmt>Lake Kyle</cmt>
+    <desc>Stewart</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.456" lon="-82.403">
+    <name>SUL001</name>
+    <cmt>Boone Lake</cmt>
+    <desc>Sullivan</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.507" lon="-82.503">
+    <name>SUL003</name>
+    <cmt>Ft Patrick Henry Lake</cmt>
+    <desc>Sullivan</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.5295" lon="-82.0672">
+    <name>SUL002</name>
+    <cmt>South Holston Lake</cmt>
+    <desc>Sullivan</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.30694" lon="-86.64333">
+    <name>SRL001</name>
+    <cmt>Anderson Lake</cmt>
+    <desc>Sumner</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.37416" lon="-86.57611">
+    <name>SRL002</name>
+    <cmt>Crutcher Lake</cmt>
+    <desc>Sumner</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.336" lon="-86.48">
+    <name>SRL003</name>
+    <cmt>Old Hickory Lake</cmt>
+    <desc>Sumner</desc>
+    <link href="http://www.lrn.usace.army.mil/Locations/Lakes/OldHickoryLake.aspx">
+      <text>info</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.42138" lon="-90.08444">
+    <name>TIL001</name>
+    <cmt>Corona Lake</cmt>
+    <desc>Tipton</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.57527" lon="-89.51083">
+    <name>TIL002</name>
+    <cmt>Cotton Lake</cmt>
+    <desc>Tipton</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.50777" lon="-89.96694">
+    <name>TIL003</name>
+    <cmt>McLaughlin Lake</cmt>
+    <desc>Tipton</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.4375" lon="-90.11888">
+    <name>TIL004</name>
+    <cmt>Pumpkin Lake</cmt>
+    <desc>Tipton</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.64" lon="-89.73305">
+    <name>TIL005</name>
+    <cmt>Round Lake</cmt>
+    <desc>Tipton</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.61277" lon="-89.80694">
+    <name>TIL006</name>
+    <cmt>Shingle Lake</cmt>
+    <desc>Tipton</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.49361" lon="-89.97222">
+    <name>TIL007</name>
+    <cmt>Sullivan Lake</cmt>
+    <desc>Tipton</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.39361" lon="-90.17166">
+    <name>TIL008</name>
+    <cmt>Willow Lake</cmt>
+    <desc>Tipton</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.07831" lon="-82.55075">
+    <name>UCL001</name>
+    <cmt>Birchfield Camp Lake</cmt>
+    <desc>Unicoi</desc>
+    <link href="">
+      <text>CNF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.28" lon="-83.935">
+    <name>UNL001</name>
+    <cmt>Norris Lake</cmt>
+    <desc>Union</desc>
+    <link href="http://tnstateparks.com/parks/about/norris-dam">
+      <text>state park</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.24444" lon="-83.92611">
+    <name>UNL002</name>
+    <cmt>Big Ridge Lake</cmt>
+    <desc>Union</desc>
+    <link href="http://tnstateparks.com/parks/about/big-ridge">
+      <text>state park</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.654" lon="-85.365">
+    <name>VBL001</name>
+    <cmt>Fall Cr. Falls Lake</cmt>
+    <desc>VanBuren</desc>
+    <link href="http://tnstateparks.com/parks/about/fall-creek-falls">
+      <text>state park</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.7972" lon="-85.6215">
+    <name>WAL002</name>
+    <cmt>Great Falls Lake</cmt>
+    <desc>Warren</desc>
+    <link href="http://www.tva.gov/sites/greatfalls.htm">
+      <text>tva</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.72055" lon="-85.71444">
+    <name>WAL001</name>
+    <cmt>Karen Lake</cmt>
+    <desc>Warren</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.16527" lon="-82.55027">
+    <name>WSL001</name>
+    <cmt>Moore Lake</cmt>
+    <desc>Washington</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.40333" lon="-87.66111">
+    <name>WYL001</name>
+    <cmt>Rainbow Lake</cmt>
+    <desc>Wayne</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.95944" lon="-85.30472">
+    <name>WHL001</name>
+    <cmt>Doe Creek Lake</cmt>
+    <desc>White</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.92111" lon="-85.34444">
+    <name>WHL002</name>
+    <cmt>Spain Lake</cmt>
+    <desc>White</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.950165" lon="-85.320467">
+    <name>WHL003</name>
+    <cmt>Wonder Lake</cmt>
+    <desc>White</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.87555" lon="-86.72194">
+    <name>WIL001</name>
+    <cmt>Ashbaugh Lake</cmt>
+    <desc>Williamson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.77722" lon="-86.88611">
+    <name>WIL002</name>
+    <cmt>Gary Lake</cmt>
+    <desc>Williamson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.83055" lon="-86.69416">
+    <name>WIL003</name>
+    <cmt>Tomlin Lake</cmt>
+    <desc>Williamson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="36.30583" lon="-86.45166">
+    <name>WLL001</name>
+    <cmt>Ackers Lake</cmt>
+    <desc>Wilson</desc>
+    <sym>Pin, Blue</sym>
+  </wpt>
+</gpx>

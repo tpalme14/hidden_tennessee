@@ -1,0 +1,17 @@
+/*
+ * Project overrides of Leaflet's own stylesheet (M02-T08 Increment 5d).
+ * Imported immediately after `leaflet/dist/leaflet.css` by every map
+ * component, so they apply consistently to the discovery map and the
+ * profile mini-map. Keep this file to the minimum: only what accessibility
+ * verification has shown to need changing.
+ */
+
+/* Leaflet draws the attribution control on an 80%-translucent white
+ * background, so its 12px link text (#0078A8) measures 4.94:1 over light
+ * tiles but can fall below the 4.5:1 WCAG 1.4.3 minimum over darker map
+ * areas. An opaque background makes the attribution text and links
+ * readable independently of whatever tiles sit underneath. Links, names,
+ * and keyboard behaviour are untouched. */
+.leaflet-container .leaflet-control-attribution {
+  background: #fff;
+}

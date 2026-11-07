@@ -1,0 +1,36 @@
+.mapWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.tileStatus {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.mapPositioner {
+  position: relative;
+}
+
+.mapContainer {
+  width: 100%;
+  height: min(70vh, 32rem);
+  border-radius: 4px;
+}
+
+.crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 1000;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #1f2937;
+  text-shadow:
+    0 0 2px white,
+    0 0 2px white;
+}

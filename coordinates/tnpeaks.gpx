@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="thd Sun Oct 26 10:54:04 2025" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensions/v3/GpxExtensionsv3.xsd http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<metadata><link href="http://tnlandforms.us/landforms"> <text>TN landforms</text></link></metadata>
+  <wpt lat="36.1043" lon="-82.1224">
+    <name>CTP001</name>
+    <cmt>Roan High Knob 6285'</cmt>
+    <desc>Carter</desc>
+    <link href="">
+      <text>CNF</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.5629" lon="-83.4988">
+    <name>SVP001</name>
+    <cmt>Clingmans Dome 6643'</cmt>
+    <desc>Sevier</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.6248" lon="-83.3931">
+    <name>SVP002</name>
+    <cmt>Mt Ambler 6120'</cmt>
+    <desc>Sevier</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.56222" lon="-83.50593">
+    <name>SVP003</name>
+    <cmt>Mt Buckley 6575'</cmt>
+    <desc>Sevier</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.6866" lon="-83.2713">
+    <name>SVP004</name>
+    <cmt>Mt Chapman 6417'</cmt>
+    <desc>Sevier</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.5861" lon="-83.4731">
+    <name>SVP005</name>
+    <cmt>Mt Collins 6188'</cmt>
+    <desc>Sevier</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.70524" lon="-83.25753">
+    <name>SVP006</name>
+    <cmt>Mt Guyot 6621'</cmt>
+    <desc>Sevier</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.630912" lon="-83.389746">
+    <name>SVP007</name>
+    <cmt>Mt Kephart 6217'</cmt>
+    <desc>Sevier</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.654167" lon="-83.436581">
+    <name>SVP008</name>
+    <cmt>Mt Le Conte 6593'</cmt>
+    <desc>Sevier</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.5668" lon="-83.4934">
+    <name>SVP009</name>
+    <cmt>Mt Love 6446'</cmt>
+    <desc>Sevier</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.67515" lon="-83.28271">
+    <name>SVP010</name>
+    <cmt>Mt Sequoyah 6023'</cmt>
+    <desc>Sevier</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.7151" lon="-83.2554">
+    <name>SVP011</name>
+    <cmt>Old Black 6370'</cmt>
+    <desc>Sevier</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+  <wpt lat="35.6957" lon="-83.2542">
+    <name>SVP012</name>
+    <cmt>Tricorner Knob 6136'</cmt>
+    <desc>Sevier</desc>
+    <link href="">
+      <text>GSMNP</text>
+    </link>
+    <sym>Pin, Blue</sym>
+  </wpt>
+</gpx>
