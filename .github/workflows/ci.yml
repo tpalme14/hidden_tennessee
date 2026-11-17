@@ -30,6 +30,11 @@ jobs:
     env:
       DATABASE_URL_TEST: postgresql://postgres:postgres@localhost:5432/landmarks_test
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/landmarks_test
+      # Better Auth (M03-T02): test-only, non-production values. Not a secret.
+      BETTER_AUTH_SECRET: test-only-better-auth-secret-not-for-production-0123456789abcdef
+      BETTER_AUTH_URL: http://localhost:3000
+      BETTER_AUTH_TELEMETRY: "0"
+      MAIL_TRANSPORT: disabled
     steps:
       - uses: actions/checkout@v4
 
@@ -97,6 +102,10 @@ jobs:
     env:
       DATABASE_URL_TEST: postgresql://postgres:postgres@localhost:5432/landmarks_test
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/landmarks_test
+      BETTER_AUTH_SECRET: test-only-better-auth-secret-not-for-production-0123456789abcdef
+      BETTER_AUTH_URL: http://localhost:3000
+      BETTER_AUTH_TELEMETRY: "0"
+      MAIL_TRANSPORT: disabled
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

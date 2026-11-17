@@ -39,6 +39,13 @@ export default defineConfig({
       DATABASE_URL: testDatabaseUrl,
       PORT: "3000",
       NODE_ENV: "production",
+      // Better Auth (M03-T02) requires a secret in every environment. This is
+      // a test-only value for the spawned server, not a secret.
+      BETTER_AUTH_SECRET: "test-only-better-auth-secret-not-for-production-0123456789abcdef",
+      BETTER_AUTH_URL: "http://localhost:3000",
+      BETTER_AUTH_TELEMETRY: "0",
+      // Production mode requires an explicit choice; no mail leaves the e2e server.
+      MAIL_TRANSPORT: "disabled",
     },
   },
 });

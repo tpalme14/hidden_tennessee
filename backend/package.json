@@ -17,8 +17,10 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
+    "better-auth": "1.7.18",
     "express": "^4.21.2",
     "fast-xml-parser": "^5.11.2",
+    "nodemailer": "10.5.0",
     "pg": "^8.13.0",
     "zod": "^4.6.7"
   },

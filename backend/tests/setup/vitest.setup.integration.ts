@@ -10,3 +10,12 @@ import { assertConnectedToTestDatabase, getVerifiedTestDatabaseUrl } from "./tes
 const testDatabaseUrl = getVerifiedTestDatabaseUrl();
 await assertConnectedToTestDatabase(testDatabaseUrl);
 process.env.DATABASE_URL = testDatabaseUrl;
+
+// Better Auth (M03-T02): test-only values, set unconditionally so a run never
+// depends on — or leaks — a developer's real secret from .env. Not a secret.
+process.env.BETTER_AUTH_SECRET = "test-only-better-auth-secret-not-for-production-0123456789abcdef";
+process.env.BETTER_AUTH_URL = "http://localhost:3000";
+process.env.BETTER_AUTH_TELEMETRY = "0";
+// The application's own instance never sends mail under test; reset tests
+// build dedicated instances with an in-memory transport.
+process.env.MAIL_TRANSPORT = "disabled";
