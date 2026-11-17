@@ -8,7 +8,11 @@ import { isOutsideWarningEnvelope, parseValidUrl } from "../src/import/validatio
 
 const REAL_COORDINATES_DIR = fileURLToPath(new URL("../../coordinates", import.meta.url));
 
-const context = { filename: "tnarches.gpx", sourceFile: "TNARCHES" as const, category: "ARCH" as const };
+const context = {
+  filename: "tnarches.gpx",
+  sourceFile: "TNARCHES" as const,
+  category: "ARCH" as const,
+};
 
 describe("mapWaypointToCandidate", () => {
   it("accepts a well-formed record, using <cmt> as the display name", () => {
@@ -46,22 +50,34 @@ describe("mapWaypointToCandidate", () => {
 
   it("rejects as unidentifiable when <name> is missing or empty", () => {
     const result = mapWaypointToCandidate({ "@_lat": 36, "@_lon": -84 }, context);
-    expect(result).toMatchObject({ kind: "rejected", record: { kind: "unidentifiable", sourceCode: null } });
+    expect(result).toMatchObject({
+      kind: "rejected",
+      record: { kind: "unidentifiable", sourceCode: null },
+    });
   });
 
   it("rejects as unidentifiable when <name> doesn't match [A-Z]{3}[0-9]{3}", () => {
     const result = mapWaypointToCandidate({ "@_lat": 36, "@_lon": -84, name: "bad-code" }, context);
-    expect(result).toMatchObject({ kind: "rejected", record: { kind: "unidentifiable", sourceCode: null } });
+    expect(result).toMatchObject({
+      kind: "rejected",
+      record: { kind: "unidentifiable", sourceCode: null },
+    });
   });
 
   it("rejects as invalid (not unidentifiable) when the source code is valid but coordinates are out of range", () => {
     const result = mapWaypointToCandidate({ "@_lat": 95, "@_lon": -84, name: "ANA003" }, context);
-    expect(result).toMatchObject({ kind: "rejected", record: { kind: "invalid", sourceCode: "ANA003" } });
+    expect(result).toMatchObject({
+      kind: "rejected",
+      record: { kind: "invalid", sourceCode: "ANA003" },
+    });
   });
 
   it("rejects as invalid when coordinates are missing or non-numeric", () => {
     const result = mapWaypointToCandidate({ name: "ANA004" }, context);
-    expect(result).toMatchObject({ kind: "rejected", record: { kind: "invalid", sourceCode: "ANA004" } });
+    expect(result).toMatchObject({
+      kind: "rejected",
+      record: { kind: "invalid", sourceCode: "ANA004" },
+    });
   });
 
   it("does not produce a navigable URL from an empty or missing href", () => {
@@ -72,7 +88,10 @@ describe("mapWaypointToCandidate", () => {
     expect(withEmptyHref.kind).toBe("accepted");
     if (withEmptyHref.kind === "accepted") expect(withEmptyHref.record.sourceUrl).toBeNull();
 
-    const withoutLink = mapWaypointToCandidate({ "@_lat": 36, "@_lon": -84, name: "ANA006" }, context);
+    const withoutLink = mapWaypointToCandidate(
+      { "@_lat": 36, "@_lon": -84, name: "ANA006" },
+      context,
+    );
     expect(withoutLink.kind).toBe("accepted");
     if (withoutLink.kind === "accepted") {
       expect(withoutLink.record.sourceUrl).toBeNull();
@@ -111,7 +130,8 @@ describe("mapWaypointToCandidate", () => {
       { filename: "tnfalls.gpx", sourceFile: "TNFALLS", category: "FALLS" },
     );
     expect(northCarolina.kind).toBe("accepted");
-    if (northCarolina.kind === "accepted") expect(northCarolina.record.sourceDescription).toBe("NC");
+    if (northCarolina.kind === "accepted")
+      expect(northCarolina.record.sourceDescription).toBe("NC");
   });
 });
 
@@ -169,7 +189,10 @@ describe("parseDataset against the real coordinates/ directory", () => {
     const dataset = parseDataset(REAL_COORDINATES_DIR);
 
     expect(dataset.isComplete).toBe(true);
-    const totalInputOccurrences = dataset.files.reduce((sum, f) => sum + f.acceptedCount + f.rejectedCount, 0);
+    const totalInputOccurrences = dataset.files.reduce(
+      (sum, f) => sum + f.acceptedCount + f.rejectedCount,
+      0,
+    );
     expect(totalInputOccurrences).toBe(1693);
     expect(dataset.exactDuplicateOccurrences).toBe(1);
     expect(dataset.accepted).toHaveLength(1692);
@@ -179,13 +202,17 @@ describe("parseDataset against the real coordinates/ directory", () => {
     const mif026Count = dataset.accepted.filter((c) => c.sourceCode === "MIF026").length;
     expect(mif026Count).toBe(1);
 
-    const outOfState = dataset.accepted.filter((c) => ["KYR001", "KYR002", "CTF004"].includes(c.sourceCode));
+    const outOfState = dataset.accepted.filter((c) =>
+      ["KYR001", "KYR002", "CTF004"].includes(c.sourceCode),
+    );
     expect(outOfState).toHaveLength(3);
     expect(outOfState.find((c) => c.sourceCode === "KYR001")?.sourceDescription).toBe("KY");
     expect(outOfState.find((c) => c.sourceCode === "KYR002")?.sourceDescription).toBe("KY");
     expect(outOfState.find((c) => c.sourceCode === "CTF004")?.sourceDescription).toBe("NC");
 
-    const geographicWarnings = dataset.accepted.filter((c) => isOutsideWarningEnvelope(c.latitude, c.longitude));
+    const geographicWarnings = dataset.accepted.filter((c) =>
+      isOutsideWarningEnvelope(c.latitude, c.longitude),
+    );
     expect(geographicWarnings).toHaveLength(0);
   });
 });

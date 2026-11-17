@@ -67,7 +67,8 @@ function parseFiniteNumber(raw: string, field: string): number {
 function parseBbox(raw: string | undefined): LandmarkCollectionQuery["bbox"] {
   if (raw === undefined) return null;
   const parts = raw.split(",");
-  if (parts.length !== 4) fail("bbox must have exactly 4 comma-separated values: minLng,minLat,maxLng,maxLat");
+  if (parts.length !== 4)
+    fail("bbox must have exactly 4 comma-separated values: minLng,minLat,maxLng,maxLat");
   const minLng = parseFiniteNumber(parts[0]!, "minLng");
   const minLat = parseFiniteNumber(parts[1]!, "minLat");
   const maxLng = parseFiniteNumber(parts[2]!, "maxLng");
@@ -81,7 +82,8 @@ function parseBbox(raw: string | undefined): LandmarkCollectionQuery["bbox"] {
   }
   // Requiring minLng < maxLng (rather than permitting wraparound) is how
   // antimeridian-crossing boxes are rejected in this version (spec §5.1/§7.1).
-  if (!(minLng < maxLng)) fail("bbox minLng must be less than maxLng (antimeridian-crossing boxes are rejected)");
+  if (!(minLng < maxLng))
+    fail("bbox minLng must be less than maxLng (antimeridian-crossing boxes are rejected)");
   if (!(minLat < maxLat)) fail("bbox minLat must be less than maxLat");
 
   return { minLng, minLat, maxLng, maxLat };
@@ -116,11 +118,14 @@ function parsePage(raw: string | undefined): number {
 function parseLimit(raw: string | undefined): number {
   if (raw === undefined) return 200;
   const value = Number(raw);
-  if (!Number.isInteger(value) || value < 1 || value > 200) fail("limit must be an integer from 1 through 200");
+  if (!Number.isInteger(value) || value < 1 || value > 200)
+    fail("limit must be an integer from 1 through 200");
   return value;
 }
 
-export function parseLandmarkCollectionQuery(rawQuery: Record<string, unknown>): LandmarkCollectionQuery {
+export function parseLandmarkCollectionQuery(
+  rawQuery: Record<string, unknown>,
+): LandmarkCollectionQuery {
   for (const key of Object.keys(rawQuery)) {
     if (!KNOWN_PARAM_NAMES.has(key)) fail(`Unknown query parameter: ${key}`);
   }

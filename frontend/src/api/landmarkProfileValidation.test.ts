@@ -70,8 +70,12 @@ describe("isValidMinimalProfile", () => {
 
   it("rejects a minimal-shaped object that also carries protected fields", () => {
     expect(isValidMinimalProfile({ ...VALID_MINIMAL, latitude: 35, longitude: -85 })).toBe(false);
-    expect(isValidMinimalProfile({ ...VALID_MINIMAL, source_url: "http://example.com" })).toBe(false);
-    expect(isValidMinimalProfile({ ...VALID_MINIMAL, sensitivityStatus: "UNREVIEWED" })).toBe(false);
+    expect(isValidMinimalProfile({ ...VALID_MINIMAL, source_url: "http://example.com" })).toBe(
+      false,
+    );
+    expect(isValidMinimalProfile({ ...VALID_MINIMAL, sensitivityStatus: "UNREVIEWED" })).toBe(
+      false,
+    );
   });
 
   it("rejects redacted: false or a non-boolean redacted value", () => {

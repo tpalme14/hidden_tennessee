@@ -10,7 +10,11 @@ vi.mock("react-leaflet", () => ({
   useMapEvents: vi.fn(),
 }));
 
-function fakeMap(bounds: { west: number; south: number; east: number; north: number }, center: [number, number], zoom: number) {
+function fakeMap(
+  bounds: { west: number; south: number; east: number; north: number },
+  center: [number, number],
+  zoom: number,
+) {
   return {
     getBounds: () => ({
       getWest: () => bounds.west,

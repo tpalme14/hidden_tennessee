@@ -10,8 +10,7 @@ import type { DiscoveryUrlState } from "./discoveryUrlState";
 import type { DiscoveryUrlActions } from "./useDiscoveryUrlState";
 
 export type EffectiveGeo =
-  | { mode: "bbox"; bbox: GeoBbox }
-  | { mode: "near"; near: GeoOrigin; radius: AllowedRadiusMiles };
+  { mode: "bbox"; bbox: GeoBbox } | { mode: "near"; near: GeoOrigin; radius: AllowedRadiusMiles };
 
 export interface GeographicDiscoveryControls {
   effectiveGeo: EffectiveGeo;
@@ -116,7 +115,9 @@ export function useGeographicDiscovery(
 
   const onNearMe = useCallback(() => {
     if (!navigator.geolocation) {
-      setGeolocationError("Geolocation is not available in this browser. Try \"Find near map center\" instead.");
+      setGeolocationError(
+        'Geolocation is not available in this browser. Try "Find near map center" instead.',
+      );
       return;
     }
     setGeolocationPending(true);
@@ -130,7 +131,7 @@ export function useGeographicDiscovery(
       () => {
         setGeolocationPending(false);
         setGeolocationError(
-          "Location access was denied or unavailable. Your previous results are unchanged — try \"Find near map center\" instead.",
+          'Location access was denied or unavailable. Your previous results are unchanged — try "Find near map center" instead.',
         );
       },
     );

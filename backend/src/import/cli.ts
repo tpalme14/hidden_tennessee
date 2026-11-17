@@ -20,7 +20,8 @@ function parseArgs(argv: string[]) {
     else if (arg === "--approve-insertions") approvals.add("insertions");
     else if (arg === "--approve-coordinate-shifts") approvals.add("coordinate-shifts");
     else if (arg.startsWith("--preview=")) previewPath = arg.slice("--preview=".length);
-    else if (arg.startsWith("--coordinates-dir=")) coordinatesDir = arg.slice("--coordinates-dir=".length);
+    else if (arg.startsWith("--coordinates-dir="))
+      coordinatesDir = arg.slice("--coordinates-dir=".length);
     else if (arg.startsWith("--out-dir=")) outDir = arg.slice("--out-dir=".length);
   }
 
@@ -28,7 +29,9 @@ function parseArgs(argv: string[]) {
 }
 
 async function main(): Promise<void> {
-  const { apply, approvals, previewPath, coordinatesDir, outDir } = parseArgs(process.argv.slice(2));
+  const { apply, approvals, previewPath, coordinatesDir, outDir } = parseArgs(
+    process.argv.slice(2),
+  );
 
   if (!apply) {
     const { artifact, path } = await runPreflight(prisma, coordinatesDir, outDir);
@@ -40,7 +43,9 @@ async function main(): Promise<void> {
           `Re-run with --apply --preview=${path} and the matching --approve-* flag(s).`,
       );
     } else {
-      console.log(`\nNo large-change thresholds triggered. Re-run with --apply --preview=${path} to apply.`);
+      console.log(
+        `\nNo large-change thresholds triggered. Re-run with --apply --preview=${path} to apply.`,
+      );
     }
     return;
   }

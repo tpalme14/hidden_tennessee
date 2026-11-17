@@ -4,7 +4,9 @@ vi.mock("./client", async () => {
   const actual = await vi.importActual<typeof import("./client")>("./client");
   return {
     ...actual,
-    getJson: vi.fn().mockResolvedValue({ items: [], page: 1, limit: 20, has_more: false, is_truncated: false }),
+    getJson: vi
+      .fn()
+      .mockResolvedValue({ items: [], page: 1, limit: 20, has_more: false, is_truncated: false }),
   };
 });
 
@@ -37,28 +39,46 @@ describe("searchLandmarks", () => {
   it("joins multiple selected categories with a comma", async () => {
     await searchLandmarks({ q: "", categories: ["arch", "falls"], page: 1, limit: 20 });
 
-    const expectedParams = new URLSearchParams({ q: "", page: "1", limit: "20", categories: "arch,falls" });
+    const expectedParams = new URLSearchParams({
+      q: "",
+      page: "1",
+      limit: "20",
+      categories: "arch,falls",
+    });
     expect(getJson).toHaveBeenCalledWith(`/api/v1/landmarks?${expectedParams.toString()}`);
   });
 
   it("combines a name query and categories together (AND semantics is the server's job; this just confirms both params are sent)", async () => {
     await searchLandmarks({ q: "Coal", categories: ["arch"], page: 1, limit: 20 });
 
-    const expectedParams = new URLSearchParams({ q: "Coal", page: "1", limit: "20", categories: "arch" });
+    const expectedParams = new URLSearchParams({
+      q: "Coal",
+      page: "1",
+      limit: "20",
+      categories: "arch",
+    });
     expect(getJson).toHaveBeenCalledWith(`/api/v1/landmarks?${expectedParams.toString()}`);
   });
 });
 
 describe("getLandmarkGeoMarkers", () => {
   it("builds a bbox-mode request, always at page=1/limit=200, omitting q and categories when empty", async () => {
-    await getLandmarkGeoMarkers({ q: "", categories: [], geo: { mode: "bbox", bbox: "-90,34,-81,37" } });
+    await getLandmarkGeoMarkers({
+      q: "",
+      categories: [],
+      geo: { mode: "bbox", bbox: "-90,34,-81,37" },
+    });
 
     const url = vi.mocked(getJson).mock.calls.at(-1)?.[0] as string;
     expect(url).toBe("/api/v1/landmarks?bbox=-90%2C34%2C-81%2C37&page=1&limit=200");
   });
 
   it("builds a near-mode request with near and radius, never a bbox param", async () => {
-    await getLandmarkGeoMarkers({ q: "", categories: [], geo: { mode: "near", near: "35.5,-85.5", radius: 25 } });
+    await getLandmarkGeoMarkers({
+      q: "",
+      categories: [],
+      geo: { mode: "near", near: "35.5,-85.5", radius: 25 },
+    });
 
     const url = vi.mocked(getJson).mock.calls.at(-1)?.[0] as string;
     expect(url).toBe("/api/v1/landmarks?near=35.5%2C-85.5&radius=25&page=1&limit=200");
@@ -66,7 +86,11 @@ describe("getLandmarkGeoMarkers", () => {
   });
 
   it("includes q and categories alongside the geo params when present", async () => {
-    await getLandmarkGeoMarkers({ q: "Coal", categories: ["arch", "falls"], geo: { mode: "bbox", bbox: "-90,34,-81,37" } });
+    await getLandmarkGeoMarkers({
+      q: "Coal",
+      categories: ["arch", "falls"],
+      geo: { mode: "bbox", bbox: "-90,34,-81,37" },
+    });
 
     const url = vi.mocked(getJson).mock.calls.at(-1)?.[0] as string;
     expect(url).toContain("q=Coal");

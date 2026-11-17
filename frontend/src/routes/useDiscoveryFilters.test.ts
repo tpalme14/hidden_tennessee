@@ -104,7 +104,9 @@ describe("useDiscoveryFilters — debounce timing", () => {
 describe("useDiscoveryFilters — category toggling and clearing", () => {
   it("toggling an unselected category adds it (sorted) to the already-committed selection", () => {
     const actions = urlActions();
-    const { result } = renderHook(() => useDiscoveryFilters(urlState({ categories: ["falls"] }), actions));
+    const { result } = renderHook(() =>
+      useDiscoveryFilters(urlState({ categories: ["falls"] }), actions),
+    );
 
     act(() => result.current.onToggleCategory("arch"));
 
@@ -124,7 +126,9 @@ describe("useDiscoveryFilters — category toggling and clearing", () => {
 
   it("Clear all filters clears both the local input and the committed text/categories", () => {
     const actions = urlActions();
-    const { result } = renderHook(() => useDiscoveryFilters(urlState({ q: "Coal", categories: ["arch"] }), actions));
+    const { result } = renderHook(() =>
+      useDiscoveryFilters(urlState({ q: "Coal", categories: ["arch"] }), actions),
+    );
 
     act(() => result.current.onInputChange("Something else"));
     act(() => result.current.onClearAll());
@@ -146,7 +150,9 @@ describe("useDiscoveryFilters — category toggling and clearing", () => {
 
   it("exposes the already-committed q/categories from urlState for consumers", () => {
     const actions = urlActions();
-    const { result } = renderHook(() => useDiscoveryFilters(urlState({ q: "Falls", categories: ["peak"] }), actions));
+    const { result } = renderHook(() =>
+      useDiscoveryFilters(urlState({ q: "Falls", categories: ["peak"] }), actions),
+    );
 
     expect(result.current.committedQuery).toBe("Falls");
     expect(result.current.selectedCategories).toEqual(["peak"]);

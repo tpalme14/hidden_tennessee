@@ -48,8 +48,18 @@ describe("LandmarkSearch — real hook, mocked network only (M02-T07 retry-path 
 
     await waitFor(() => expect(screen.getByText("Coal Creek Arches")).toBeInTheDocument());
     expect(searchLandmarks).toHaveBeenCalledTimes(2);
-    expect(searchLandmarks).toHaveBeenNthCalledWith(1, { q: "Coal", categories: [], page: 1, limit: 20 });
-    expect(searchLandmarks).toHaveBeenNthCalledWith(2, { q: "Coal", categories: [], page: 1, limit: 20 });
+    expect(searchLandmarks).toHaveBeenNthCalledWith(1, {
+      q: "Coal",
+      categories: [],
+      page: 1,
+      limit: 20,
+    });
+    expect(searchLandmarks).toHaveBeenNthCalledWith(2, {
+      q: "Coal",
+      categories: [],
+      page: 1,
+      limit: 20,
+    });
   });
 
   it("works identically when categories are passed instead of (or alongside) text", async () => {
@@ -66,13 +76,23 @@ describe("LandmarkSearch — real hook, mocked network only (M02-T07 retry-path 
     renderReal("", ["falls"]);
 
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("Server error."));
-    expect(searchLandmarks).toHaveBeenCalledWith({ q: "", categories: ["falls"], page: 1, limit: 20 });
+    expect(searchLandmarks).toHaveBeenCalledWith({
+      q: "",
+      categories: ["falls"],
+      page: 1,
+      limit: 20,
+    });
 
     await userEvent.click(screen.getByRole("button", { name: /try again/i }));
 
     await waitFor(() => expect(screen.getByText("Coalfield Falls")).toBeInTheDocument());
     expect(searchLandmarks).toHaveBeenCalledTimes(2);
-    expect(searchLandmarks).toHaveBeenNthCalledWith(2, { q: "", categories: ["falls"], page: 1, limit: 20 });
+    expect(searchLandmarks).toHaveBeenNthCalledWith(2, {
+      q: "",
+      categories: ["falls"],
+      page: 1,
+      limit: 20,
+    });
   });
 
   it("re-fetches with the new committed values when the component is re-rendered with different committed props (proving real DiscoveryFilters commits would drive a real refetch)", async () => {
@@ -98,6 +118,11 @@ describe("LandmarkSearch — real hook, mocked network only (M02-T07 retry-path 
     );
 
     await waitFor(() => expect(searchLandmarks).toHaveBeenCalledTimes(2));
-    expect(searchLandmarks).toHaveBeenLastCalledWith({ q: "Falls", categories: ["arch"], page: 1, limit: 20 });
+    expect(searchLandmarks).toHaveBeenLastCalledWith({
+      q: "Falls",
+      categories: ["arch"],
+      page: 1,
+      limit: 20,
+    });
   });
 });

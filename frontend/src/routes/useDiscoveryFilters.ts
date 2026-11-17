@@ -43,7 +43,10 @@ export function useDiscoveryFilters(
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => urlActions.commitText(normalizeQuery(inputValue)), DEBOUNCE_MS);
+    debounceRef.current = setTimeout(
+      () => urlActions.commitText(normalizeQuery(inputValue)),
+      DEBOUNCE_MS,
+    );
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
@@ -63,7 +66,11 @@ export function useDiscoveryFilters(
       if (debounceRef.current) clearTimeout(debounceRef.current);
       urlActions.commitText(normalizeQuery(inputValueRef.current));
       const current = urlState.categories;
-      const next = (current.includes(slug) ? current.filter((existing) => existing !== slug) : [...current, slug]).sort();
+      const next = (
+        current.includes(slug)
+          ? current.filter((existing) => existing !== slug)
+          : [...current, slug]
+      ).sort();
       urlActions.commitCategories(next);
     },
     onClearAll: () => {

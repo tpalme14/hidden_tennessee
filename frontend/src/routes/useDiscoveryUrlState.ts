@@ -1,6 +1,12 @@
 import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router";
-import { formatBboxParam, formatNearParam, type AllowedRadiusMiles, type GeoBbox, type GeoOrigin } from "../map/geo";
+import {
+  formatBboxParam,
+  formatNearParam,
+  type AllowedRadiusMiles,
+  type GeoBbox,
+  type GeoOrigin,
+} from "../map/geo";
 import { parseDiscoveryParams, type DiscoveryUrlState } from "./discoveryUrlState";
 
 export interface DiscoveryUrlActions {
@@ -156,7 +162,15 @@ export function useDiscoveryUrlState(): [DiscoveryUrlState, DiscoveryUrlActions]
       exitProximity,
       updateViewport,
     }),
-    [commitText, commitCategories, commitBbox, commitNearOrigin, commitRadius, exitProximity, updateViewport],
+    [
+      commitText,
+      commitCategories,
+      commitBbox,
+      commitNearOrigin,
+      commitRadius,
+      exitProximity,
+      updateViewport,
+    ],
   );
 
   return [state, actions];

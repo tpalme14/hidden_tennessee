@@ -1,7 +1,12 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
 import { prisma } from "../db/prisma.js";
 import { invalidQueryEnvelope, notFoundEnvelope } from "../http/error-envelope.js";
-import { InvalidQueryError, getCategories, getLandmarkCollection, getLandmarkDetail } from "./service.js";
+import {
+  InvalidQueryError,
+  getCategories,
+  getLandmarkCollection,
+  getLandmarkDetail,
+} from "./service.js";
 
 export const landmarksRouter = Router();
 

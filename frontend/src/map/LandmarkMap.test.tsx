@@ -2,7 +2,11 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { MapContainerProps, TileLayerProps } from "react-leaflet";
 import { describe, expect, it, vi } from "vitest";
-import { TEMPORARY_DEV_TILE_ATTRIBUTION, TEMPORARY_DEV_TILE_URL, TENNESSEE_BOUNDS } from "./tile-config";
+import {
+  TEMPORARY_DEV_TILE_ATTRIBUTION,
+  TEMPORARY_DEV_TILE_URL,
+  TENNESSEE_BOUNDS,
+} from "./tile-config";
 import { LandmarkMap } from "./LandmarkMap";
 
 // react-leaflet's real MapContainer/TileLayer need actual DOM layout
@@ -47,7 +51,9 @@ describe("LandmarkMap", () => {
   it("exposes an accessible region name for the map, without an application role", () => {
     render(<LandmarkMap />);
 
-    expect(screen.getByRole("region", { name: /map of tennessee natural landmarks/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("region", { name: /map of tennessee natural landmarks/i }),
+    ).toBeInTheDocument();
     expect(screen.queryByRole("application")).not.toBeInTheDocument();
   });
 

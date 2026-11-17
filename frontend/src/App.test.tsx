@@ -18,7 +18,10 @@ describe("App routing and layout", () => {
     expect(screen.getByRole("banner")).toBeInTheDocument();
     expect(screen.getByRole("navigation", { name: /primary/i })).toBeInTheDocument();
     expect(screen.getByRole("main")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /skip to content/i })).toHaveAttribute("href", "#main-content");
+    expect(screen.getByRole("link", { name: /skip to content/i })).toHaveAttribute(
+      "href",
+      "#main-content",
+    );
     expect(screen.getByRole("heading", { name: /discover landmarks/i })).toBeInTheDocument();
   });
 

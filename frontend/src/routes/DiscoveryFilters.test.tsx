@@ -40,7 +40,9 @@ describe("DiscoveryFilters (M02-T07: shared text/category controls, lifted out o
     const onSubmitNow = vi.fn();
     const onClearAll = vi.fn();
     vi.mocked(useCategoryOptions).mockReturnValue(baseCategoryOptions());
-    render(<DiscoveryFilters controls={baseControls({ onInputChange, onSubmitNow, onClearAll })} />);
+    render(
+      <DiscoveryFilters controls={baseControls({ onInputChange, onSubmitNow, onClearAll })} />,
+    );
 
     const input = screen.getByLabelText(/search landmarks by name/i);
     await userEvent.type(input, "C");
@@ -73,7 +75,11 @@ describe("DiscoveryFilters (M02-T07: shared text/category controls, lifted out o
   it("reflects selectedCategories as checked, and toggles call onToggleCategory with the right slug", async () => {
     const onToggleCategory = vi.fn();
     vi.mocked(useCategoryOptions).mockReturnValue(baseCategoryOptions());
-    render(<DiscoveryFilters controls={baseControls({ selectedCategories: ["arch"], onToggleCategory })} />);
+    render(
+      <DiscoveryFilters
+        controls={baseControls({ selectedCategories: ["arch"], onToggleCategory })}
+      />,
+    );
 
     const archBox = screen.getByRole("checkbox", { name: "Natural Arch" });
     const fallsBox = screen.getByRole("checkbox", { name: "Waterfall" });
@@ -107,7 +113,10 @@ describe("DiscoveryFilters (M02-T07: shared text/category controls, lifted out o
   });
 
   it("shows an empty state if the category list legitimately has zero entries", () => {
-    vi.mocked(useCategoryOptions).mockReturnValue({ status: { kind: "success", categories: [] }, retry: vi.fn() });
+    vi.mocked(useCategoryOptions).mockReturnValue({
+      status: { kind: "success", categories: [] },
+      retry: vi.fn(),
+    });
     render(<DiscoveryFilters controls={baseControls()} />);
 
     expect(screen.getByText(/no category filters are available/i)).toBeInTheDocument();

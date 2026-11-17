@@ -14,7 +14,8 @@ type Sensitivity = "UNREVIEWED" | "PUBLIC" | "SENSITIVE";
 
 interface FixtureOptions {
   category?: "ARCH" | "BALD" | "FALLS" | "LAKE" | "OTHER" | "PEAK" | "ROCK" | "SINK";
-  sourceFile?: "TNARCHES" | "TNBALDS" | "TNFALLS" | "TNLAKES" | "TNOTHER" | "TNPEAKS" | "TNROCKS" | "TNSINKS";
+  sourceFile?:
+    "TNARCHES" | "TNBALDS" | "TNFALLS" | "TNLAKES" | "TNOTHER" | "TNPEAKS" | "TNROCKS" | "TNSINKS";
   sensitivityStatus?: Sensitivity;
   isActive?: boolean;
   baseLat?: number;
@@ -82,7 +83,9 @@ describe("Landmark Retrieval API (integration)", () => {
       const response = await request(app).get("/api/v1/landmarks").query({ q: "Cove Falls" });
 
       expect(response.status).toBe(200);
-      const byName = Object.fromEntries(response.body.items.map((item: Record<string, unknown>) => [item.display_name, item]));
+      const byName = Object.fromEntries(
+        response.body.items.map((item: Record<string, unknown>) => [item.display_name, item]),
+      );
 
       expect(byName["Hidden Cove Falls"]).toEqual({
         id: expect.any(String),
@@ -124,13 +127,17 @@ describe("Landmark Retrieval API (integration)", () => {
 
       const app = createApp();
 
-      const literalMatch = await request(app).get("/api/v1/landmarks").query({ q: "100% Natural_Spot" });
+      const literalMatch = await request(app)
+        .get("/api/v1/landmarks")
+        .query({ q: "100% Natural_Spot" });
       expect(literalMatch.body.items.map((i: { display_name: string }) => i.display_name)).toEqual([
         "100% Natural_Spot",
       ]);
 
       // If % / _ were unescaped wildcards, this would also match "100X NaturalZSpot".
-      const wouldOverMatchIfUnescaped = await request(app).get("/api/v1/landmarks").query({ q: "100% Natural_Spot" });
+      const wouldOverMatchIfUnescaped = await request(app)
+        .get("/api/v1/landmarks")
+        .query({ q: "100% Natural_Spot" });
       expect(wouldOverMatchIfUnescaped.body.items).toHaveLength(1);
     });
 
@@ -141,7 +148,9 @@ describe("Landmark Retrieval API (integration)", () => {
       expect(unknownParam.status).toBe(400);
       expect(unknownParam.body.error.code).toBe("INVALID_QUERY");
 
-      const malformedBbox = await request(app).get("/api/v1/landmarks").query({ bbox: "170,35,-170,36" });
+      const malformedBbox = await request(app)
+        .get("/api/v1/landmarks")
+        .query({ bbox: "170,35,-170,36" });
       expect(malformedBbox.status).toBe(400);
       expect(malformedBbox.body.error.code).toBe("INVALID_QUERY");
 
@@ -195,8 +204,8 @@ describe("Landmark Retrieval API (integration)", () => {
           sourceFile: "TNPEAKS",
           category: "PEAK",
           displayName: "Secret Near Peak",
-          latitude: 35.500,
-          longitude: -85.000,
+          latitude: 35.5,
+          longitude: -85.0,
           sensitivityStatus: "SENSITIVE",
         },
       });
@@ -206,8 +215,8 @@ describe("Landmark Retrieval API (integration)", () => {
           sourceFile: "TNPEAKS",
           category: "PEAK",
           displayName: "Open Far Peak",
-          latitude: 35.520,
-          longitude: -85.020,
+          latitude: 35.52,
+          longitude: -85.02,
           sensitivityStatus: "PUBLIC",
         },
       });
@@ -244,7 +253,9 @@ describe("Landmark Retrieval API (integration)", () => {
       async (total) => {
         await createBoundaryFixtures(total, "BoundaryGeo", { sensitivityStatus: "PUBLIC" });
         const app = createApp();
-        const response = await request(app).get("/api/v1/landmarks").query({ bbox: "-85,35,-84,36" });
+        const response = await request(app)
+          .get("/api/v1/landmarks")
+          .query({ bbox: "-85,35,-84,36" });
 
         expect(response.status).toBe(200);
         expect(response.body.items).toHaveLength(Math.min(total, 200));
@@ -256,7 +267,9 @@ describe("Landmark Retrieval API (integration)", () => {
     it("returns the second page's remaining row when a plain search has 201 total matches", async () => {
       await createBoundaryFixtures(201, "BoundaryPage2");
       const app = createApp();
-      const page2 = await request(app).get("/api/v1/landmarks").query({ q: "BoundaryPage2", page: "2" });
+      const page2 = await request(app)
+        .get("/api/v1/landmarks")
+        .query({ q: "BoundaryPage2", page: "2" });
 
       expect(page2.status).toBe(200);
       expect(page2.body.items).toHaveLength(1);
@@ -268,13 +281,21 @@ describe("Landmark Retrieval API (integration)", () => {
       await createBoundaryFixtures(120, "BoundaryCross");
       const app = createApp();
 
-      const full = await request(app).get("/api/v1/landmarks").query({ q: "BoundaryCross", limit: "200" });
+      const full = await request(app)
+        .get("/api/v1/landmarks")
+        .query({ q: "BoundaryCross", limit: "200" });
       const canonicalIds = full.body.items.map((i: { id: string }) => i.id);
       expect(canonicalIds).toHaveLength(120);
 
-      const page1 = await request(app).get("/api/v1/landmarks").query({ q: "BoundaryCross", limit: "50", page: "1" });
-      const page2 = await request(app).get("/api/v1/landmarks").query({ q: "BoundaryCross", limit: "50", page: "2" });
-      const page3 = await request(app).get("/api/v1/landmarks").query({ q: "BoundaryCross", limit: "50", page: "3" });
+      const page1 = await request(app)
+        .get("/api/v1/landmarks")
+        .query({ q: "BoundaryCross", limit: "50", page: "1" });
+      const page2 = await request(app)
+        .get("/api/v1/landmarks")
+        .query({ q: "BoundaryCross", limit: "50", page: "2" });
+      const page3 = await request(app)
+        .get("/api/v1/landmarks")
+        .query({ q: "BoundaryCross", limit: "50", page: "3" });
 
       expect(page1.body.has_more).toBe(true);
       expect(page2.body.has_more).toBe(true);
@@ -347,7 +368,12 @@ describe("Landmark Retrieval API (integration)", () => {
         category: "arch",
         redacted: true,
       });
-      expect(Object.keys(response.body).sort()).toEqual(["category", "display_name", "id", "redacted"]);
+      expect(Object.keys(response.body).sort()).toEqual([
+        "category",
+        "display_name",
+        "id",
+        "redacted",
+      ]);
       expect(JSON.stringify(response.body)).not.toContain("36.3");
       expect(JSON.stringify(response.body)).not.toContain("Anderson");
       expect(JSON.stringify(response.body)).not.toContain("example.com");

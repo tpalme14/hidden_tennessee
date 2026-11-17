@@ -105,7 +105,9 @@ export function parseRadiusParam(raw: string | null): AllowedRadiusMiles | null 
 }
 
 export function boundsEqual(a: GeoBbox, b: GeoBbox): boolean {
-  return a.minLng === b.minLng && a.minLat === b.minLat && a.maxLng === b.maxLng && a.maxLat === b.maxLat;
+  return (
+    a.minLng === b.minLng && a.minLat === b.minLat && a.maxLng === b.maxLng && a.maxLat === b.maxLat
+  );
 }
 
 export function bboxCenter(bbox: GeoBbox): [number, number] {

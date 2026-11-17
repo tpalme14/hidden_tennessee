@@ -24,14 +24,22 @@ export async function getJson<T>(path: string): Promise<T> {
   try {
     response = await fetch(path, { headers: { Accept: "application/json" } });
   } catch {
-    throw new ApiError(0, "NETWORK_ERROR", "Unable to reach the server. Check your connection and try again.");
+    throw new ApiError(
+      0,
+      "NETWORK_ERROR",
+      "Unable to reach the server. Check your connection and try again.",
+    );
   }
 
   let body: unknown;
   try {
     body = await response.json();
   } catch {
-    throw new ApiError(response.status, "INVALID_RESPONSE", "The server returned an unexpected response.");
+    throw new ApiError(
+      response.status,
+      "INVALID_RESPONSE",
+      "The server returned an unexpected response.",
+    );
   }
 
   if (!response.ok) {

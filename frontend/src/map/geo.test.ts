@@ -61,11 +61,18 @@ describe("radius", () => {
 
 describe("bbox/near param formatting and parsing round-trip", () => {
   it("formats bbox as minLng,minLat,maxLng,maxLat", () => {
-    expect(formatBboxParam({ minLng: -85, minLat: 35, maxLng: -84, maxLat: 36 })).toBe("-85,35,-84,36");
+    expect(formatBboxParam({ minLng: -85, minLat: 35, maxLng: -84, maxLat: 36 })).toBe(
+      "-85,35,-84,36",
+    );
   });
 
   it("parses a valid bbox string back to the same object", () => {
-    expect(parseBboxParam("-85,35,-84,36")).toEqual({ minLng: -85, minLat: 35, maxLng: -84, maxLat: 36 });
+    expect(parseBboxParam("-85,35,-84,36")).toEqual({
+      minLng: -85,
+      minLat: 35,
+      maxLng: -84,
+      maxLat: 36,
+    });
   });
 
   it("returns null for a malformed or invalid bbox string", () => {

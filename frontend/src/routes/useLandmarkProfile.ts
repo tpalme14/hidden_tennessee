@@ -36,13 +36,19 @@ export function useLandmarkProfile(id: string | undefined): [LandmarkProfileStat
       try {
         const profile = await getLandmarkProfile(landmarkId);
         if (cancelled) return;
-        setStatus(isMinimalProfile(profile) ? { kind: "minimal", profile } : { kind: "full", profile });
+        setStatus(
+          isMinimalProfile(profile) ? { kind: "minimal", profile } : { kind: "full", profile },
+        );
       } catch (error) {
         if (cancelled) return;
         if (error instanceof MalformedLandmarkProfileError) {
           setStatus({ kind: "unavailable" });
         } else if (error instanceof ApiError) {
-          setStatus(error.status === 404 ? { kind: "unavailable" } : { kind: "error", message: error.message });
+          setStatus(
+            error.status === 404
+              ? { kind: "unavailable" }
+              : { kind: "error", message: error.message },
+          );
         } else {
           setStatus({ kind: "error", message: "Unable to load this landmark." });
         }

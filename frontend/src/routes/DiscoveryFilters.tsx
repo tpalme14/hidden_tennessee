@@ -19,16 +19,23 @@ export interface DiscoveryFiltersProps {
  * privacy-scoped consumers.
  */
 export function DiscoveryFilters({ controls }: DiscoveryFiltersProps) {
-  const { inputValue, selectedCategories, onInputChange, onSubmitNow, onToggleCategory, onClearAll } = controls;
+  const {
+    inputValue,
+    selectedCategories,
+    onInputChange,
+    onSubmitNow,
+    onToggleCategory,
+    onClearAll,
+  } = controls;
   const categoryOptions = useCategoryOptions();
 
   return (
     <section aria-labelledby="filters-heading">
       <h3 id="filters-heading">Search and filter</h3>
       <p>
-        These filters apply to both the map above and the results list below — the map only ever shows
-        publicly viewable landmark locations, while the list can also surface landmarks that don&apos;t have a
-        public location yet.
+        These filters apply to both the map above and the results list below — the map only ever
+        shows publicly viewable landmark locations, while the list can also surface landmarks that
+        don&apos;t have a public location yet.
       </p>
 
       <div>
@@ -47,11 +54,14 @@ export function DiscoveryFilters({ controls }: DiscoveryFiltersProps) {
 
       <fieldset>
         <legend>Filter by category</legend>
-        {categoryOptions.status.kind === "loading" ? <LoadingState label="Loading categories…" /> : null}
+        {categoryOptions.status.kind === "loading" ? (
+          <LoadingState label="Loading categories…" />
+        ) : null}
         {categoryOptions.status.kind === "error" ? (
           <ErrorState message={categoryOptions.status.message} onRetry={categoryOptions.retry} />
         ) : null}
-        {categoryOptions.status.kind === "success" && categoryOptions.status.categories.length === 0 ? (
+        {categoryOptions.status.kind === "success" &&
+        categoryOptions.status.categories.length === 0 ? (
           <EmptyState message="No category filters are available right now." />
         ) : null}
         {categoryOptions.status.kind === "success"

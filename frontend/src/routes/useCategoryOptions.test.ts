@@ -36,7 +36,9 @@ describe("useCategoryOptions", () => {
       .mockResolvedValueOnce([{ slug: "arch", label: "Natural Arch" }]);
 
     const { result } = renderHook(() => useCategoryOptions());
-    await waitFor(() => expect(result.current.status).toEqual({ kind: "error", message: "Server error." }));
+    await waitFor(() =>
+      expect(result.current.status).toEqual({ kind: "error", message: "Server error." }),
+    );
 
     result.current.retry();
     await waitFor(() =>

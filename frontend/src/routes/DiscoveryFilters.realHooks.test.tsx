@@ -25,7 +25,10 @@ function Harness() {
   return (
     <>
       <DiscoveryFilters controls={filters} />
-      <LandmarkSearch committedQuery={filters.committedQuery} categories={filters.selectedCategories} />
+      <LandmarkSearch
+        committedQuery={filters.committedQuery}
+        categories={filters.selectedCategories}
+      />
     </>
   );
 }
@@ -76,7 +79,12 @@ describe("DiscoveryFilters + useDiscoveryUrlState + LandmarkSearch — real hook
     await userEvent.click(checkbox);
 
     await waitFor(() => expect(screen.getByText("Coalfield Falls")).toBeInTheDocument());
-    expect(searchLandmarks).toHaveBeenCalledWith({ q: "", categories: ["falls"], page: 1, limit: 20 });
+    expect(searchLandmarks).toHaveBeenCalledWith({
+      q: "",
+      categories: ["falls"],
+      page: 1,
+      limit: 20,
+    });
   });
 
   it("restores committed q/categories from the URL on first render (refresh/direct-link restoration, spec §9.6)", async () => {
@@ -92,9 +100,16 @@ describe("DiscoveryFilters + useDiscoveryUrlState + LandmarkSearch — real hook
     renderHarness("/?q=Restored&categories=arch");
 
     expect(await screen.findByDisplayValue("Restored")).toBeInTheDocument();
-    await waitFor(() => expect(screen.getByRole("checkbox", { name: "Natural Arch" })).toBeChecked());
+    await waitFor(() =>
+      expect(screen.getByRole("checkbox", { name: "Natural Arch" })).toBeChecked(),
+    );
     await waitFor(() => expect(screen.getByText("Restored Arch")).toBeInTheDocument());
-    expect(searchLandmarks).toHaveBeenCalledWith({ q: "Restored", categories: ["arch"], page: 1, limit: 20 });
+    expect(searchLandmarks).toHaveBeenCalledWith({
+      q: "Restored",
+      categories: ["arch"],
+      page: 1,
+      limit: 20,
+    });
   });
 
   it("Clear all filters clears the URL params and returns the list to idle", async () => {
@@ -112,7 +127,9 @@ describe("DiscoveryFilters + useDiscoveryUrlState + LandmarkSearch — real hook
 
     await userEvent.click(screen.getByRole("button", { name: /clear all filters/i }));
 
-    expect(await screen.findByText(/type a landmark name or choose a category/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/type a landmark name or choose a category/i),
+    ).toBeInTheDocument();
     expect(screen.getByRole("checkbox", { name: "Natural Arch" })).not.toBeChecked();
   });
 });

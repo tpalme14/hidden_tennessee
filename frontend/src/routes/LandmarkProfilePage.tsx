@@ -18,7 +18,9 @@ export function LandmarkProfilePage() {
   const [status, retry] = useLandmarkProfile(id);
   const navigate = useNavigate();
   const location = useLocation();
-  const cameFromDiscovery = Boolean((location.state as { fromDiscovery?: boolean } | null)?.fromDiscovery);
+  const cameFromDiscovery = Boolean(
+    (location.state as { fromDiscovery?: boolean } | null)?.fromDiscovery,
+  );
 
   function handleReturn() {
     // `navigate(-1)` only when we can reliably establish this page was
@@ -113,7 +115,12 @@ function FullProfileContent({
     <>
       <h2 id="profile-heading">{displayName}</h2>
       <p>{categoryLabel(category)}</p>
-      <LandmarkLocationMap latitude={latitude} longitude={longitude} category={category} displayName={displayName} />
+      <LandmarkLocationMap
+        latitude={latitude}
+        longitude={longitude}
+        category={category}
+        displayName={displayName}
+      />
       {sourceDescription ? <p>{sourceDescription}</p> : null}
       {sourceAccessLabel ? <p>{sourceAccessLabel}</p> : null}
       {safeUrl ? (
@@ -124,8 +131,8 @@ function FullProfileContent({
         </p>
       ) : null}
       <p>
-        Coordinates and labels shown here do not establish public access, legal entry, maintained trails, or
-        safety.
+        Coordinates and labels shown here do not establish public access, legal entry, maintained
+        trails, or safety.
       </p>
     </>
   );

@@ -7,7 +7,12 @@ import { useLandmarkSearch } from "./useLandmarkSearch";
 
 vi.mock("../api/landmarks", () => ({ searchLandmarks: vi.fn() }));
 
-function page(items: unknown[], pageNumber: number, hasMore: boolean, isTruncated = false): LandmarkCollectionResponse {
+function page(
+  items: unknown[],
+  pageNumber: number,
+  hasMore: boolean,
+  isTruncated = false,
+): LandmarkCollectionResponse {
   return {
     items: items as LandmarkCollectionResponse["items"],
     page: pageNumber,
@@ -41,7 +46,12 @@ describe("useLandmarkSearch (M02-T07: takes committed q/categories as arguments)
     const { result } = renderHook(() => useLandmarkSearch("", ["falls"]));
 
     await waitFor(() => expect(result.current.status.kind).toBe("success"));
-    expect(searchLandmarks).toHaveBeenCalledWith({ q: "", categories: ["falls"], page: 1, limit: 20 });
+    expect(searchLandmarks).toHaveBeenCalledWith({
+      q: "",
+      categories: ["falls"],
+      page: 1,
+      limit: 20,
+    });
   });
 
   it("refetches exactly once when committedQuery changes, resetting to page 1", async () => {
@@ -50,19 +60,32 @@ describe("useLandmarkSearch (M02-T07: takes committed q/categories as arguments)
       .mockResolvedValueOnce(page([{ id: "b" }], 2, false))
       .mockResolvedValueOnce(page([{ id: "c" }], 1, false));
 
-    const { result, rerender } = renderHook(({ q, categories }) => useLandmarkSearch(q, categories), {
-      initialProps: { q: "Coal", categories: [] as string[] },
-    });
+    const { result, rerender } = renderHook(
+      ({ q, categories }) => useLandmarkSearch(q, categories),
+      {
+        initialProps: { q: "Coal", categories: [] as string[] },
+      },
+    );
     await waitFor(() => expect(searchLandmarks).toHaveBeenCalledTimes(1));
 
     act(() => result.current.onNextPage());
     await waitFor(() => expect(searchLandmarks).toHaveBeenCalledTimes(2));
-    expect(searchLandmarks).toHaveBeenLastCalledWith({ q: "Coal", categories: [], page: 2, limit: 20 });
+    expect(searchLandmarks).toHaveBeenLastCalledWith({
+      q: "Coal",
+      categories: [],
+      page: 2,
+      limit: 20,
+    });
 
     rerender({ q: "Falls", categories: [] });
     await waitFor(() => expect(searchLandmarks).toHaveBeenCalledTimes(3));
     expect(searchLandmarks).toHaveBeenCalledTimes(3);
-    expect(searchLandmarks).toHaveBeenLastCalledWith({ q: "Falls", categories: [], page: 1, limit: 20 });
+    expect(searchLandmarks).toHaveBeenLastCalledWith({
+      q: "Falls",
+      categories: [],
+      page: 1,
+      limit: 20,
+    });
   });
 
   it("does NOT reset the page, and does not refetch, when re-rendered with the identical committedQuery/categories", async () => {
@@ -70,9 +93,12 @@ describe("useLandmarkSearch (M02-T07: takes committed q/categories as arguments)
       .mockResolvedValueOnce(page([{ id: "a" }], 1, true))
       .mockResolvedValueOnce(page([{ id: "b" }], 2, false));
 
-    const { result, rerender } = renderHook(({ q, categories }) => useLandmarkSearch(q, categories), {
-      initialProps: { q: "Coal", categories: [] as string[] },
-    });
+    const { result, rerender } = renderHook(
+      ({ q, categories }) => useLandmarkSearch(q, categories),
+      {
+        initialProps: { q: "Coal", categories: [] as string[] },
+      },
+    );
     await waitFor(() => expect(searchLandmarks).toHaveBeenCalledTimes(1));
 
     act(() => result.current.onNextPage());
@@ -95,9 +121,12 @@ describe("useLandmarkSearch (M02-T07: takes committed q/categories as arguments)
       .mockResolvedValueOnce(page([{ id: "b" }], 2, false))
       .mockResolvedValueOnce(page([{ id: "c" }], 1, false));
 
-    const { result, rerender } = renderHook(({ q, categories }) => useLandmarkSearch(q, categories), {
-      initialProps: { q: "", categories: ["falls"] },
-    });
+    const { result, rerender } = renderHook(
+      ({ q, categories }) => useLandmarkSearch(q, categories),
+      {
+        initialProps: { q: "", categories: ["falls"] },
+      },
+    );
     await waitFor(() => expect(searchLandmarks).toHaveBeenCalledTimes(1));
 
     act(() => result.current.onNextPage());
@@ -105,7 +134,12 @@ describe("useLandmarkSearch (M02-T07: takes committed q/categories as arguments)
 
     rerender({ q: "", categories: ["arch", "falls"] });
     await waitFor(() => expect(searchLandmarks).toHaveBeenCalledTimes(3));
-    expect(searchLandmarks).toHaveBeenLastCalledWith({ q: "", categories: ["arch", "falls"], page: 1, limit: 20 });
+    expect(searchLandmarks).toHaveBeenLastCalledWith({
+      q: "",
+      categories: ["arch", "falls"],
+      page: 1,
+      limit: 20,
+    });
   });
 
   it("discards a stale response when a newer committedQuery was already issued (out-of-order resolution)", async () => {
@@ -117,9 +151,12 @@ describe("useLandmarkSearch (M02-T07: takes committed q/categories as arguments)
       .mockReturnValueOnce(firstPromise)
       .mockResolvedValueOnce(page([{ id: "second" }], 1, false));
 
-    const { result, rerender } = renderHook(({ q, categories }) => useLandmarkSearch(q, categories), {
-      initialProps: { q: "Coal", categories: [] as string[] },
-    });
+    const { result, rerender } = renderHook(
+      ({ q, categories }) => useLandmarkSearch(q, categories),
+      {
+        initialProps: { q: "Coal", categories: [] as string[] },
+      },
+    );
     await waitFor(() => expect(searchLandmarks).toHaveBeenCalledTimes(1));
 
     rerender({ q: "Falls", categories: [] });
@@ -140,12 +177,19 @@ describe("useLandmarkSearch (M02-T07: takes committed q/categories as arguments)
       .mockResolvedValueOnce(page([{ id: "a" }], 1, false));
 
     const { result } = renderHook(() => useLandmarkSearch("Coal", ["arch"]));
-    await waitFor(() => expect(result.current.status).toEqual({ kind: "error", message: "Server error." }));
+    await waitFor(() =>
+      expect(result.current.status).toEqual({ kind: "error", message: "Server error." }),
+    );
 
     act(() => result.current.retry());
     await waitFor(() => expect(result.current.status.kind).toBe("success"));
     expect(searchLandmarks).toHaveBeenCalledTimes(2);
-    expect(searchLandmarks).toHaveBeenLastCalledWith({ q: "Coal", categories: ["arch"], page: 1, limit: 20 });
+    expect(searchLandmarks).toHaveBeenLastCalledWith({
+      q: "Coal",
+      categories: ["arch"],
+      page: 1,
+      limit: 20,
+    });
   });
 
   it("reads is_truncated directly from the response, never inferring it from items.length", async () => {
@@ -194,9 +238,12 @@ describe("useLandmarkSearch — retaining the previous successful page during lo
       .mockResolvedValueOnce(page([{ id: "a" }], 1, false, true))
       .mockReturnValueOnce(secondPromise);
 
-    const { result, rerender } = renderHook(({ q, categories }) => useLandmarkSearch(q, categories), {
-      initialProps: { q: "Coal", categories: [] as string[] },
-    });
+    const { result, rerender } = renderHook(
+      ({ q, categories }) => useLandmarkSearch(q, categories),
+      {
+        initialProps: { q: "Coal", categories: [] as string[] },
+      },
+    );
     await waitFor(() => expect(result.current.status.kind).toBe("success"));
 
     rerender({ q: "Falls", categories: [] });
@@ -218,9 +265,12 @@ describe("useLandmarkSearch — retaining the previous successful page during lo
       .mockResolvedValueOnce(page([{ id: "a" }], 1, false))
       .mockRejectedValueOnce(new ApiError(500, "INTERNAL", "Server error."));
 
-    const { result, rerender } = renderHook(({ q, categories }) => useLandmarkSearch(q, categories), {
-      initialProps: { q: "Coal", categories: [] as string[] },
-    });
+    const { result, rerender } = renderHook(
+      ({ q, categories }) => useLandmarkSearch(q, categories),
+      {
+        initialProps: { q: "Coal", categories: [] as string[] },
+      },
+    );
     await waitFor(() => expect(result.current.status.kind).toBe("success"));
 
     rerender({ q: "Falls", categories: [] });
@@ -237,22 +287,30 @@ describe("useLandmarkSearch — retaining the previous successful page during lo
       .mockResolvedValueOnce(page([{ id: "a" }], 1, false))
       .mockResolvedValueOnce(page([], 1, false));
 
-    const { result, rerender } = renderHook(({ q, categories }) => useLandmarkSearch(q, categories), {
-      initialProps: { q: "Coal", categories: [] as string[] },
-    });
+    const { result, rerender } = renderHook(
+      ({ q, categories }) => useLandmarkSearch(q, categories),
+      {
+        initialProps: { q: "Coal", categories: [] as string[] },
+      },
+    );
     await waitFor(() => expect(result.current.status.kind).toBe("success"));
 
     rerender({ q: "NoMatches", categories: [] });
-    await waitFor(() => expect(result.current.status).toMatchObject({ kind: "success", items: [] }));
+    await waitFor(() =>
+      expect(result.current.status).toMatchObject({ kind: "success", items: [] }),
+    );
     expect(result.current.status).not.toHaveProperty("previous");
   });
 
   it("clearing filters to idle discards any retained previous result — idle is a deliberate reset, not a transient state", async () => {
     vi.mocked(searchLandmarks).mockResolvedValueOnce(page([{ id: "a" }], 1, false));
 
-    const { result, rerender } = renderHook(({ q, categories }) => useLandmarkSearch(q, categories), {
-      initialProps: { q: "Coal", categories: [] as string[] },
-    });
+    const { result, rerender } = renderHook(
+      ({ q, categories }) => useLandmarkSearch(q, categories),
+      {
+        initialProps: { q: "Coal", categories: [] as string[] },
+      },
+    );
     await waitFor(() => expect(result.current.status.kind).toBe("success"));
 
     rerender({ q: "", categories: [] });

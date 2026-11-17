@@ -2,7 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import { ApiError } from "../api/client";
 import { getLandmarkGeoMarkers } from "../api/landmarks";
 import type { LandmarkCollectionItem } from "../api/types";
-import { formatBboxParam, formatNearParam, isValidLatitude, isValidLongitude, type AllowedRadiusMiles, type GeoBbox, type GeoOrigin } from "./geo";
+import {
+  formatBboxParam,
+  formatNearParam,
+  isValidLatitude,
+  isValidLongitude,
+  type AllowedRadiusMiles,
+  type GeoBbox,
+  type GeoOrigin,
+} from "./geo";
 
 export type LandmarkMarker = LandmarkCollectionItem & { latitude: number; longitude: number };
 
@@ -19,7 +27,8 @@ export type MapMarkersStatus =
 export interface UseMapMarkersParams {
   q: string;
   categories: string[];
-  geo: { mode: "bbox"; bbox: GeoBbox } | { mode: "near"; near: GeoOrigin; radius: AllowedRadiusMiles };
+  geo:
+    { mode: "bbox"; bbox: GeoBbox } | { mode: "near"; near: GeoOrigin; radius: AllowedRadiusMiles };
 }
 
 function hasValidCoordinates(item: LandmarkCollectionItem): item is LandmarkMarker {
@@ -86,7 +95,11 @@ export function useMapMarkers(params: UseMapMarkersParams): [MapMarkersStatus, (
     const geo =
       params.geo.mode === "bbox"
         ? ({ mode: "bbox", bbox: formatBboxParam(params.geo.bbox) } as const)
-        : ({ mode: "near", near: formatNearParam(params.geo.near), radius: params.geo.radius } as const);
+        : ({
+            mode: "near",
+            near: formatNearParam(params.geo.near),
+            radius: params.geo.radius,
+          } as const);
 
     getLandmarkGeoMarkers({ q: params.q, categories: params.categories, geo })
       .then((response) => {

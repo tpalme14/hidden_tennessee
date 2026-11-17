@@ -11,7 +11,10 @@ const { LandmarkSearch } = await import("./LandmarkSearch");
 function renderSearch(props: { committedQuery?: string; categories?: string[] } = {}) {
   return render(
     <MemoryRouter>
-      <LandmarkSearch committedQuery={props.committedQuery ?? ""} categories={props.categories ?? []} />
+      <LandmarkSearch
+        committedQuery={props.committedQuery ?? ""}
+        categories={props.categories ?? []}
+      />
     </MemoryRouter>,
   );
 }
@@ -48,7 +51,9 @@ describe("LandmarkSearch (M02-T07: results list only — filters UI moved to Dis
     vi.mocked(useLandmarkSearch).mockReturnValue(baseControls());
     renderSearch();
 
-    expect(screen.getByText(/type a landmark name or choose a category above/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/type a landmark name or choose a category above/i),
+    ).toBeInTheDocument();
   });
 
   it("shows a loading state while searching", () => {
@@ -60,7 +65,9 @@ describe("LandmarkSearch (M02-T07: results list only — filters UI moved to Dis
 
   it("shows a real error state with working retry", async () => {
     const retry = vi.fn();
-    vi.mocked(useLandmarkSearch).mockReturnValue(baseControls({ status: { kind: "error", message: "Server error." }, retry }));
+    vi.mocked(useLandmarkSearch).mockReturnValue(
+      baseControls({ status: { kind: "error", message: "Server error." }, retry }),
+    );
     renderSearch();
 
     expect(screen.getByRole("alert")).toHaveTextContent("Server error.");
@@ -70,7 +77,9 @@ describe("LandmarkSearch (M02-T07: results list only — filters UI moved to Dis
 
   it("shows an empty-results state for zero matches", () => {
     vi.mocked(useLandmarkSearch).mockReturnValue(
-      baseControls({ status: { kind: "success", items: [], page: 1, hasMore: false, isTruncated: false } }),
+      baseControls({
+        status: { kind: "success", items: [], page: 1, hasMore: false, isTruncated: false },
+      }),
     );
     renderSearch();
 
@@ -86,7 +95,13 @@ describe("LandmarkSearch (M02-T07: results list only — filters UI moved to Dis
           hasMore: false,
           isTruncated: false,
           items: [
-            { id: "a", display_name: "Open Falls", category: "falls", latitude: 35.123456, longitude: -85.654321 },
+            {
+              id: "a",
+              display_name: "Open Falls",
+              category: "falls",
+              latitude: 35.123456,
+              longitude: -85.654321,
+            },
             { id: "b", display_name: "Hidden Peak", category: "peak" },
           ],
         },
@@ -277,7 +292,10 @@ describe("LandmarkSearch — retaining previous results during loading/error (M0
   it("does not show a previous-results notice when the retained previous result was itself empty", () => {
     vi.mocked(useLandmarkSearch).mockReturnValue(
       baseControls({
-        status: { kind: "loading", previous: { items: [], page: 1, hasMore: false, isTruncated: false } },
+        status: {
+          kind: "loading",
+          previous: { items: [], page: 1, hasMore: false, isTruncated: false },
+        },
       }),
     );
     renderSearch();
@@ -288,7 +306,9 @@ describe("LandmarkSearch — retaining previous results during loading/error (M0
 
   it("a successful (even empty) response is never shown as 'previous' — success is always authoritative", () => {
     vi.mocked(useLandmarkSearch).mockReturnValue(
-      baseControls({ status: { kind: "success", items: [], page: 1, hasMore: false, isTruncated: false } }),
+      baseControls({
+        status: { kind: "success", items: [], page: 1, hasMore: false, isTruncated: false },
+      }),
     );
     renderSearch();
 

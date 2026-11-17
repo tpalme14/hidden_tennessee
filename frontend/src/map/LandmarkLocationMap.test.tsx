@@ -25,17 +25,36 @@ const { LandmarkLocationMap } = await import("./LandmarkLocationMap");
 
 describe("LandmarkLocationMap", () => {
   it("centers the map and marker on the given coordinates, at a fixed single-point zoom", () => {
-    render(<LandmarkLocationMap latitude={36.2} longitude={-84.1} category="arch" displayName="Public Arch" />);
+    render(
+      <LandmarkLocationMap
+        latitude={36.2}
+        longitude={-84.1}
+        category="arch"
+        displayName="Public Arch"
+      />,
+    );
 
     const map = screen.getByTestId("map-container");
     expect(map).toHaveAttribute("data-center", JSON.stringify([36.2, -84.1]));
     expect(map).toHaveAttribute("data-zoom", "13");
-    expect(screen.getByTestId("circle-marker")).toHaveAttribute("data-center", JSON.stringify([36.2, -84.1]));
+    expect(screen.getByTestId("circle-marker")).toHaveAttribute(
+      "data-center",
+      JSON.stringify([36.2, -84.1]),
+    );
   });
 
   it("exposes an accessible, landmark-specific region name", () => {
-    render(<LandmarkLocationMap latitude={36.2} longitude={-84.1} category="arch" displayName="Public Arch" />);
+    render(
+      <LandmarkLocationMap
+        latitude={36.2}
+        longitude={-84.1}
+        category="arch"
+        displayName="Public Arch"
+      />,
+    );
 
-    expect(screen.getByRole("region", { name: /map showing the location of public arch/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("region", { name: /map showing the location of public arch/i }),
+    ).toBeInTheDocument();
   });
 });

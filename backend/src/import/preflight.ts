@@ -1,5 +1,10 @@
 import { isOutsideWarningEnvelope } from "./validation.js";
-import { dbBaselineFingerprintInput, fetchDbBaseline, type BaselineRow, type QueryExecutor } from "./db-baseline.js";
+import {
+  dbBaselineFingerprintInput,
+  fetchDbBaseline,
+  type BaselineRow,
+  type QueryExecutor,
+} from "./db-baseline.js";
 import { canonicalHash } from "./fingerprint.js";
 import type { ParsedDataset } from "./parse-dataset.js";
 import type { CandidateLandmark } from "./types.js";
@@ -35,10 +40,13 @@ export interface PreflightDiff {
   previewHash: string;
 }
 
-function candidateChanged(candidate: CandidateLandmark, previous: BaselineRow, shiftedMeters: number): boolean {
+function candidateChanged(
+  candidate: CandidateLandmark,
+  previous: BaselineRow,
+  shiftedMeters: number,
+): boolean {
   return (
-    shiftedMeters > 0 ||
-    candidate.sourceFile !== previous.sourceFile
+    shiftedMeters > 0 || candidate.sourceFile !== previous.sourceFile
     // displayName/category/description/etc. are not in BaselineRow (we only snapshot identity/coords/active-state
     // for diffing purposes); any accepted candidate for a matched source_code is always re-written on apply
     // regardless of whether every field changed, since recomputing field-level diffs for non-coordinate,
@@ -50,14 +58,22 @@ export function computeGpxFingerprint(dataset: ParsedDataset): string {
   return canonicalHash({
     isComplete: dataset.isComplete,
     files: dataset.files
-      .map((f) => ({ filename: f.filename, status: f.status, retirementDisabled: f.retirementDisabled }))
+      .map((f) => ({
+        filename: f.filename,
+        status: f.status,
+        retirementDisabled: f.retirementDisabled,
+      }))
       .sort((a, b) => a.filename.localeCompare(b.filename)),
     accepted: dataset.accepted
       .map((c) => ({ ...c }))
       .sort((a, b) => a.sourceCode.localeCompare(b.sourceCode)),
     rejected: dataset.rejected
       .map((r) => ({ ...r }))
-      .sort((a, b) => (a.sourceCode ?? "").localeCompare(b.sourceCode ?? "") || a.reason.localeCompare(b.reason)),
+      .sort(
+        (a, b) =>
+          (a.sourceCode ?? "").localeCompare(b.sourceCode ?? "") ||
+          a.reason.localeCompare(b.reason),
+      ),
     exactDuplicateOccurrences: dataset.exactDuplicateOccurrences,
   });
 }
@@ -69,7 +85,10 @@ export function computeGpxFingerprint(dataset: ParsedDataset): string {
  * preview to both the parsed GPX state and the database baseline it was
  * computed against (requirement 4).
  */
-export async function computePreflightDiff(db: QueryExecutor, dataset: ParsedDataset): Promise<PreflightDiff> {
+export async function computePreflightDiff(
+  db: QueryExecutor,
+  dataset: ParsedDataset,
+): Promise<PreflightDiff> {
   const baseline = await fetchDbBaseline(db);
   const activeBaselineCount = [...baseline.values()].filter((row) => row.isActive).length;
 
@@ -118,17 +137,22 @@ export async function computePreflightDiff(db: QueryExecutor, dataset: ParsedDat
     }
   }
 
-  const geographicWarnings = dataset.accepted.filter((c) => isOutsideWarningEnvelope(c.latitude, c.longitude));
+  const geographicWarnings = dataset.accepted.filter((c) =>
+    isOutsideWarningEnvelope(c.latitude, c.longitude),
+  );
 
   const requiredApprovals: ApprovalCategory[] = [];
   const retirementsTriggered =
     retirements.length > RETIREMENT_COUNT_THRESHOLD ||
-    (activeBaselineCount > 0 && retirements.length > RETIREMENT_PERCENT_THRESHOLD * activeBaselineCount);
+    (activeBaselineCount > 0 &&
+      retirements.length > RETIREMENT_PERCENT_THRESHOLD * activeBaselineCount);
   if (retirementsTriggered) requiredApprovals.push("retirements");
 
   // M01-T04 decision 1: with zero active landmarks, any insertion volume triggers the gate.
   const insertionsTriggered =
-    inserts.length > 0 && (activeBaselineCount === 0 || inserts.length > INSERTION_PERCENT_THRESHOLD * activeBaselineCount);
+    inserts.length > 0 &&
+    (activeBaselineCount === 0 ||
+      inserts.length > INSERTION_PERCENT_THRESHOLD * activeBaselineCount);
   if (insertionsTriggered) requiredApprovals.push("insertions");
 
   const matchedCount = matchedEntries.length;

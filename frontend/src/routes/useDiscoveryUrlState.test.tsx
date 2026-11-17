@@ -15,7 +15,9 @@ function Probe() {
 }
 
 function setup(initialPath = "/") {
-  const router = createMemoryRouter([{ path: "/", element: <Probe /> }], { initialEntries: [initialPath] });
+  const router = createMemoryRouter([{ path: "/", element: <Probe /> }], {
+    initialEntries: [initialPath],
+  });
   render(<RouterProvider router={router} />);
   return router;
 }

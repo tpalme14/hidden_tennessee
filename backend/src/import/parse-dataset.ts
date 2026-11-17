@@ -1,7 +1,12 @@
 import { join } from "node:path";
 import type { LandmarkSourceFile } from "@prisma/client";
 import { deduplicateCandidates } from "./duplicates.js";
-import { GpxFileMissingError, GpxFileUnreadableError, GpxMalformedError, parseGpxFile } from "./gpx-parser.js";
+import {
+  GpxFileMissingError,
+  GpxFileUnreadableError,
+  GpxMalformedError,
+  parseGpxFile,
+} from "./gpx-parser.js";
 import { mapWaypointToCandidate } from "./landmark-mapper.js";
 import { EXPECTED_GPX_FILENAMES, SOURCE_FILE_CATEGORY_MAP } from "./source-files.js";
 import type { CandidateLandmark, FileStatus, RejectedRecord } from "./types.js";
@@ -57,8 +62,17 @@ export function parseDataset(coordinatesDir: string): ParsedDataset {
             ? { status: "unreadable", error: error.message }
             : error instanceof GpxMalformedError
               ? { status: "malformed", error: error.message }
-              : { status: "malformed", error: error instanceof Error ? error.message : String(error) };
-      files.push({ filename, status, acceptedCount: 0, rejectedCount: 0, retirementDisabled: true });
+              : {
+                  status: "malformed",
+                  error: error instanceof Error ? error.message : String(error),
+                };
+      files.push({
+        filename,
+        status,
+        acceptedCount: 0,
+        rejectedCount: 0,
+        retirementDisabled: true,
+      });
       filesWithRetirementDisabled.add(sourceFile);
       continue;
     }

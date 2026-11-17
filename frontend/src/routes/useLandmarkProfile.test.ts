@@ -20,7 +20,12 @@ const FULL_PROFILE = {
   source_url: null,
 };
 
-const MINIMAL_PROFILE = { id: "b", display_name: "Hidden Falls", category: "falls", redacted: true as const };
+const MINIMAL_PROFILE = {
+  id: "b",
+  display_name: "Hidden Falls",
+  category: "falls",
+  redacted: true as const,
+};
 
 describe("useLandmarkProfile", () => {
   it("returns unavailable immediately when no id is given, without fetching", () => {
@@ -43,11 +48,15 @@ describe("useLandmarkProfile", () => {
 
     const { result } = renderHook(() => useLandmarkProfile("b"));
 
-    await waitFor(() => expect(result.current[0]).toEqual({ kind: "minimal", profile: MINIMAL_PROFILE }));
+    await waitFor(() =>
+      expect(result.current[0]).toEqual({ kind: "minimal", profile: MINIMAL_PROFILE }),
+    );
   });
 
   it("treats a 404 ApiError as unavailable", async () => {
-    vi.mocked(getLandmarkProfile).mockRejectedValue(new ApiError(404, "NOT_FOUND", "Resource not found."));
+    vi.mocked(getLandmarkProfile).mockRejectedValue(
+      new ApiError(404, "NOT_FOUND", "Resource not found."),
+    );
 
     const { result } = renderHook(() => useLandmarkProfile("unknown"));
 
@@ -67,7 +76,9 @@ describe("useLandmarkProfile", () => {
 
     const { result } = renderHook(() => useLandmarkProfile("d"));
 
-    await waitFor(() => expect(result.current[0]).toEqual({ kind: "error", message: "Server error." }));
+    await waitFor(() =>
+      expect(result.current[0]).toEqual({ kind: "error", message: "Server error." }),
+    );
   });
 
   it("retry re-invokes the fetch", async () => {

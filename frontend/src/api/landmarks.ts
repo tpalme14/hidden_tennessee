@@ -3,8 +3,7 @@ import { parseLandmarkProfile } from "./landmarkProfileValidation";
 import type { LandmarkCollectionResponse, LandmarkProfile } from "./types";
 
 export type LandmarkGeoMode =
-  | { mode: "bbox"; bbox: string }
-  | { mode: "near"; near: string; radius: number };
+  { mode: "bbox"; bbox: string } | { mode: "near"; near: string; radius: number };
 
 export interface LandmarkGeoMarkerQuery {
   q: string;
@@ -25,7 +24,9 @@ export interface LandmarkGeoMarkerQuery {
  * would return non-`PUBLIC` records without coordinates, which is not a
  * valid marker response shape.
  */
-export function getLandmarkGeoMarkers(query: LandmarkGeoMarkerQuery): Promise<LandmarkCollectionResponse> {
+export function getLandmarkGeoMarkers(
+  query: LandmarkGeoMarkerQuery,
+): Promise<LandmarkCollectionResponse> {
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
   if (query.categories.length > 0) params.set("categories", query.categories.join(","));
@@ -59,7 +60,11 @@ export interface LandmarkSearchQuery {
  * server-side; this module must never duplicate that escaping itself.
  */
 export function searchLandmarks(query: LandmarkSearchQuery): Promise<LandmarkCollectionResponse> {
-  const params = new URLSearchParams({ q: query.q, page: String(query.page), limit: String(query.limit) });
+  const params = new URLSearchParams({
+    q: query.q,
+    page: String(query.page),
+    limit: String(query.limit),
+  });
   if (query.categories.length > 0) {
     params.set("categories", query.categories.join(","));
   }

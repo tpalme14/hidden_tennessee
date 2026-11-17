@@ -38,7 +38,10 @@ export function buildGpxXml(waypoints: FixtureWaypoint[]): string {
  * `overrides` replaced by the given raw XML content. Returns the directory
  * path and a cleanup function; always call cleanup, even on test failure.
  */
-export function createGpxFixtureDir(overrides: Record<string, string> = {}): { dir: string; cleanup: () => void } {
+export function createGpxFixtureDir(overrides: Record<string, string> = {}): {
+  dir: string;
+  cleanup: () => void;
+} {
   const dir = mkdtempSync(join(tmpdir(), "gpx-import-test-"));
   for (const filename of EXPECTED_GPX_FILENAMES) {
     const content = overrides[filename] ?? buildGpxXml([]);

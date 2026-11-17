@@ -29,7 +29,10 @@ export interface PreviewArtifact {
 }
 
 export function buildPreviewArtifact(dataset: ParsedDataset, diff: PreflightDiff): PreviewArtifact {
-  const totalInputOccurrences = dataset.files.reduce((sum, f) => sum + f.acceptedCount + f.rejectedCount, 0);
+  const totalInputOccurrences = dataset.files.reduce(
+    (sum, f) => sum + f.acceptedCount + f.rejectedCount,
+    0,
+  );
   return {
     generatedAt: new Date().toISOString(),
     gpxFingerprint: diff.gpxFingerprint,
@@ -56,7 +59,10 @@ export function buildPreviewArtifact(dataset: ParsedDataset, diff: PreflightDiff
       latitude: c.latitude,
       longitude: c.longitude,
     })),
-    retirements: diff.retirements.map((r) => ({ sourceCode: r.sourceCode, sourceFile: r.sourceFile })),
+    retirements: diff.retirements.map((r) => ({
+      sourceCode: r.sourceCode,
+      sourceFile: r.sourceFile,
+    })),
   };
 }
 

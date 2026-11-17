@@ -32,7 +32,10 @@ export async function getLandmarkCollection(
 
 export type LandmarkDetailOutcome = { status: 200; body: unknown } | { status: 404 };
 
-export async function getLandmarkDetail(prisma: PrismaClient, id: string): Promise<LandmarkDetailOutcome> {
+export async function getLandmarkDetail(
+  prisma: PrismaClient,
+  id: string,
+): Promise<LandmarkDetailOutcome> {
   const row = await findLandmarkById(prisma, id);
   const result = toDetailResult(row);
 

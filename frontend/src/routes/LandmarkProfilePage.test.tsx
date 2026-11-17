@@ -38,12 +38,7 @@ function renderRouted(fromDiscovery: boolean) {
   return render(
     <MemoryRouter initialEntries={entries} initialIndex={entries.length - 1}>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <DiscoveryRouteProbe />
-          }
-        />
+        <Route path="/" element={<DiscoveryRouteProbe />} />
         <Route path="/landmarks/:id" element={<LandmarkProfilePage />} />
       </Routes>
     </MemoryRouter>,
@@ -78,7 +73,10 @@ describe("LandmarkProfilePage", () => {
   });
 
   it("renders the full profile with all approved fields, the mini-map, and the safety disclaimer", () => {
-    vi.mocked(useLandmarkProfile).mockReturnValue([{ kind: "full", profile: FULL_PROFILE }, vi.fn()]);
+    vi.mocked(useLandmarkProfile).mockReturnValue([
+      { kind: "full", profile: FULL_PROFILE },
+      vi.fn(),
+    ]);
 
     renderPage();
 
@@ -99,7 +97,15 @@ describe("LandmarkProfilePage", () => {
 
   it("omits optional fields that are null, without showing placeholder text", () => {
     vi.mocked(useLandmarkProfile).mockReturnValue([
-      { kind: "full", profile: { ...FULL_PROFILE, source_description: null, source_access_label: null, source_url: null } },
+      {
+        kind: "full",
+        profile: {
+          ...FULL_PROFILE,
+          source_description: null,
+          source_access_label: null,
+          source_url: null,
+        },
+      },
       vi.fn(),
     ]);
 
@@ -123,7 +129,10 @@ describe("LandmarkProfilePage", () => {
 
   it("renders strictly the minimal profile for a redacted (UNREVIEWED-shaped) record, with no map and no protected fields", () => {
     vi.mocked(useLandmarkProfile).mockReturnValue([
-      { kind: "minimal", profile: { id: "b", display_name: "Hidden Falls", category: "falls", redacted: true } },
+      {
+        kind: "minimal",
+        profile: { id: "b", display_name: "Hidden Falls", category: "falls", redacted: true },
+      },
       vi.fn(),
     ]);
 
@@ -131,7 +140,9 @@ describe("LandmarkProfilePage", () => {
 
     expect(screen.getByRole("heading", { name: "Hidden Falls" })).toBeInTheDocument();
     expect(screen.getByText("Waterfall")).toBeInTheDocument();
-    expect(screen.getByText("Full details for this landmark are not currently available.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Full details for this landmark are not currently available."),
+    ).toBeInTheDocument();
     expect(screen.queryByTestId("location-map")).not.toBeInTheDocument();
     expect(screen.queryByText(/redacted/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/unreviewed/i)).not.toBeInTheDocument();
@@ -140,13 +151,18 @@ describe("LandmarkProfilePage", () => {
 
   it("renders the identical minimal profile for a SENSITIVE-shaped record — no distinguishing content", () => {
     vi.mocked(useLandmarkProfile).mockReturnValue([
-      { kind: "minimal", profile: { id: "c", display_name: "Secret Peak", category: "peak", redacted: true } },
+      {
+        kind: "minimal",
+        profile: { id: "c", display_name: "Secret Peak", category: "peak", redacted: true },
+      },
       vi.fn(),
     ]);
 
     renderPage();
 
-    expect(screen.getByText("Full details for this landmark are not currently available.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Full details for this landmark are not currently available."),
+    ).toBeInTheDocument();
     expect(screen.queryByTestId("location-map")).not.toBeInTheDocument();
     expect(screen.queryByText(/sensitive/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/unreviewed/i)).not.toBeInTheDocument();
@@ -158,13 +174,18 @@ describe("LandmarkProfilePage", () => {
     renderPage();
 
     expect(screen.getByRole("heading", { name: "Landmark unavailable" })).toBeInTheDocument();
-    expect(screen.getByText("This landmark is no longer available in the explorer.")).toBeInTheDocument();
+    expect(
+      screen.getByText("This landmark is no longer available in the explorer."),
+    ).toBeInTheDocument();
     expect(screen.queryByTestId("location-map")).not.toBeInTheDocument();
   });
 
   it("shows a real error state with a working retry action for a genuine failure", async () => {
     const retry = vi.fn();
-    vi.mocked(useLandmarkProfile).mockReturnValue([{ kind: "error", message: "Server error." }, retry]);
+    vi.mocked(useLandmarkProfile).mockReturnValue([
+      { kind: "error", message: "Server error." },
+      retry,
+    ]);
 
     renderPage();
 
@@ -177,7 +198,10 @@ describe("LandmarkProfilePage", () => {
   describe("return navigation (M02-T07)", () => {
     it("navigates back (preserving the prior discovery URL/state) when reached via an in-app discovery link", async () => {
       vi.mocked(useLandmarkProfile).mockReturnValue([
-        { kind: "minimal", profile: { id: "a", display_name: "Hidden Falls", category: "falls", redacted: true } },
+        {
+          kind: "minimal",
+          profile: { id: "a", display_name: "Hidden Falls", category: "falls", redacted: true },
+        },
         vi.fn(),
       ]);
 
@@ -192,7 +216,10 @@ describe("LandmarkProfilePage", () => {
 
     it("falls back to the plain discovery route for a direct profile visit with no discovery history", async () => {
       vi.mocked(useLandmarkProfile).mockReturnValue([
-        { kind: "minimal", profile: { id: "a", display_name: "Hidden Falls", category: "falls", redacted: true } },
+        {
+          kind: "minimal",
+          profile: { id: "a", display_name: "Hidden Falls", category: "falls", redacted: true },
+        },
         vi.fn(),
       ]);
 

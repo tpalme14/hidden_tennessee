@@ -10,7 +10,8 @@ import {
   trimToNullable,
 } from "./validation.js";
 
-export type MapResult = { kind: "accepted"; record: CandidateLandmark } | { kind: "rejected"; record: RejectedRecord };
+export type MapResult =
+  { kind: "accepted"; record: CandidateLandmark } | { kind: "rejected"; record: RejectedRecord };
 
 function coerceCoordinate(value: unknown): number | null {
   if (isFiniteCoordinate(value)) return value;

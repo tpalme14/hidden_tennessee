@@ -2,10 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { getJson } from "./client";
 
 function stubFetchResolved(partial: { ok: boolean; status: number; json: () => Promise<unknown> }) {
-  vi.stubGlobal(
-    "fetch",
-    vi.fn().mockResolvedValue(partial as unknown as Response),
-  );
+  vi.stubGlobal("fetch", vi.fn().mockResolvedValue(partial as unknown as Response));
 }
 
 describe("getJson", () => {

@@ -55,7 +55,9 @@ describe("useGeographicDiscovery — pending vs. committed bbox", () => {
 
   it("restoring a saved, NON-default committed bbox (e.g. after a refresh following a prior 'Search this area') does not flag a pending change before any further interaction", () => {
     const restoredBbox = { minLng: -86, minLat: 35, maxLng: -85, maxLat: 36 };
-    const { result } = renderHook(() => useGeographicDiscovery(urlState({ bbox: restoredBbox }), urlActions()));
+    const { result } = renderHook(() =>
+      useGeographicDiscovery(urlState({ bbox: restoredBbox }), urlActions()),
+    );
 
     // The restored viewport's actual rendered bounds, as Leaflet would report
     // them for that exact center/zoom — not required to be byte-identical to
@@ -83,9 +85,12 @@ describe("useGeographicDiscovery — pending vs. committed bbox", () => {
 
   it("onSearchThisArea commits exactly the last-reported pending bounds, and re-anchors the baseline so the prompt doesn't immediately reappear once the commit's URL update flows back in", () => {
     const actions = urlActions();
-    const { result, rerender } = renderHook((state: DiscoveryUrlState) => useGeographicDiscovery(state, actions), {
-      initialProps: urlState(),
-    });
+    const { result, rerender } = renderHook(
+      (state: DiscoveryUrlState) => useGeographicDiscovery(state, actions),
+      {
+        initialProps: urlState(),
+      },
+    );
 
     act(() => result.current.onViewportChange(DEFAULT_BBOX, [35.75, -85.95], 7));
     const panned = { minLng: -86, minLat: 35, maxLng: -85, maxLat: 36 };
@@ -122,9 +127,16 @@ describe("useGeographicDiscovery — map-center proximity", () => {
 
   it("reflects a committed near/radius from the URL in effectiveGeo", () => {
     const { result } = renderHook(() =>
-      useGeographicDiscovery(urlState({ mode: "near", near: { lat: 36, lng: -84 }, radius: 50 }), urlActions()),
+      useGeographicDiscovery(
+        urlState({ mode: "near", near: { lat: 36, lng: -84 }, radius: 50 }),
+        urlActions(),
+      ),
     );
-    expect(result.current.effectiveGeo).toEqual({ mode: "near", near: { lat: 36, lng: -84 }, radius: 50 });
+    expect(result.current.effectiveGeo).toEqual({
+      mode: "near",
+      near: { lat: 36, lng: -84 },
+      radius: 50,
+    });
     expect(result.current.isDeviceOrigin).toBe(false);
   });
 });
@@ -133,21 +145,31 @@ describe("useGeographicDiscovery — device geolocation ('Near me'), never writt
   const originalGeolocation = navigator.geolocation;
 
   afterEach(() => {
-    Object.defineProperty(navigator, "geolocation", { value: originalGeolocation, configurable: true });
+    Object.defineProperty(navigator, "geolocation", {
+      value: originalGeolocation,
+      configurable: true,
+    });
   });
 
   it("on success, overrides effectiveGeo locally without ever calling a URL-writing action", () => {
     const getCurrentPosition = vi.fn((success: PositionCallback) => {
       success({ coords: { latitude: 36.1, longitude: -84.2 } } as GeolocationPosition);
     });
-    Object.defineProperty(navigator, "geolocation", { value: { getCurrentPosition }, configurable: true });
+    Object.defineProperty(navigator, "geolocation", {
+      value: { getCurrentPosition },
+      configurable: true,
+    });
 
     const actions = urlActions();
     const { result } = renderHook(() => useGeographicDiscovery(urlState(), actions));
 
     act(() => result.current.onNearMe());
 
-    expect(result.current.effectiveGeo).toEqual({ mode: "near", near: { lat: 36.1, lng: -84.2 }, radius: 25 });
+    expect(result.current.effectiveGeo).toEqual({
+      mode: "near",
+      near: { lat: 36.1, lng: -84.2 },
+      radius: 25,
+    });
     expect(result.current.isDeviceOrigin).toBe(true);
     expect(actions.commitNearOrigin).not.toHaveBeenCalled();
     expect(actions.commitBbox).not.toHaveBeenCalled();
@@ -158,7 +180,10 @@ describe("useGeographicDiscovery — device geolocation ('Near me'), never writt
     const getCurrentPosition = vi.fn((_success: PositionCallback, error: PositionErrorCallback) => {
       error({ code: 1, message: "denied" } as GeolocationPositionError);
     });
-    Object.defineProperty(navigator, "geolocation", { value: { getCurrentPosition }, configurable: true });
+    Object.defineProperty(navigator, "geolocation", {
+      value: { getCurrentPosition },
+      configurable: true,
+    });
 
     const actions = urlActions();
     const { result } = renderHook(() => useGeographicDiscovery(urlState(), actions));
@@ -183,7 +208,10 @@ describe("useGeographicDiscovery — device geolocation ('Near me'), never writt
     const getCurrentPosition = vi.fn((success: PositionCallback) => {
       success({ coords: { latitude: 36.1, longitude: -84.2 } } as GeolocationPosition);
     });
-    Object.defineProperty(navigator, "geolocation", { value: { getCurrentPosition }, configurable: true });
+    Object.defineProperty(navigator, "geolocation", {
+      value: { getCurrentPosition },
+      configurable: true,
+    });
 
     const actions = urlActions();
     const { result } = renderHook(() => useGeographicDiscovery(urlState(), actions));
@@ -199,7 +227,10 @@ describe("useGeographicDiscovery — device geolocation ('Near me'), never writt
     const getCurrentPosition = vi.fn((success: PositionCallback) => {
       success({ coords: { latitude: 36.1, longitude: -84.2 } } as GeolocationPosition);
     });
-    Object.defineProperty(navigator, "geolocation", { value: { getCurrentPosition }, configurable: true });
+    Object.defineProperty(navigator, "geolocation", {
+      value: { getCurrentPosition },
+      configurable: true,
+    });
 
     const actions = urlActions();
     const { result } = renderHook(() => useGeographicDiscovery(urlState(), actions));
@@ -216,9 +247,12 @@ describe("useGeographicDiscovery — device geolocation ('Near me'), never writt
 
   it("onExitProximity re-anchors the baseline so 'Search this area' doesn't immediately reappear", () => {
     const actions = urlActions();
-    const { result, rerender } = renderHook((state: DiscoveryUrlState) => useGeographicDiscovery(state, actions), {
-      initialProps: urlState(),
-    });
+    const { result, rerender } = renderHook(
+      (state: DiscoveryUrlState) => useGeographicDiscovery(state, actions),
+      {
+        initialProps: urlState(),
+      },
+    );
 
     act(() => result.current.onViewportChange(DEFAULT_BBOX, [35.75, -85.95], 7)); // baseline
     const panned = { minLng: -86, minLat: 35, maxLng: -85, maxLat: 36 };
@@ -237,7 +271,10 @@ describe("useGeographicDiscovery — radius change while a URL-committed near or
   it("delegates to urlActions.commitRadius", () => {
     const actions = urlActions();
     const { result } = renderHook(() =>
-      useGeographicDiscovery(urlState({ mode: "near", near: { lat: 36, lng: -84 }, radius: 25 }), actions),
+      useGeographicDiscovery(
+        urlState({ mode: "near", near: { lat: 36, lng: -84 }, radius: 25 }),
+        actions,
+      ),
     );
 
     act(() => result.current.onRadiusChange(50));

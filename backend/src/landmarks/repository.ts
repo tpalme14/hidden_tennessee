@@ -44,9 +44,10 @@ function mapRawRow(row: RawRow): LandmarkRow {
     sourceDescription: row.source_description,
     sourceAccessLabel: row.source_access_label,
     sourceUrl: row.source_url,
-    distanceMiles: row.distance_meters === null || row.distance_meters === undefined
-      ? null
-      : row.distance_meters / MILES_TO_METERS,
+    distanceMiles:
+      row.distance_meters === null || row.distance_meters === undefined
+        ? null
+        : row.distance_meters / MILES_TO_METERS,
   };
 }
 
@@ -154,7 +155,10 @@ export async function fetchLandmarkCollection(
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export async function findLandmarkById(prisma: PrismaClient, id: string): Promise<LandmarkRow | null> {
+export async function findLandmarkById(
+  prisma: PrismaClient,
+  id: string,
+): Promise<LandmarkRow | null> {
   if (!UUID_PATTERN.test(id)) return null;
 
   const rows = await prisma.$queryRaw<RawRow[]>`

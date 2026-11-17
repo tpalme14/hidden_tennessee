@@ -9,11 +9,24 @@ vi.mock("../api/landmarks", () => ({ getLandmarkGeoMarkers: vi.fn() }));
 
 const BBOX = { minLng: -90.3, minLat: 34.8, maxLng: -81.6, maxLat: 36.7 };
 
-function fixture(id: string, overrides: Partial<LandmarkCollectionItem> = {}): LandmarkCollectionItem {
-  return { id, display_name: `Landmark ${id}`, category: "falls", latitude: 35.1, longitude: -85.1, ...overrides };
+function fixture(
+  id: string,
+  overrides: Partial<LandmarkCollectionItem> = {},
+): LandmarkCollectionItem {
+  return {
+    id,
+    display_name: `Landmark ${id}`,
+    category: "falls",
+    latitude: 35.1,
+    longitude: -85.1,
+    ...overrides,
+  };
 }
 
-function response(items: LandmarkCollectionItem[], isTruncated: boolean): LandmarkCollectionResponse {
+function response(
+  items: LandmarkCollectionItem[],
+  isTruncated: boolean,
+): LandmarkCollectionResponse {
   return { items, page: 1, limit: 200, has_more: false, is_truncated: isTruncated };
 }
 
@@ -27,7 +40,9 @@ describe("useMapMarkers — fetch shape", () => {
   it("requests a single bbox-mode page with the committed q/categories, and never requests a second page", async () => {
     vi.mocked(getLandmarkGeoMarkers).mockResolvedValue(response([fixture("a")], false));
 
-    const { result } = renderHook(() => useMapMarkers(bboxParams({ q: "Coal", categories: ["arch"] })));
+    const { result } = renderHook(() =>
+      useMapMarkers(bboxParams({ q: "Coal", categories: ["arch"] })),
+    );
     await waitFor(() => expect(result.current[0].kind).toBe("success"));
 
     expect(getLandmarkGeoMarkers).toHaveBeenCalledTimes(1);
@@ -42,7 +57,11 @@ describe("useMapMarkers — fetch shape", () => {
     vi.mocked(getLandmarkGeoMarkers).mockResolvedValue(response([], false));
 
     renderHook(() =>
-      useMapMarkers({ q: "", categories: [], geo: { mode: "near", near: { lat: 35.5, lng: -85.5 }, radius: 25 } }),
+      useMapMarkers({
+        q: "",
+        categories: [],
+        geo: { mode: "near", near: { lat: 35.5, lng: -85.5 }, radius: 25 },
+      }),
     );
     await waitFor(() => expect(getLandmarkGeoMarkers).toHaveBeenCalled());
 
@@ -117,9 +136,12 @@ describe("useMapMarkers — stale-response protection across every axis of the c
       .mockReturnValueOnce(firstPromise)
       .mockResolvedValueOnce(response([fixture("second")], false));
 
-    const { result, rerender } = renderHook((params: UseMapMarkersParams) => useMapMarkers(params), {
-      initialProps: bboxParams({ q: "Coal" }),
-    });
+    const { result, rerender } = renderHook(
+      (params: UseMapMarkersParams) => useMapMarkers(params),
+      {
+        initialProps: bboxParams({ q: "Coal" }),
+      },
+    );
     await waitFor(() => expect(getLandmarkGeoMarkers).toHaveBeenCalledTimes(1));
 
     rerender(bboxParams({ q: "Falls" }));
@@ -143,12 +165,19 @@ describe("useMapMarkers — stale-response protection across every axis of the c
       .mockReturnValueOnce(firstPromise)
       .mockResolvedValueOnce(response([fixture("second")], false));
 
-    const { result, rerender } = renderHook((params: UseMapMarkersParams) => useMapMarkers(params), {
-      initialProps: bboxParams(),
-    });
+    const { result, rerender } = renderHook(
+      (params: UseMapMarkersParams) => useMapMarkers(params),
+      {
+        initialProps: bboxParams(),
+      },
+    );
     await waitFor(() => expect(getLandmarkGeoMarkers).toHaveBeenCalledTimes(1));
 
-    rerender({ q: "", categories: [], geo: { mode: "near", near: { lat: 35, lng: -85 }, radius: 10 } });
+    rerender({
+      q: "",
+      categories: [],
+      geo: { mode: "near", near: { lat: 35, lng: -85 }, radius: 10 },
+    });
     await waitFor(() => expect(getLandmarkGeoMarkers).toHaveBeenCalledTimes(2));
     await waitFor(() => expect(result.current[0].kind).toBe("success"));
 
@@ -196,9 +225,12 @@ describe("useMapMarkers — retaining the previous successful result during load
       .mockResolvedValueOnce(response([fixture("a")], true))
       .mockReturnValueOnce(secondPromise);
 
-    const { result, rerender } = renderHook((params: UseMapMarkersParams) => useMapMarkers(params), {
-      initialProps: bboxParams({ q: "Coal" }),
-    });
+    const { result, rerender } = renderHook(
+      (params: UseMapMarkersParams) => useMapMarkers(params),
+      {
+        initialProps: bboxParams({ q: "Coal" }),
+      },
+    );
     await waitFor(() => expect(result.current[0].kind).toBe("success"));
 
     rerender(bboxParams({ q: "Falls" }));
@@ -220,9 +252,12 @@ describe("useMapMarkers — retaining the previous successful result during load
       .mockResolvedValueOnce(response([fixture("a")], false))
       .mockRejectedValueOnce(new ApiError(500, "INTERNAL", "Server error."));
 
-    const { result, rerender } = renderHook((params: UseMapMarkersParams) => useMapMarkers(params), {
-      initialProps: bboxParams({ q: "Coal" }),
-    });
+    const { result, rerender } = renderHook(
+      (params: UseMapMarkersParams) => useMapMarkers(params),
+      {
+        initialProps: bboxParams({ q: "Coal" }),
+      },
+    );
     await waitFor(() => expect(result.current[0].kind).toBe("success"));
 
     rerender(bboxParams({ q: "Falls" }));
@@ -239,9 +274,12 @@ describe("useMapMarkers — retaining the previous successful result during load
       .mockResolvedValueOnce(response([fixture("a")], false))
       .mockResolvedValueOnce(response([], false));
 
-    const { result, rerender } = renderHook((params: UseMapMarkersParams) => useMapMarkers(params), {
-      initialProps: bboxParams({ q: "Coal" }),
-    });
+    const { result, rerender } = renderHook(
+      (params: UseMapMarkersParams) => useMapMarkers(params),
+      {
+        initialProps: bboxParams({ q: "Coal" }),
+      },
+    );
     await waitFor(() => expect(result.current[0].kind).toBe("success"));
 
     rerender(bboxParams({ q: "NoMatches" }));
@@ -255,9 +293,12 @@ describe("useMapMarkers — retaining the previous successful result during load
       .mockResolvedValueOnce(response([], false))
       .mockRejectedValueOnce(new ApiError(500, "INTERNAL", "Server error."));
 
-    const { result, rerender } = renderHook((params: UseMapMarkersParams) => useMapMarkers(params), {
-      initialProps: bboxParams({ q: "Coal" }),
-    });
+    const { result, rerender } = renderHook(
+      (params: UseMapMarkersParams) => useMapMarkers(params),
+      {
+        initialProps: bboxParams({ q: "Coal" }),
+      },
+    );
     await waitFor(() => expect(result.current[0].kind).toBe("success"));
 
     rerender(bboxParams({ q: "Falls" }));
@@ -275,7 +316,9 @@ describe("useMapMarkers — error and retry", () => {
       .mockResolvedValueOnce(response([fixture("a")], false));
 
     const { result } = renderHook(() => useMapMarkers(bboxParams({ q: "Coal" })));
-    await waitFor(() => expect(result.current[0]).toEqual({ kind: "error", message: "Server error." }));
+    await waitFor(() =>
+      expect(result.current[0]).toEqual({ kind: "error", message: "Server error." }),
+    );
 
     act(() => result.current[1]());
     await waitFor(() => expect(result.current[0].kind).toBe("success"));

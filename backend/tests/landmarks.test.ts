@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { categorySlugToValue, categoryValueToSlug, isCategorySlug } from "../src/landmarks/categories.js";
+import {
+  categorySlugToValue,
+  categoryValueToSlug,
+  isCategorySlug,
+} from "../src/landmarks/categories.js";
 import { escapeLikePattern } from "../src/landmarks/like-escape.js";
 import { InvalidQueryError, parseLandmarkCollectionQuery } from "../src/landmarks/query-schema.js";
 import { toCollectionItem, toDetailResult } from "../src/landmarks/redaction.js";
@@ -56,9 +60,16 @@ describe("parseLandmarkCollectionQuery", () => {
   });
 
   it("parses valid category slugs and rejects unknown or duplicate ones", () => {
-    expect(parseLandmarkCollectionQuery({ categories: "falls,arch" }).categories).toEqual(["FALLS", "ARCH"]);
-    expect(() => parseLandmarkCollectionQuery({ categories: "waterfall" })).toThrow(InvalidQueryError);
-    expect(() => parseLandmarkCollectionQuery({ categories: "falls,falls" })).toThrow(InvalidQueryError);
+    expect(parseLandmarkCollectionQuery({ categories: "falls,arch" }).categories).toEqual([
+      "FALLS",
+      "ARCH",
+    ]);
+    expect(() => parseLandmarkCollectionQuery({ categories: "waterfall" })).toThrow(
+      InvalidQueryError,
+    );
+    expect(() => parseLandmarkCollectionQuery({ categories: "falls,falls" })).toThrow(
+      InvalidQueryError,
+    );
   });
 
   it("treats an empty categories value as no restriction", () => {
@@ -77,12 +88,18 @@ describe("parseLandmarkCollectionQuery", () => {
   it("rejects a malformed bbox (wrong part count, non-numeric, out of range, inverted)", () => {
     expect(() => parseLandmarkCollectionQuery({ bbox: "-85,35,-84" })).toThrow(InvalidQueryError);
     expect(() => parseLandmarkCollectionQuery({ bbox: "x,35,-84,36" })).toThrow(InvalidQueryError);
-    expect(() => parseLandmarkCollectionQuery({ bbox: "-200,35,-84,36" })).toThrow(InvalidQueryError);
-    expect(() => parseLandmarkCollectionQuery({ bbox: "-85,95,-84,36" })).toThrow(InvalidQueryError);
+    expect(() => parseLandmarkCollectionQuery({ bbox: "-200,35,-84,36" })).toThrow(
+      InvalidQueryError,
+    );
+    expect(() => parseLandmarkCollectionQuery({ bbox: "-85,95,-84,36" })).toThrow(
+      InvalidQueryError,
+    );
   });
 
   it("rejects an antimeridian-crossing bbox (minLng not less than maxLng)", () => {
-    expect(() => parseLandmarkCollectionQuery({ bbox: "170,35,-170,36" })).toThrow(InvalidQueryError);
+    expect(() => parseLandmarkCollectionQuery({ bbox: "170,35,-170,36" })).toThrow(
+      InvalidQueryError,
+    );
   });
 
   it("parses a valid near + radius", () => {
@@ -94,7 +111,9 @@ describe("parseLandmarkCollectionQuery", () => {
   it("rejects near without radius, radius without near, and an unsupported radius value", () => {
     expect(() => parseLandmarkCollectionQuery({ near: "35.5,-85.5" })).toThrow(InvalidQueryError);
     expect(() => parseLandmarkCollectionQuery({ radius: "25" })).toThrow(InvalidQueryError);
-    expect(() => parseLandmarkCollectionQuery({ near: "35.5,-85.5", radius: "30" })).toThrow(InvalidQueryError);
+    expect(() => parseLandmarkCollectionQuery({ near: "35.5,-85.5", radius: "30" })).toThrow(
+      InvalidQueryError,
+    );
   });
 
   it("rejects near combined with bbox", () => {
@@ -104,12 +123,19 @@ describe("parseLandmarkCollectionQuery", () => {
   });
 
   it("rejects out-of-range near coordinates", () => {
-    expect(() => parseLandmarkCollectionQuery({ near: "95,-85.5", radius: "25" })).toThrow(InvalidQueryError);
-    expect(() => parseLandmarkCollectionQuery({ near: "35.5,-185", radius: "25" })).toThrow(InvalidQueryError);
+    expect(() => parseLandmarkCollectionQuery({ near: "95,-85.5", radius: "25" })).toThrow(
+      InvalidQueryError,
+    );
+    expect(() => parseLandmarkCollectionQuery({ near: "35.5,-185", radius: "25" })).toThrow(
+      InvalidQueryError,
+    );
   });
 
   it("parses page and limit, defaulting and validating ranges", () => {
-    expect(parseLandmarkCollectionQuery({ page: "3", limit: "50" })).toMatchObject({ page: 3, limit: 50 });
+    expect(parseLandmarkCollectionQuery({ page: "3", limit: "50" })).toMatchObject({
+      page: 3,
+      limit: 50,
+    });
     expect(() => parseLandmarkCollectionQuery({ page: "0" })).toThrow(InvalidQueryError);
     expect(() => parseLandmarkCollectionQuery({ page: "1.5" })).toThrow(InvalidQueryError);
     expect(() => parseLandmarkCollectionQuery({ limit: "0" })).toThrow(InvalidQueryError);
@@ -121,7 +147,9 @@ describe("parseLandmarkCollectionQuery", () => {
   });
 
   it("rejects a query parameter provided more than once (array value)", () => {
-    expect(() => parseLandmarkCollectionQuery({ q: ["a", "b"] as unknown as string })).toThrow(InvalidQueryError);
+    expect(() => parseLandmarkCollectionQuery({ q: ["a", "b"] as unknown as string })).toThrow(
+      InvalidQueryError,
+    );
   });
 });
 
@@ -195,7 +223,9 @@ describe("toDetailResult", () => {
 
   it("returns not_found for an inactive landmark regardless of sensitivityStatus", () => {
     for (const sensitivityStatus of ["PUBLIC", "UNREVIEWED", "SENSITIVE"]) {
-      expect(toDetailResult({ ...baseRow, isActive: false, sensitivityStatus })).toEqual({ kind: "not_found" });
+      expect(toDetailResult({ ...baseRow, isActive: false, sensitivityStatus })).toEqual({
+        kind: "not_found",
+      });
     }
   });
 
@@ -227,7 +257,12 @@ describe("toDetailResult", () => {
         category: "arch",
         redacted: true,
       });
-      expect(Object.keys(result.body).sort()).toEqual(["category", "display_name", "id", "redacted"]);
+      expect(Object.keys(result.body).sort()).toEqual([
+        "category",
+        "display_name",
+        "id",
+        "redacted",
+      ]);
     }
   });
 });

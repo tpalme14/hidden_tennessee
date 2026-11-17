@@ -29,14 +29,20 @@ export interface LandmarkSearchProps {
  * M02-T07 follow-up; same pattern as `useMapMarkers`/`DiscoveryPage`).
  */
 export function LandmarkSearch({ committedQuery, categories }: LandmarkSearchProps) {
-  const { status, onNextPage, onPreviousPage, retry } = useLandmarkSearch(committedQuery, categories);
+  const { status, onNextPage, onPreviousPage, retry } = useLandmarkSearch(
+    committedQuery,
+    categories,
+  );
 
-  const previousResult = status.kind === "loading" || status.kind === "error" ? status.previous : undefined;
+  const previousResult =
+    status.kind === "loading" || status.kind === "error" ? status.previous : undefined;
   const isShowingPrevious = Boolean(previousResult && previousResult.items.length > 0);
   const itemsToRender = status.kind === "success" ? status.items : (previousResult?.items ?? []);
   const pageToRender = status.kind === "success" ? status.page : (previousResult?.page ?? 1);
-  const hasMoreToRender = status.kind === "success" ? status.hasMore : (previousResult?.hasMore ?? false);
-  const isTruncatedToRender = status.kind === "success" ? status.isTruncated : (previousResult?.isTruncated ?? false);
+  const hasMoreToRender =
+    status.kind === "success" ? status.hasMore : (previousResult?.hasMore ?? false);
+  const isTruncatedToRender =
+    status.kind === "success" ? status.isTruncated : (previousResult?.isTruncated ?? false);
 
   return (
     <section aria-labelledby="search-heading">
@@ -44,14 +50,18 @@ export function LandmarkSearch({ committedQuery, categories }: LandmarkSearchPro
         Name search results
       </h3>
 
-      {status.kind === "idle" ? <p>Type a landmark name or choose a category above to search.</p> : null}
+      {status.kind === "idle" ? (
+        <p>Type a landmark name or choose a category above to search.</p>
+      ) : null}
       {status.kind === "loading" ? (
         <LoadingState label={isShowingPrevious ? "Updating search results…" : "Searching…"} />
       ) : null}
       {status.kind === "error" ? <ErrorState message={status.message} onRetry={retry} /> : null}
       {isShowingPrevious ? (
         <p role="status">
-          Showing results from your previous search while {status.kind === "error" ? "the update failed" : "the update loads"} — these may not match your current search or filters.
+          Showing results from your previous search while{" "}
+          {status.kind === "error" ? "the update failed" : "the update loads"} — these may not match
+          your current search or filters.
         </p>
       ) : null}
       {status.kind === "success" && status.items.length === 0 ? (

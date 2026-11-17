@@ -13,7 +13,13 @@ function renderList(status: MapMarkersStatus, onRetry = vi.fn()) {
   );
 }
 
-const marker: LandmarkMarker = { id: "a", display_name: "Open Falls", category: "falls", latitude: 35.1, longitude: -85.1 };
+const marker: LandmarkMarker = {
+  id: "a",
+  display_name: "Open Falls",
+  category: "falls",
+  latitude: 35.1,
+  longitude: -85.1,
+};
 
 describe("GeographicResultsList", () => {
   it("renders a stable, skip-link-focusable heading", () => {
@@ -50,7 +56,9 @@ describe("GeographicResultsList", () => {
 
   it("shows an empty state for a successful, zero-marker result", () => {
     renderList({ kind: "success", markers: [], isTruncated: false });
-    expect(screen.getByText(/no publicly viewable landmarks are currently shown on the map/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/no publicly viewable landmarks are currently shown on the map/i),
+    ).toBeInTheDocument();
   });
 
   it("renders each marker's name, category, and profile link, with fromDiscovery state", async () => {
@@ -65,7 +73,12 @@ describe("GeographicResultsList", () => {
         <Routes>
           <Route
             path="/"
-            element={<GeographicResultsList status={{ kind: "success", markers: [marker], isTruncated: false }} onRetry={vi.fn()} />}
+            element={
+              <GeographicResultsList
+                status={{ kind: "success", markers: [marker], isTruncated: false }}
+                onRetry={vi.fn()}
+              />
+            }
           />
           <Route path="/landmarks/:id" element={<LocationProbe />} />
         </Routes>
@@ -113,7 +126,11 @@ describe("GeographicResultsList", () => {
   });
 
   it("shows retained previous markers, clearly labeled, alongside a real error", () => {
-    renderList({ kind: "error", message: "Server error.", previous: { markers: [marker], isTruncated: false } });
+    renderList({
+      kind: "error",
+      message: "Server error.",
+      previous: { markers: [marker], isTruncated: false },
+    });
 
     expect(screen.getByText("Server error.")).toBeInTheDocument();
     expect(screen.getByText(/previous search/i)).toHaveTextContent(/the update failed/i);

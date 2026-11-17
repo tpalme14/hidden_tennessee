@@ -2,7 +2,11 @@ import { Client } from "pg";
 import { afterEach, describe, expect, it } from "vitest";
 import { prisma } from "../src/db/prisma.js";
 import { applyImport } from "../src/import/apply.js";
-import { ConcurrentImportError, MissingApprovalError, StalePreviewError } from "../src/import/errors.js";
+import {
+  ConcurrentImportError,
+  MissingApprovalError,
+  StalePreviewError,
+} from "../src/import/errors.js";
 import { runPreflight } from "../src/import/preview.js";
 import { buildGpxXml, createGpxFixtureDir } from "./helpers/gpx-fixtures.js";
 import { resetTestDatabase } from "./setup/reset-test-database.js";
@@ -45,7 +49,13 @@ describe("GPX import (integration)", () => {
 
     const { dir, cleanup } = createGpxFixtureDir({
       "tnarches.gpx": buildGpxXml([
-        { lat: 36.2174, lon: -84.12754, name: "ARC001", cmt: "Coal Creek Arches 4x5", desc: "Anderson" },
+        {
+          lat: 36.2174,
+          lon: -84.12754,
+          name: "ARC001",
+          cmt: "Coal Creek Arches 4x5",
+          desc: "Anderson",
+        },
         { lat: 36.3, lon: -84.2, name: "ARC002", cmt: "New Arch", desc: "Anderson" },
       ]),
     });
@@ -61,7 +71,9 @@ describe("GPX import (integration)", () => {
       const result = await applyImport(prisma, dir, artifact, new Set(artifact.requiredApprovals));
       expect(result).toEqual({ inserted: 1, updated: 0, reactivated: 1, retired: 1 });
 
-      const reactivated = await prisma.landmark.findUniqueOrThrow({ where: { sourceCode: "ARC001" } });
+      const reactivated = await prisma.landmark.findUniqueOrThrow({
+        where: { sourceCode: "ARC001" },
+      });
       expect(reactivated.isActive).toBe(true);
       expect(reactivated.displayName).toBe("Coal Creek Arches 4x5");
 
@@ -89,7 +101,9 @@ describe("GPX import (integration)", () => {
     });
 
     const { dir, cleanup } = createGpxFixtureDir({
-      "tnarches.gpx": buildGpxXml([{ lat: 36.2174, lon: -84.12754, name: "ARC001", cmt: "Updated Name" }]),
+      "tnarches.gpx": buildGpxXml([
+        { lat: 36.2174, lon: -84.12754, name: "ARC001", cmt: "Updated Name" },
+      ]),
     });
     try {
       const { artifact } = await runPreflight(prisma, dir, dir);
@@ -119,9 +133,9 @@ describe("GPX import (integration)", () => {
         "utf-8",
       );
 
-      await expect(applyImport(prisma, dir, artifact, new Set(artifact.requiredApprovals))).rejects.toThrow(
-        StalePreviewError,
-      );
+      await expect(
+        applyImport(prisma, dir, artifact, new Set(artifact.requiredApprovals)),
+      ).rejects.toThrow(StalePreviewError);
     } finally {
       cleanup();
     }
@@ -146,9 +160,9 @@ describe("GPX import (integration)", () => {
         },
       });
 
-      await expect(applyImport(prisma, dir, artifact, new Set(artifact.requiredApprovals))).rejects.toThrow(
-        StalePreviewError,
-      );
+      await expect(
+        applyImport(prisma, dir, artifact, new Set(artifact.requiredApprovals)),
+      ).rejects.toThrow(StalePreviewError);
     } finally {
       cleanup();
     }
@@ -162,7 +176,9 @@ describe("GPX import (integration)", () => {
       const { artifact } = await runPreflight(prisma, dir, dir);
       expect(artifact.requiredApprovals).toContain("insertions");
 
-      await expect(applyImport(prisma, dir, artifact, new Set())).rejects.toThrow(MissingApprovalError);
+      await expect(applyImport(prisma, dir, artifact, new Set())).rejects.toThrow(
+        MissingApprovalError,
+      );
 
       const count = await prisma.landmark.count();
       expect(count).toBe(0);
@@ -196,7 +212,9 @@ describe("GPX import (integration)", () => {
       const approvals = new Set(artifact.requiredApprovals);
       await applyImport(prisma, dir, artifact, approvals);
 
-      const stillActive = await prisma.landmark.findUniqueOrThrow({ where: { sourceCode: "FAL500" } });
+      const stillActive = await prisma.landmark.findUniqueOrThrow({
+        where: { sourceCode: "FAL500" },
+      });
       expect(stillActive.isActive).toBe(true);
     } finally {
       cleanup();
@@ -242,7 +260,9 @@ describe("GPX import (integration)", () => {
 
       await applyImport(prisma, dir, artifact, new Set(artifact.requiredApprovals));
 
-      const protectedLandmark = await prisma.landmark.findUniqueOrThrow({ where: { sourceCode: "ARC001" } });
+      const protectedLandmark = await prisma.landmark.findUniqueOrThrow({
+        where: { sourceCode: "ARC001" },
+      });
       expect(protectedLandmark.isActive).toBe(true); // protected, not retired, despite being "absent" from accepted set.
 
       const retired = await prisma.landmark.findUniqueOrThrow({ where: { sourceCode: "ARC999" } });
@@ -261,7 +281,9 @@ describe("GPX import (integration)", () => {
     });
     try {
       const { artifact } = await runPreflight(prisma, dir, dir);
-      expect(artifact.rejected).toContainEqual(expect.objectContaining({ sourceCode: "ARC001", kind: "conflict" }));
+      expect(artifact.rejected).toContainEqual(
+        expect.objectContaining({ sourceCode: "ARC001", kind: "conflict" }),
+      );
       expect(artifact.summary.acceptedUniqueRecords).toBe(0);
 
       await applyImport(prisma, dir, artifact, new Set(artifact.requiredApprovals));

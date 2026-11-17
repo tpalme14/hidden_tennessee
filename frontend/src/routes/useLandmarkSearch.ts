@@ -16,7 +16,13 @@ export type LandmarkSearchStatus =
   | { kind: "idle" }
   | { kind: "loading"; previous?: PreviousSearchResult }
   | { kind: "error"; message: string; previous?: PreviousSearchResult }
-  | { kind: "success"; items: LandmarkCollectionItem[]; page: number; hasMore: boolean; isTruncated: boolean };
+  | {
+      kind: "success";
+      items: LandmarkCollectionItem[];
+      page: number;
+      hasMore: boolean;
+      isTruncated: boolean;
+    };
 
 export interface LandmarkSearchControls {
   status: LandmarkSearchStatus;
@@ -50,7 +56,10 @@ export interface LandmarkSearchControls {
  * rather than helpful. A new `success` always replaces `previous` outright,
  * including with an empty page.
  */
-export function useLandmarkSearch(committedQuery: string, categories: string[]): LandmarkSearchControls {
+export function useLandmarkSearch(
+  committedQuery: string,
+  categories: string[],
+): LandmarkSearchControls {
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState<LandmarkSearchStatus>({ kind: "idle" });
   const [retryToken, setRetryToken] = useState(0);
