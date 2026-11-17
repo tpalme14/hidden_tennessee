@@ -58,6 +58,13 @@ jobs:
       - name: Generate Prisma client
         run: npm run prisma:generate --workspace=backend
 
+      # ADR-010: migrations are applied only with `prisma migrate deploy`. The
+      # service container starts empty; every later database-dependent step
+      # (integration tests, the production-mode e2e server) needs the schema.
+      - name: Apply database migrations (landmarks_test)
+        working-directory: backend
+        run: npx prisma migrate deploy
+
       - name: Build
         run: npm run build
 
@@ -113,6 +120,11 @@ jobs:
           node-version: "22"
           cache: "npm"
       - run: npm ci
+      # Prisma 7 generates no client on install; the build needs it, and the
+      # e2e server needs the schema (ADR-010: `prisma migrate deploy` only).
+      - run: npm run prisma:generate --workspace=backend
+      - run: npx prisma migrate deploy
+        working-directory: backend
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
