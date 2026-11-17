@@ -52,11 +52,11 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Type check
-        run: npm run typecheck
-
       - name: Generate Prisma client
         run: npm run prisma:generate --workspace=backend
+
+      - name: Type check
+        run: npm run typecheck
 
       # ADR-010: migrations are applied only with `prisma migrate deploy`. The
       # service container starts empty; every later database-dependent step
