@@ -3,6 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      M03-T03 decision 5 (amended 2026-11-18): every Referer this page sends is
+      the bare origin — never a path or query, so a reset token can never leak
+      through one. Not "no-referrer": OpenStreetMap's tile usage policy requires
+      a Referer on tile requests. Guarded by frontend/src/referrerPolicy.test.ts
+      and e2e/referrer-policy.spec.ts.
+    -->
+    <meta name="referrer" content="strict-origin" />
     <title>Tennessee Natural Landmarks Explorer</title>
   </head>
   <body>

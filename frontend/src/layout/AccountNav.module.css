@@ -1,0 +1,70 @@
+/* Account area of the shell header (M03-T03 Increment 2). Link styles match
+   AppLayout.module.css's primary navigation. */
+
+.account {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  max-width: 100%;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.5rem;
+}
+
+.link {
+  text-decoration: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+}
+
+.linkActive {
+  composes: link;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.signedInAs {
+  margin: 0;
+  /* Long addresses wrap instead of widening the header on narrow screens. */
+  overflow-wrap: anywhere;
+}
+
+.email {
+  font-weight: 600;
+}
+
+.button {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #fff;
+  color: #111;
+  cursor: pointer;
+}
+
+.button[aria-disabled="true"] {
+  cursor: progress;
+  color: #444;
+}
+
+.message {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #b0b0b0;
+  border-radius: 4px;
+  background: #f6f6f6;
+}
+
+.message p {
+  margin: 0;
+}

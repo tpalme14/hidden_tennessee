@@ -1,0 +1,87 @@
+/* Shared styles for the authentication pages — registration, sign-in, forgot
+   password, and reset password (M03-T03). Consolidated in Increment 6 from
+   RegisterPage.module.css and SignInPage.module.css; rules unchanged. */
+
+.page {
+  max-width: 28rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.field label {
+  font-weight: 600;
+}
+
+.field input {
+  font: inherit;
+  width: 100%;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid #555;
+  border-radius: 4px;
+}
+
+.field input[aria-invalid="true"] {
+  border-color: #b00020;
+  border-width: 2px;
+}
+
+.hint {
+  margin: 0;
+  color: #444;
+  font-size: 0.9375rem;
+}
+
+.fieldError {
+  margin: 0;
+  color: #b00020;
+  font-weight: 600;
+}
+
+.formError {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid #b00020;
+  border-radius: 4px;
+  background: #fdf2f3;
+}
+
+.formError p {
+  margin: 0;
+}
+
+/* Confirmation notices: registration and reset on sign-in, the reset-link request. */
+.notice {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid #1a7f37;
+  border-radius: 4px;
+  background: #eef8f0;
+}
+
+.notice p {
+  margin: 0;
+}
+
+.submit {
+  padding: 0.5rem 1rem;
+  border: 1px solid #1a5fb4;
+  border-radius: 4px;
+  background: #1a5fb4;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.submit[aria-disabled="true"] {
+  cursor: progress;
+  background: #3d6fa8;
+}
+
+.alternative {
+  margin-top: 1.5rem;
+}

@@ -65,6 +65,16 @@ session. Password-reset links are single-use, expire after 30 minutes, and point
 client address, registration to 5 per 10 minutes, reset requests to 3 per 10 minutes, and reset
 completions to 5 per 10 minutes.
 
+**Frontend pages (M03-T03).** `/register`, `/sign-in`, `/forgot-password`, and `/reset-password`
+use these endpoints through the typed wrappers in `frontend/src/api/auth.ts`; the header shows the
+signed-in address and a Sign out button, restored on reload from the session endpoint (nothing is
+kept in browser storage). `frontend/index.html` sets a global `strict-origin` referrer policy, so
+every Referer is the bare origin — never a path or query — while map tiles still receive the
+Referer OpenStreetMap's tile policy requires. On `/reset-password`, `frontend/src/main.tsx` takes
+the token out of the URL before React starts, keeps it in memory only, and sends it only in the
+reset request's body. The Playwright server sets `AUTH_RATE_LIMIT_ENABLED=false` because the
+journeys sign in and register repeatedly from one address.
+
 **Development and test defaults.** `npm run dev` reads `backend/.env`; only the two
 `BETTER_AUTH_*` values need to be real locally. The integration tests and the Playwright suite
 set their own test-only secret, `BETTER_AUTH_URL`, and `MAIL_TRANSPORT=disabled` and run against
@@ -78,6 +88,9 @@ candidate value deployed, make one sign-in attempt from a machine whose public a
 once without and once with a deliberately spoofed `X-Forwarded-For` header, and confirm the
 `rate_limits` row key is `<your public address>|/sign-in/email` both times (details in
 `backend/src/auth/client-ip.ts`). Until that check passes, leave the hop count at `0`.
+A reset link's token is part of the first request for `/reset-password?token=…`, before any
+script can remove it, so check whether the hosting platform's or any proxy's access logs keep
+query strings, and treat those logs as sensitive for the token's 30-minute lifetime.
 
 Verification commands (run from the repository root; `npm run` wrappers may be blocked by local
 policy, in which case invoke the binaries under `node_modules` with `node` directly):

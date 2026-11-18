@@ -1,18 +1,28 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import App from "./App";
+import { AuthProvider } from "./auth/AuthProvider";
+
+// The shell's account area checks the session (M03-T03 Increment 2); answer
+// "signed out" so these routing tests never depend on a real request.
+vi.mock("./api/auth", () => ({
+  getSession: vi.fn().mockResolvedValue(null),
+  signOut: vi.fn(),
+}));
 
 function renderAt(path: string) {
   return render(
     <MemoryRouter initialEntries={[path]}>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </MemoryRouter>,
   );
 }
 
 describe("App routing and layout", () => {
-  it("renders the shell's semantic landmarks and skip link on the discovery route", () => {
+  it("renders the shell's semantic landmarks and skip link on the discovery route", async () => {
     renderAt("/");
 
     expect(screen.getByRole("banner")).toBeInTheDocument();
@@ -23,6 +33,8 @@ describe("App routing and layout", () => {
       "#main-content",
     );
     expect(screen.getByRole("heading", { name: /discover landmarks/i })).toBeInTheDocument();
+    // The account navigation sits beside the primary navigation.
+    expect(await screen.findByRole("link", { name: "Sign in" })).toBeInTheDocument();
   });
 
   it("renders the landmark profile route directly, with no prior navigation", () => {

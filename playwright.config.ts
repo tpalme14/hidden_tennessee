@@ -46,6 +46,11 @@ export default defineConfig({
       BETTER_AUTH_TELEMETRY: "0",
       // Production mode requires an explicit choice; no mail leaves the e2e server.
       MAIL_TRANSPORT: "disabled",
+      // M03-T03 decision 6: auth journeys register and sign in repeatedly from
+      // one address, which the production limiter (e.g. 5 registrations per
+      // 10 minutes) would throttle. Limiting itself is verified by the
+      // backend's own rate-limit integration tests, not here.
+      AUTH_RATE_LIMIT_ENABLED: "false",
     },
   },
 });
