@@ -87,12 +87,16 @@ test.describe("registration → sign-in (cross-increment)", () => {
     await page.goto(`/sign-in?returnTo=${returnTo}`);
     await signInForm(page).getByRole("link", { name: "Create an account" }).click();
     await expect(page).toHaveURL(`/register?returnTo=${returnTo}`);
+    // The URL changes before React Router's transition renders the new page;
+    // wait for the registration form so the fills cannot land in the old one.
+    const registerForm = page.getByRole("region", { name: "Create an account" });
+    await expect(registerForm).toBeVisible();
 
     const email = uniqueEmail("journey");
-    await page.getByLabel("Email address").fill(email);
-    await page.getByLabel("Password", { exact: true }).fill(PASSWORD);
-    await page.getByLabel("Confirm password").fill(PASSWORD);
-    await page.getByRole("button", { name: "Create account" }).click();
+    await registerForm.getByLabel("Email address").fill(email);
+    await registerForm.getByLabel("Password", { exact: true }).fill(PASSWORD);
+    await registerForm.getByLabel("Confirm password").fill(PASSWORD);
+    await registerForm.getByRole("button", { name: "Create account" }).click();
 
     // The usable sign-in page, inside the application shell, with the notice.
     await expect(page).toHaveURL(`/sign-in?returnTo=${returnTo}`);
