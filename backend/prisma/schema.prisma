@@ -88,6 +88,8 @@ model Landmark {
   sensitivityStatus SensitivityReviewStatus               @default(UNREVIEWED) @map("sensitivity_status")
   createdAt         DateTime                              @default(now()) @map("created_at")
   updatedAt         DateTime                              @updatedAt @map("updated_at")
+  // Back-relation only (no column): required by Prisma for `Favorite.landmark`.
+  favorites         Favorite[]
 
   @@map("landmarks")
 }
@@ -121,15 +123,17 @@ model Landmark {
 // populated (no OAuth providers) but must exist for schema validation.
 
 model User {
-  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id            String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name          String
-  email         String    @unique
-  emailVerified Boolean   @default(false) @map("email_verified")
+  email         String     @unique
+  emailVerified Boolean    @default(false) @map("email_verified")
   image         String?
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
   sessions      Session[]
   accounts      Account[]
+  // Back-relation only (no column): required by Prisma for `Favorite.user`.
+  favorites     Favorite[]
 
   @@map("users")
 }
@@ -193,4 +197,27 @@ model RateLimit {
   lastRequest BigInt @map("last_request")
 
   @@map("rate_limits")
+}
+
+// Favorites, per M03-T01 / ADR-011 decision 8 (implemented in M03-T05).
+//
+// One row per (user, landmark): the composite unique constraint makes a
+// repeated or concurrent add idempotent at the database. Both foreign keys are
+// RESTRICT (ADR-011 decision 7, spec §10.2.6): no user deletion can silently
+// remove application data, and landmark retirement (is_active = false — the
+// import never deletes landmarks) keeps favorites. `landmark_id` references the
+// internal landmark UUID, never `source_code`. Rows are never updated, so there
+// is no `updated_at`. The (user_id, created_at DESC, id) index serves the
+// newest-first, stable-tie-break paginated listing.
+model Favorite {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  user       User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  landmarkId String   @map("landmark_id") @db.Uuid
+  landmark   Landmark @relation(fields: [landmarkId], references: [id], onDelete: Restrict)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, landmarkId])
+  @@index([userId, createdAt(sort: Desc), id])
+  @@map("favorites")
 }

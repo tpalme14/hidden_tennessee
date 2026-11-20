@@ -118,3 +118,32 @@ npm run build
 ```bash
 npm run test:e2e
 ```
+
+## Favorites API
+
+Account-scoped favorites (M03-T05; backend only — the interface is M03-T06). Mounted with
+`mountProtected` (ADR-012), so every request needs a valid session cookie, and its responses —
+including errors — carry `Cache-Control: private, no-store` (the one exception: a malformed JSON
+body still gets Express's default HTML `400`, an existing app-wide limitation). The full contract
+and its verification are in the M03-T05 record of `docs/IMPLEMENTATION_PLAN.md`.
+
+| Method and path                        | Success                                | Body                                      |
+| -------------------------------------- | -------------------------------------- | ----------------------------------------- |
+| `GET /api/v1/favorites?page&limit`     | `200`                                  | `{ favorites, page, limit, has_more }`    |
+| `PUT /api/v1/favorites/:landmarkId`    | `201` newly saved, `200` already saved | `{ "success": true, "landmark_id": "…" }` |
+| `DELETE /api/v1/favorites/:landmarkId` | `200` whether or not it was saved      | `{ "success": true, "landmark_id": "…" }` |
+
+- **Identity:** taken only from the session; every query is scoped to that user. PUT and DELETE
+  accept no query parameters and only an absent or empty JSON body; GET accepts only `page`
+  (default 1) and `limit` (default 50, maximum 100). `:landmarkId` is the internal landmark UUID.
+- **CSRF:** cookie-bearing PUT/DELETE requests need a trusted `Origin` (or a trusted `Referer`
+  when `Origin` is absent); otherwise `403 INVALID_ORIGIN`, also with `no-store`.
+- **Errors:** `400 INVALID_REQUEST` / `400 INVALID_QUERY`, `401 UNAUTHENTICATED`, `403
+INVALID_ORIGIN`, `404 NOT_FOUND` (PUT on an unknown, retired, or not-yet-public landmark),
+  `429 RATE_LIMITED` with `Retry-After`, `503 SERVICE_UNAVAILABLE`, `500 INTERNAL_ERROR`.
+- **Ordering and throttling:** newest first. Each signed-in user may make 120 reads and 60
+  changes per minute; counters are kept per server process.
+- **Entries:** `available` (active, public: `id`, `display_name`, `category`, `latitude`,
+  `longitude`), `redacted` (active, not yet public: `id`, `display_name`, `category`,
+  `redacted: true`, no coordinates), or `unavailable` (retired: the landmark ID only; still
+  removable). Only landmarks classified `PUBLIC` can be added, and none are classified yet.

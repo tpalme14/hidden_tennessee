@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { env } from "../config/env.js";
 import { invalidOriginEnvelope } from "../http/error-envelope.js";
+import { PROTECTED_CACHE_CONTROL } from "./protected-route.js";
 
 /**
  * CSRF protection for application-owned routes (M03-T02 Increment 4; spec
@@ -25,6 +26,10 @@ import { invalidOriginEnvelope } from "../http/error-envelope.js";
  *     exactly (unparseable → 403).
  *  5. Neither header → 403.
  * The rejection never logs or echoes the offending value.
+ *
+ * Every 403 carries `Cache-Control: private, no-store` (M03-T05 Increment 3,
+ * developer-approved Option A). This middleware runs ahead of any protected
+ * mount, so the mount's own `noStore` never reaches these responses.
  */
 
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
@@ -41,6 +46,12 @@ export function hasSessionCookie(cookieHeader: string | undefined): boolean {
     const name = pair.slice(0, pair.indexOf("=")).trim();
     return SESSION_COOKIE_NAMES.includes(name);
   });
+}
+
+/** The single 403 response: unchanged status and body, plus no-store. */
+function rejectUntrustedOrigin(res: Response): void {
+  res.setHeader("Cache-Control", PROTECTED_CACHE_CONTROL);
+  res.status(403).json(invalidOriginEnvelope());
 }
 
 function originOf(url: string): string | null {
@@ -72,7 +83,7 @@ export function createRequireTrustedOrigin(allowedOrigins: readonly string[]) {
     const origin = req.headers.origin;
     if (origin !== undefined) {
       if (allowed.has(origin)) return next();
-      res.status(403).json(invalidOriginEnvelope());
+      rejectUntrustedOrigin(res);
       return;
     }
 
@@ -81,7 +92,7 @@ export function createRequireTrustedOrigin(allowedOrigins: readonly string[]) {
       const refererOrigin = originOf(referer);
       if (refererOrigin && allowed.has(refererOrigin)) return next();
     }
-    res.status(403).json(invalidOriginEnvelope());
+    rejectUntrustedOrigin(res);
   };
 }
 

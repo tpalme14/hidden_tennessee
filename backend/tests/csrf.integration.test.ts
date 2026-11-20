@@ -28,6 +28,15 @@ const INVALID_ORIGIN = {
   error: { code: "INVALID_ORIGIN", message: "Request origin not allowed." },
 };
 const UNAUTHENTICATED = { error: { code: "UNAUTHENTICATED", message: "Authentication required." } };
+/** Every requireTrustedOrigin 403 is uncacheable (M03-T05 Increment 3, Option A). */
+const NO_STORE = "private, no-store";
+
+/** Asserts the complete CSRF rejection: status, exact body, and no-store. */
+function expectOriginRejection(response: HttpResponse, label = "") {
+  expect(response.status, label).toBe(403);
+  expect(response.body, label).toEqual(INVALID_ORIGIN);
+  expect(response.headers["cache-control"], label).toBe(NO_STORE);
+}
 /** The sanitizer's entry format (src/auth/log-sanitizer.ts); the library's default logger starts with an ANSI escape instead. */
 const SANITIZED_ENTRY =
   /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z (WARN|ERROR) \[Better Auth\]: /;
@@ -141,8 +150,7 @@ describe("CSRF (integration, M03-T02 Increment 4)", () => {
           .set("Cookie", cookie)
           .set("Origin", origin)
           .send({});
-        expect(response.status, `Origin: ${JSON.stringify(origin)}`).toBe(403);
-        expect(response.body).toEqual(INVALID_ORIGIN);
+        expectOriginRejection(response, `Origin: ${JSON.stringify(origin)}`);
       }
       expect(probeHandler).not.toHaveBeenCalled();
       expect(logged).toEqual([]); // the application middleware logs nothing
@@ -157,6 +165,8 @@ describe("CSRF (integration, M03-T02 Increment 4)", () => {
         .set("Referer", `${ORIGIN}/landmarks/abc?x=1`)
         .send({});
       expect(good.status).toBe(200);
+      // A request that passes the origin check is not given the rejection's header.
+      expect(good.headers["cache-control"]).toBeUndefined();
 
       for (const referer of [
         "https://attacker.example/page",
@@ -168,8 +178,7 @@ describe("CSRF (integration, M03-T02 Increment 4)", () => {
           .set("Cookie", cookie)
           .set("Referer", referer)
           .send({});
-        expect(bad.status, `Referer: ${referer}`).toBe(403);
-        expect(bad.body).toEqual(INVALID_ORIGIN);
+        expectOriginRejection(bad, `Referer: ${referer}`);
       }
 
       // A good Referer does not rescue a bad Origin.
@@ -179,15 +188,14 @@ describe("CSRF (integration, M03-T02 Increment 4)", () => {
         .set("Origin", "https://attacker.example")
         .set("Referer", `${ORIGIN}/`)
         .send({});
-      expect(mixed.status).toBe(403);
+      expectOriginRejection(mixed, "bad Origin with good Referer");
       expect(probeHandler).toHaveBeenCalledTimes(1);
     });
 
     it("rejects a cookie-bearing POST with neither Origin nor Referer", async () => {
       const cookie = await signIn("no-evidence@example.com");
       const response = await request(app).post("/api/v1/probe").set("Cookie", cookie).send({});
-      expect(response.status).toBe(403);
-      expect(response.body).toEqual(INVALID_ORIGIN);
+      expectOriginRejection(response, "no Origin or Referer");
       expect(probeHandler).not.toHaveBeenCalled();
     });
 
@@ -204,7 +212,7 @@ describe("CSRF (integration, M03-T02 Increment 4)", () => {
           .set("Cookie", `${name}=forged.AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`)
           .set("Origin", "https://attacker.example")
           .send({});
-        expect(response.status).toBe(403);
+        expectOriginRejection(response, name);
       }
       // The same forged cookie with a TRUSTED Origin passes the origin check and
       // is then refused by requireSession — cookie presence proved nothing.
@@ -221,12 +229,42 @@ describe("CSRF (integration, M03-T02 Increment 4)", () => {
       expect(probeHandler).not.toHaveBeenCalled();
     });
 
-    it("the real app's existing GET routes are unaffected", async () => {
+    it("the real app's existing GET routes are unaffected, including their caching (no Cache-Control added)", async () => {
       const real = createApp();
-      expect((await request(real).get("/api/v1/landmarks")).status).toBe(200);
-      expect((await request(real).get("/api/v1/categories")).status).toBe(200);
+      for (const path of ["/api/v1/landmarks", "/api/v1/categories", "/health"]) {
+        const response = await request(real).get(path);
+        expect(response.status, path).toBe(200);
+        expect(response.headers["cache-control"], path).toBeUndefined();
+      }
+      // A cookie-bearing GET with a foreign Origin still passes (safe method), uncached as before.
+      const crossOriginGet = await request(real)
+        .get("/api/v1/categories")
+        .set("Cookie", "better-auth.session_token=x.y")
+        .set("Origin", "https://attacker.example");
+      expect(crossOriginGet.status).toBe(200);
+      expect(crossOriginGet.headers["cache-control"]).toBeUndefined();
       // The application middleware is the exported one, built from env.
       expect(typeof requireTrustedOrigin).toBe("function");
+    });
+
+    it("the real app: every cookie-bearing state-changing rejection under /api/v1 carries no-store", async () => {
+      const real = createApp();
+      const cookie = "better-auth.session_token=x.y";
+      const evidence: [string, Record<string, string>][] = [
+        ["foreign Origin", { Origin: "https://attacker.example" }],
+        ["null Origin", { Origin: "null" }],
+        ["foreign Referer", { Referer: "https://attacker.example/page" }],
+        ["no evidence", {}],
+      ];
+      for (const method of ["post", "put", "patch", "delete"] as const) {
+        for (const path of ["/api/v1/landmarks", "/api/v1/anything/at/all"]) {
+          for (const [label, headers] of evidence) {
+            let pending = request(real)[method](path).set("Cookie", cookie);
+            for (const [name, value] of Object.entries(headers)) pending = pending.set(name, value);
+            expectOriginRejection(await pending, `${method.toUpperCase()} ${path} (${label})`);
+          }
+        }
+      }
     });
   });
 

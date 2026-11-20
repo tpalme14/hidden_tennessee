@@ -213,18 +213,37 @@ describe("route inventory (integration, M03-T04 Increment 2)", () => {
       expect(result.staleAllowlistEntries).toEqual([]);
     });
 
-    it("the inventory is the expected set — today: no account-scoped (protected) endpoints exist yet", () => {
+    it("the inventory is the expected set — the favorites endpoints (M03-T05) are the only protected ones", () => {
       expect(inventory.endpoints.map((e) => `${e.kind} ${e.path}`)).toEqual([
         "route /api/auth/*",
         "route /api/v1/landmarks",
         "route /api/v1/landmarks/:id",
         "route /api/v1/categories",
+        "route /api/v1/favorites",
+        "route /api/v1/favorites/:landmarkId",
+        "route /api/v1/favorites/:landmarkId",
         "route /health",
         "middleware /api",
         "route *",
       ]);
-      // When favorites (M03-T05) are mounted, this count changes in the same commit.
-      expect(inventory.endpoints.filter((e) => e.protection === "protected-mount")).toHaveLength(0);
+      expect(inventory.endpoints.filter((e) => e.protection === "protected-mount")).toHaveLength(3);
+    });
+
+    it("exactly three protected favorites endpoints, verified by HTTP method AND path", () => {
+      const protectedEndpoints = inventory.endpoints
+        .filter((e) => e.protection === "protected-mount")
+        .map((e) => `${e.kind} ${e.methods.join(",")} ${e.path}`);
+      expect(protectedEndpoints).toEqual([
+        "route get /api/v1/favorites",
+        "route put /api/v1/favorites/:landmarkId",
+        "route delete /api/v1/favorites/:landmarkId",
+      ]);
+      // Nothing else under /api/v1/favorites exists, protected or not.
+      expect(
+        inventory.endpoints
+          .filter((e) => e.path.startsWith("/api/v1/favorites"))
+          .every((e) => e.protection === "protected-mount" && e.kind === "route"),
+      ).toBe(true);
     });
 
     it("Better Auth's mount is classified as externally managed, identified by its error handler", () => {
@@ -254,12 +273,12 @@ describe("route inventory (integration, M03-T04 Increment 2)", () => {
       }
     });
 
-    it("the behavioural sweep runs over whatever protected endpoints the real app has (none today)", async () => {
+    it("the behavioural sweep rejects anonymous and forged-cookie requests to every real protected endpoint (3 endpoints × 2 = 6 requests)", async () => {
       const result = await sweepProtectedEndpoints(
         app,
         inventory.endpoints.filter((e) => e.protection === "protected-mount"),
       );
-      expect(result).toEqual({ failures: [], requests: 0 });
+      expect(result).toEqual({ failures: [], requests: 6 });
     });
 
     it("an unprotected router attached to a fresh copy of the real app is detected", () => {

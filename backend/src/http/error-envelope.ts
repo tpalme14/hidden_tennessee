@@ -46,6 +46,22 @@ export function internalErrorEnvelope(): ErrorEnvelope {
   return { error: { code: "INTERNAL_ERROR", message: "Something went wrong. Please try again." } };
 }
 
+/**
+ * Invalid path parameter or request body on an application route (M03-T05;
+ * decision D7). The message is a fixed, safe string chosen by the validator —
+ * never the submitted value.
+ */
+export function invalidRequestEnvelope(message: string): ErrorEnvelope {
+  return { error: { code: "INVALID_REQUEST", message } };
+}
+
+/** A per-user application rate limit was exceeded (M03-T05; decisions D6, D7, F4). */
+export function rateLimitedEnvelope(): ErrorEnvelope {
+  return {
+    error: { code: "RATE_LIMITED", message: "Too many requests. Please try again later." },
+  };
+}
+
 /** Matches the existing unknown-route 404 shape in src/app.ts, byte-for-byte, so every "not found" response in the API is identical. */
 export function notFoundEnvelope(): ErrorEnvelope {
   return { error: { code: "NOT_FOUND", message: "Resource not found." } };

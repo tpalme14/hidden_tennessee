@@ -225,6 +225,42 @@ Use Vitest, Supertest, a dedicated test PostgreSQL database, React Testing Libra
 | M03-T05 | Sections 6–7 |
 | M03-T06 | Section 8 |
 
+### 11.1 Implementation verification (non-normative)
+
+*Added 2026-11-20 at M03-T05 closure, with explicit developer approval. This section records how the §9.2 tests have been verified; it does not change any requirement in §§1–10. Backend test files are under `backend/tests/`; browser tests under `e2e/`. Full results are in `docs/IMPLEMENTATION_PLAN.md` (M03-T02, M03-T03, M03-T05 records).*
+
+**Backend (M03-T02 authentication; M03-T05 favorites data model and API):**
+
+| §9.2 test | Verified by | Status |
+|---|---|---|
+| 1 Registration and login establish a session without email verification | M03-T02 — `auth.integration.test.ts`, `identity-schema.integration.test.ts` | Verified |
+| 2 Invalid credentials fail safely; throttling | M03-T02 — `auth.integration.test.ts` (identical 401), `rate-limit.integration.test.ts` | Verified |
+| 3 Missing, expired, forged, revoked sessions cannot access favorites | M03-T02 `require-session` suites; M03-T05 — `favorites.integration.test.ts`, `favorites-security.integration.test.ts` | Verified |
+| 4 Logout invalidates the session | M03-T02 — `auth.integration.test.ts`; M03-T05 — `favorites-security.integration.test.ts` | Verified |
+| 5 CSRF rejects inappropriate state changes | M03-T02 — `csrf.integration.test.ts`; M03-T05 — `favorites.integration.test.ts` (403 now also `no-store`) | Verified |
+| 6 User A cannot list, add, or delete User B's favorites | M03-T05 — `favorites-repository.integration.test.ts`, `favorites-security.integration.test.ts` | Verified |
+| 7 Duplicate and concurrent adds produce one relationship | M03-T05 — schema, repository (forced COMMIT/ROLLBACK interleavings), HTTP, and cross-user concurrency tests | Verified |
+| 8 Repeated deletion does not expose or delete another user's data | M03-T05 — `favorites-security.integration.test.ts` | Verified |
+| 9 Favorites survive metadata reimport and retirement/reactivation | M03-T05 — `favorites-schema`, `favorites-repository`, `favorites-lifecycle.integration.test.ts` (real import pipeline) | Verified for favorites. The re-import update path was exercised with a coordinate change: a metadata-only GPX change is currently not persisted at all (open M01-T04 defect, recorded in the implementation plan); favorites are unaffected either way. |
+| 10 Favorites honor public visibility and sensitive-location restrictions | M03-T05 — repository, HTTP, and lifecycle tests, including comparison with the public landmark endpoint | Mechanics verified with synthetic statuses. The classification policy remains unresolved and release-blocking (§10.3). |
+| 12 Reset requests do not disclose account existence; controlled test transport | M03-T02 — `password-reset.integration.test.ts` | Verified |
+| 13 Reset tokens single-use; expired/invalid/reused fail; reset throttling | M03-T02 — `password-reset.integration.test.ts`, `rate-limit.integration.test.ts` | Verified |
+| 14 Reset applies the password policy and revokes all sessions; sign-out revokes only the current session | M03-T02 — `password-reset.integration.test.ts`, `session-policy.integration.test.ts`; M03-T05 — two sessions of one user in `favorites-security.integration.test.ts` | Verified |
+| 16 Automated tests use a dedicated database | Test-database guard (`backend/tests/setup/test-db-guard.ts`), applied before every integration suite and Playwright run | Verified |
+| 17 Session expiration and renewal (30-day / seven-day) | M03-T02 — `session-policy.integration.test.ts` | Verified |
+| 18 Favorites pagination, newest-first order, 201/200 PUT, idempotent 200 DELETE | M03-T05 — `favorites.test.ts`, `favorites-repository.integration.test.ts`, `favorites.integration.test.ts` | Verified |
+| 19 CSRF rejects foreign, null, and untrusted missing origins | M03-T02 — `csrf.integration.test.ts`; M03-T05 — `favorites.integration.test.ts` | Verified |
+| 20 Reset links single-use, 30-minute expiry, canonical origin, no token leakage | M03-T02 — `password-reset.integration.test.ts`; M03-T03 — `e2e/referrer-policy.spec.ts`, `e2e/password-reset.spec.ts`, `frontend/src/referrerPolicy.test.ts` | Verified in test environments; real production mail delivery remains a deployment blocker (§10.3). |
+
+**Frontend (M03-T03 done; favorites UI assigned to M03-T06):**
+
+| §9.2 test | Verified by | Status |
+|---|---|---|
+| 11 Sign-in, sign-out, favorite toggling, empty states, error feedback, keyboard access in the UI | M03-T03 — sign-in, sign-out, registration, and reset journeys (`e2e/sign-in.spec.ts`, `e2e/password-reset.spec.ts`, component tests, axe) | **Partly verified.** Authentication UI verified in M03-T03. Favorite toggling, the My Favorites view, empty states, and favorites error feedback are **M03-T06 — not started**. |
+| 15 Retired favorites appear as non-navigable "No longer available" entries without location details and can be removed | M03-T05 — the API lists retired favorites as `{ landmark_id, availability: "unavailable" }` and allows removal (`favorites.test.ts`, `favorites.integration.test.ts`, `favorites-lifecycle.integration.test.ts`) | **Backend verified; UI pending.** The non-navigable "No longer available" presentation is M03-T06. |
+
+**Section coverage:** §§5–7 (authorization boundaries, favorites data model, favorites API) are implemented in the backend by M03-T04 and M03-T05. §8 (frontend favorites behaviour) is assigned to M03-T06 and not yet implemented. §7's final implemented contract, including details this specification leaves open (error codes, throttling limits, entry shapes), is recorded in the M03-T05 record of `docs/IMPLEMENTATION_PLAN.md` and summarised in `README.md`.
+
 
 ---
 
