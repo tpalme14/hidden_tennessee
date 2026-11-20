@@ -37,6 +37,15 @@ export function serviceUnavailableEnvelope(): ErrorEnvelope {
   };
 }
 
+/**
+ * An unexpected failure inside a protected (account-scoped) route, including a
+ * handler that ran without an established identity (M03-T04; ADR-012 Accepted,
+ * decision 8). A fixed body: no message text, stack, or internal detail.
+ */
+export function internalErrorEnvelope(): ErrorEnvelope {
+  return { error: { code: "INTERNAL_ERROR", message: "Something went wrong. Please try again." } };
+}
+
 /** Matches the existing unknown-route 404 shape in src/app.ts, byte-for-byte, so every "not found" response in the API is identical. */
 export function notFoundEnvelope(): ErrorEnvelope {
   return { error: { code: "NOT_FOUND", message: "Resource not found." } };

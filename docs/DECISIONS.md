@@ -82,8 +82,10 @@ Explain why this approach is preferred.
 | ADR-008 | Hosting and deployment | Accepted |
 | ADR-009 | Testing and continuous integration | Accepted |
 | ADR-010 | Prisma migration workflow for the generated PostGIS `location` column | Accepted |
+| ADR-011 | Identity schema conventions for Better Auth on Prisma | Accepted |
+| ADR-012 | Authorization conventions for account-scoped API resources | Accepted |
 
-All nine initially identified architectural decisions, plus ADR-010 (added during M01-T03 implementation), are now Accepted.
+All nine initially identified architectural decisions, plus ADR-010 (added during M01-T03 implementation), ADR-011 (M03-T01), and ADR-012 (M03-T04), are now Accepted.
 
 ## 6a. Decision Records
 
@@ -691,6 +693,52 @@ ADR-006 adopted Better Auth with database-backed sessions and clarified that Pri
 - `docs/DECISIONS.md` — ADR-003, ADR-006, ADR-007, ADR-010.
 - `.claude/skills/postgres-prisma/SKILL.md`, `.claude/skills/spec-driven-development/SKILL.md`.
 
+### ADR-012: Authorization Conventions for Account-Scoped API Resources
+
+**Status:** Accepted
+
+**Date:** 2026-11-20
+
+**Related Requirements:** FR-08 through FR-12 (favorites, ratings and reviews, trips); NFR 7.4 (Security and Privacy), 7.7 (Maintainability and Testability); `specs/AUTHENTICATION_FAVORITES_SPEC.md` §§5, 7, 9; M03-T04 (Implement Authorization), M03-T05, M04-T02, M05-T03
+
+**Context:**
+ADR-006 separates authentication (identity from the validated session) from authorization (a per-resource ownership check in the service or data layer). M03-T02 implemented the identity half: `requireSession` (401 `UNAUTHENTICATED` for missing, expired, forged, or revoked sessions; 503 for infrastructure failures) and `requireTrustedOrigin` (CSRF). Favorites (M03-T05), reviews (M04), and trips (M05) will each add account-scoped routes. Without one shared convention, each could protect routes, derive identity, report non-owned resources, and handle caching and errors differently — the inconsistency in which "logged in but not the owner" bugs occur. M03-T04 implemented the shared building blocks (`backend/src/auth/protected-route.ts`, `mount-protected.ts`), a deny-by-default structural test, and two-user test helpers.
+
+**Options Considered:**
+1. **Per-route ad hoc checks** — each router applies `requireSession` and checks ownership its own way. Flexible, but easy to omit on one route or method, and hard to verify structurally.
+2. **A shared protected-mount convention plus owner-scoped data access, enforced by a deny-by-default route inventory (chosen).**
+3. **A generic policy or permissions layer (roles, ACLs)** — unnecessary: the product has no roles, administrators, or sharing (spec §1).
+
+**Decision:**
+1. **Protected mounts.** Account-scoped routers are mounted through `mountProtected(parent, path, router)` at a specific literal path (the root, wildcards, and parameterised paths are refused). It registers one contiguous group at that path, in order: `noStore` (`Cache-Control: private, no-store`), `requireSession`, the router, and `protectedRouteErrorHandler`. Every method and every nested route under the path is protected; public routes and the 404 for unknown `/api/v1` paths are unaffected.
+2. **Identity.** The acting user's ID is obtained only from the validated server session, through `authenticatedUserId(req)`. Query parameters, request bodies, path segments, and headers are never used as identity. The accessor returns only the user ID; the session object (including its token) is never placed in responses or logs. If no validated identity is present, it throws, so a mis-wired route fails closed rather than acting anonymously.
+3. **Ownership.** Every read or write of an owned resource takes the authenticated user ID as a required parameter of the data-access function and applies it inside the database query itself, never as a check after an unscoped fetch. Ownership is enforced server-side in the service/data layer, independently of route middleware.
+4. **Non-owned resources.** A resource that does not exist and one that belongs to another user produce the same response: HTTP 404 with the standard `NOT_FOUND` envelope. HTTP 403 is not used for ownership; it remains reserved for the CSRF origin check (`INVALID_ORIGIN`).
+5. **Request validation.** Route schemas reject unexpected client-supplied identity fields (for example with strict Zod objects returning 400). Validation is defence in depth and does not replace decision 3.
+6. **Response status summary.** No, expired, forged, or revoked session → 401 `UNAUTHENTICATED` (one identical body); session-validation infrastructure failure → 503 `SERVICE_UNAVAILABLE`; cookie-bearing state change without trusted origin → 403 `INVALID_ORIGIN`; invalid input → 400; missing or non-owned resource → 404 `NOT_FOUND`; throttled → 429 where a route defines a limit; unexpected failure → 500 `INTERNAL_ERROR` (decision 8).
+7. **Caching.** Protected responses, including their 401, 503, and 500 responses, carry `Cache-Control: private, no-store`. This instructs shared caches and the browser's HTTP cache not to store them; it does not guarantee that a browser's back-forward cache or other in-memory page restoration will not redisplay previously rendered content.
+8. **Errors in protected routes.** Intentional client errors that carry a 4xx status (for example a malformed body, or a deliberate not-found) keep their status and existing handling. Any other failure — including a handler that runs without an established identity — produces a fixed 500 JSON envelope with no message text, stack, or internal detail, and one log line carrying only an event code and the error's class name.
+9. **Structural enforcement (deny by default).** A test inventories every endpoint the application can reach — routes and bare middleware functions — with its full path and effective middleware chain. Each endpoint must be either (a) inside a `mountProtected` group, recognised by the identity of its four functions, with nothing that could answer a request ahead of `requireSession`; or (b) an exact entry (kind, method set, full path) in the reviewed allowlist `backend/tests/helpers/public-api-routes.ts`. Allowlisted application endpoints must be GET-only; Better Auth's `/api/auth/*` is a separately classified, externally managed authentication entry identified by its handler, with its own controls covered by its own tests; stale entries fail. `requireSession` on a route alone, a guard after a handler, a guard on another path, a function merely named `requireSession`, an unknown global middleware, and any layer the inspector cannot interpret all fail. Behavioural tests complement the inventory: anonymous and forged-cookie requests to every discovered protected endpoint, including nested and parameterised ones, must be rejected before any handler runs. The inspector relies on Express 4 internals, isolated in one test helper behind a version check and self-tests; it sees registrations, identity, and order, not logic inside a function, which is why the behavioural checks remain required.
+10. **Ownership testing.** Each feature that adds owned resources proves ownership with two real accounts created through the real registration, sign-in, and session endpoints (`backend/tests/helpers/test-users.ts`), over real HTTP and session cookies (ADR-009).
+
+**Rationale:**
+- Puts ADR-006's identity-then-ownership model into a form that is implemented once, tested once, and reused.
+- Scoping ownership inside the query removes the check-then-act gap and makes another user's record unreachable rather than merely refused.
+- A uniform 404 avoids revealing whether another user's resource exists (spec §5).
+- Deny-by-default enforcement catches the realistic failure — a new account route added without protection — rather than only verifying routes already mounted correctly.
+- Rejected alternatives: ad hoc checks cannot be verified structurally; a policy layer is speculative with no roles or sharing in scope.
+
+**Consequences:**
+- Benefits: one way to protect a route, one source of identity, one non-owned response, and a test suite that fails when an account route is unprotected, mis-ordered, or not listed.
+- Tradeoffs: every owned-resource data-access function carries a user-ID parameter; a non-owner sees 404 rather than an explicit "forbidden"; adding a public endpoint requires a reviewed allowlist entry; the structural test depends on Express 4 internals and must be revisited on an Express upgrade.
+- Does not cover: roles, administration, sharing, or account deletion (out of scope, spec §§1 and 10.2.6); application-route throttling, defined per feature (favorites in M03-T05); application-wide handling of unexpected errors on public routes (a separate follow-up).
+
+**Related Documents:**
+- `docs/DECISIONS.md` — ADR-006 (authorization model), ADR-008 (single-origin deployment), ADR-009 (authentication/authorization testing), ADR-011 (identity schema)
+- `specs/AUTHENTICATION_FAVORITES_SPEC.md` — §§5, 7, 9
+- `docs/IMPLEMENTATION_PLAN.md` — M03-T04, M03-T05, M04-T02, M05-T03
+- `backend/src/auth/protected-route.ts`, `backend/src/auth/mount-protected.ts`, `backend/tests/helpers/route-inspection.ts`, `backend/tests/helpers/public-api-routes.ts`, `backend/tests/helpers/test-users.ts`
+
 ## 6. Decision Management
 
 Before accepting a decision:
@@ -718,5 +766,7 @@ All nine initially identified architectural decisions (ADR-001 through ADR-009) 
 **ADR-010 — Prisma Migration Workflow for the Generated PostGIS `location` Column — added and Accepted 2026-10-30**, during M01-T03 implementation (Milestone 01, not M00). It documents a Prisma ORM tooling limitation discovered while implementing the M01-T02-approved generated `location` column, and the resulting standing project rule to apply migrations only via `prisma migrate deploy`. See the full record above and `.claude/skills/postgres-prisma/SKILL.md` for the operational guardrail.
 
 **ADR-011 — Identity Schema Conventions for Better Auth on Prisma — drafted and Accepted 2026-11-07** during M03-T01 (Milestone 03). It records the six developer-approved M03-T01 design decisions (shared hand-authored identity models under project naming conventions; database-generated UUIDs with `generateId: false`; `name` forced empty; session IP/user-agent not persisted; case-insensitive email uniqueness with `autoSignIn: false`; one credential account per user via two constraints; RESTRICT on all application relationships; favorites model; rate-limit storage deferred to M03-T02). Eleven decisions (ADR-001 through ADR-011) are now Accepted.
+
+**ADR-012 — Authorization Conventions for Account-Scoped API Resources — Accepted 2026-11-20** during M03-T04 (protected mounts through `mountProtected`, identity only from the validated session, owner-scoped queries, uniform 404 for non-owned resources, `private, no-store` caching, safe 500s, deny-by-default structural enforcement with a reviewed public allowlist, and two-user ownership testing). Twelve decisions (ADR-001 through ADR-012) are now Accepted.
 
 **Next Decision:** none currently proposed. The rate-limit storage decision (memory vs. database) is made explicitly in M03-T02 before authentication acceptance, and may warrant an ADR amendment if it changes the schema.
