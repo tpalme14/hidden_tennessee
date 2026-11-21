@@ -1,0 +1,11 @@
+/* Shared favorites announcements for list controls (M03-T06 Increment 4).
+   Visible so sighted users see the same feedback; empty regions take no space. */
+
+.status:not(:empty) {
+  margin: 0.5rem 0;
+}
+
+.alert {
+  margin: 0.5rem 0;
+  color: #8a1c1c;
+}

@@ -1,0 +1,64 @@
+/* Favorite control (M03-T06 Increment 3). Focus styles come from the global
+   :focus-visible rule; button colors match AccountNav.module.css. */
+
+.favorite {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+}
+
+/* List variant (M03-T06 Increment 4): inline after the item's text. */
+.compact {
+  display: inline-flex;
+  margin: 0 0 0 0.5rem;
+  vertical-align: middle;
+}
+
+.button,
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #fff;
+  color: #111;
+  cursor: pointer;
+}
+
+.link {
+  text-decoration: none;
+}
+
+.button[aria-pressed="true"] {
+  background: #fff4cc;
+  border-color: #7a5b00;
+}
+
+.button[aria-disabled="true"] {
+  cursor: progress;
+  color: #444;
+}
+
+.icon {
+  font-size: 1.1em;
+  line-height: 1;
+}
+
+.note,
+.status,
+.alert {
+  margin: 0;
+}
+
+.alert {
+  flex-basis: 100%;
+  color: #8a1c1c;
+}
+
+.status:empty {
+  display: none;
+}

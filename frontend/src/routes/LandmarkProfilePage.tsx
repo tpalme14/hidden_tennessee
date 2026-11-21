@@ -1,6 +1,7 @@
 import { useLocation, useNavigate, useParams } from "react-router";
 import { parseSafeHttpUrl } from "../api/landmarkProfileValidation";
 import { ErrorState } from "../components/ErrorState";
+import { FavoriteButton } from "../favorites/FavoriteButton";
 import { LoadingState } from "../components/LoadingState";
 import { categoryLabel } from "../map/categoryMarkerStyle";
 import { LandmarkLocationMap } from "../map/LandmarkLocationMap";
@@ -71,6 +72,7 @@ export function LandmarkProfilePage() {
 
       {status.kind === "full" ? (
         <FullProfileContent
+          id={status.profile.id}
           displayName={status.profile.display_name}
           category={status.profile.category}
           latitude={status.profile.latitude}
@@ -91,6 +93,7 @@ export function LandmarkProfilePage() {
 }
 
 interface FullProfileContentProps {
+  id: string;
   displayName: string;
   category: string;
   latitude: number;
@@ -101,6 +104,7 @@ interface FullProfileContentProps {
 }
 
 function FullProfileContent({
+  id,
   displayName,
   category,
   latitude,
@@ -115,6 +119,10 @@ function FullProfileContent({
     <>
       <h2 id="profile-heading">{displayName}</h2>
       <p>{categoryLabel(category)}</p>
+      {/* Full profiles are active PUBLIC landmarks only — the one profile kind
+          that can be favorited (M03-T06; D1). Never rendered for the minimal
+          (redacted), unavailable, loading, or error states. */}
+      <FavoriteButton landmarkId={id} displayName={displayName} />
       <LandmarkLocationMap
         latitude={latitude}
         longitude={longitude}

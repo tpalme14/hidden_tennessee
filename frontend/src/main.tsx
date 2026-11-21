@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";
 import App from "./App";
 import { AuthProvider } from "./auth/AuthProvider";
+import { FavoritesProvider } from "./favorites/FavoritesProvider";
 import "./styles/global.css";
 
 // First statement to run: take a password-reset token out of the URL before
@@ -19,7 +20,9 @@ createRoot(rootElement).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <App />
+        <FavoritesProvider>
+          <App />
+        </FavoritesProvider>
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>,

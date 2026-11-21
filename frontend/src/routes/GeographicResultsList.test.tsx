@@ -2,14 +2,32 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router";
 import { describe, expect, it, vi } from "vitest";
+import type { ReactNode } from "react";
+import { FavoritesAnnouncer } from "../favorites/FavoritesAnnouncer";
+import { WithFakeFavorites } from "../favorites/testFavorites";
 import type { LandmarkMarker, MapMarkersStatus } from "../map/useMapMarkers";
 import { GeographicResultsList } from "./GeographicResultsList";
 
+/**
+ * Supplies what the list's favorite controls need (M03-T06 Increment 4): a
+ * favorites context and the shared announcer DiscoveryPage renders around
+ * this list. Wrapper only — no assertion below changed.
+ */
+function favoritesWrapper(children: ReactNode) {
+  return (
+    <WithFakeFavorites>
+      <FavoritesAnnouncer>{children}</FavoritesAnnouncer>
+    </WithFakeFavorites>
+  );
+}
+
 function renderList(status: MapMarkersStatus, onRetry = vi.fn()) {
   return render(
-    <MemoryRouter>
-      <GeographicResultsList status={status} onRetry={onRetry} />
-    </MemoryRouter>,
+    favoritesWrapper(
+      <MemoryRouter>
+        <GeographicResultsList status={status} onRetry={onRetry} />
+      </MemoryRouter>,
+    ),
   );
 }
 
@@ -69,20 +87,22 @@ describe("GeographicResultsList", () => {
     }
 
     render(
-      <MemoryRouter initialEntries={["/"]}>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <GeographicResultsList
-                status={{ kind: "success", markers: [marker], isTruncated: false }}
-                onRetry={vi.fn()}
-              />
-            }
-          />
-          <Route path="/landmarks/:id" element={<LocationProbe />} />
-        </Routes>
-      </MemoryRouter>,
+      favoritesWrapper(
+        <MemoryRouter initialEntries={["/"]}>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <GeographicResultsList
+                  status={{ kind: "success", markers: [marker], isTruncated: false }}
+                  onRetry={vi.fn()}
+                />
+              }
+            />
+            <Route path="/landmarks/:id" element={<LocationProbe />} />
+          </Routes>
+        </MemoryRouter>,
+      ),
     );
 
     const list = screen.getByRole("list");

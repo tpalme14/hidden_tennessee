@@ -147,3 +147,26 @@ INVALID_ORIGIN`, `404 NOT_FOUND` (PUT on an unknown, retired, or not-yet-public 
   `longitude`), `redacted` (active, not yet public: `id`, `display_name`, `category`,
   `redacted: true`, no coordinates), or `unavailable` (retired: the landmark ID only; still
   removable). Only landmarks classified `PUBLIC` can be added, and none are classified yet.
+
+## Favorites UI and E2E Fixtures
+
+The favorites interface (M03-T06) adds a favorite toggle to full landmark profiles and the
+geographic results list, and a **My Favorites** page at `/favorites` (linked in the navigation
+only when signed in). Because no real landmark is classified `PUBLIC` yet, the real favorites
+journeys in `e2e/favorites.spec.ts` run against synthetic landmarks created by the guarded helper
+`e2e/helpers/favoritesFixtures.ts` (its guards are tested in `e2e/fixture-guard.spec.ts`):
+
+- **`landmarks_test` only.** Every fixture statement runs in a transaction that first applies the
+  existing test-database guard (`DATABASE_URL_TEST` on `localhost`/`127.0.0.1`, database
+  `landmarks_test`) and then checks `current_database()` on the same connection before writing.
+  Nothing is ever written to `landmarks_dev`.
+- **What it writes.** Each test gets three synthetic landmarks (`ZZ…` source codes, names
+  `E2E Fixture <run> <test> …`, located far outside Tennessee so other specs never see them).
+  Favorites are created only through the real API or UI, never inserted directly. Teardown runs
+  even when a test fails, and deletes only the rows that test recorded after verifying each one.
+- **Leftovers.** A process killed mid-run can leave fixtures behind. They are never deleted
+  automatically: each Playwright worker logs a read-only count of fixtures from earlier runs.
+  Test-created accounts (`e2e-fav-…@example.com`) are kept, because account deletion is disabled.
+- **Do not run backend integration tests and Playwright at the same time.** The integration
+  suite resets `landmarks_test` (it truncates every application table), which would remove
+  fixtures and accounts from under a running browser test. Run them one after the other.

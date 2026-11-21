@@ -210,7 +210,9 @@ test.describe("automated accessibility scans (axe-core, WCAG 2.0/2.1/2.2 A+AA)",
     await expect(page.locator(".leaflet-marker-icon")).toHaveCount(3);
     await page.getByRole("textbox", { name: "Search landmarks by name" }).fill("Falls");
     const searchSection = page.locator("section", { has: page.locator("#search-heading") });
-    await expect(searchSection.getByRole("link", { name: "Alpha Falls" })).toBeVisible();
+    await expect(
+      searchSection.getByRole("link", { name: "Alpha Falls", exact: true }),
+    ).toBeVisible();
     await expect(page.locator(".leaflet-marker-icon")).toHaveCount(1); // the map refetched with the same filter
     await expectNoLoadingText(page);
     await scan(page, testInfo, "name-search-populated");

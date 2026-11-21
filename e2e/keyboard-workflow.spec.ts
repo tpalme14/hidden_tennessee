@@ -260,7 +260,9 @@ test.describe("complete keyboard workflow on the discovery page", () => {
     await page.keyboard.type("Falls");
     // The search is debounced (300 ms) and fetched; wait for its result to render before tabbing on.
     const searchSection = page.locator('section[aria-labelledby="search-heading"]');
-    await expect(searchSection.getByRole("link", { name: "Alpha Falls" })).toBeVisible();
+    await expect(
+      searchSection.getByRole("link", { name: "Alpha Falls", exact: true }),
+    ).toBeVisible();
     await pressUntil(page, "Tab", isSearchResultLink, 40);
     expect(await page.evaluate(() => document.activeElement?.textContent)).toBe("Alpha Falls");
 

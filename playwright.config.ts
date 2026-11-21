@@ -1,5 +1,12 @@
+import { randomBytes } from "node:crypto";
 import { defineConfig } from "@playwright/test";
 import { getVerifiedTestDatabaseUrl } from "./backend/tests/setup/test-db-guard.js";
+
+// One fixture run tag per Playwright run (M03-T06 Increment 6B, decision R3).
+// Set here, in the runner process, before workers start; workers inherit the
+// environment and `||=` keeps the inherited value when they load this config
+// again. Used only to name synthetic E2E fixtures (e2e/helpers/favoritesFixtures.ts).
+process.env.E2E_FIXTURE_RUN ||= randomBytes(3).toString("hex");
 
 // Reuses the same guard used by the integration test suite — one single
 // source of truth for what counts as a safe test database connection.

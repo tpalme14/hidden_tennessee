@@ -1,6 +1,7 @@
 import { EmptyState } from "../components/EmptyState";
 import { ErrorState } from "../components/ErrorState";
 import { LoadingState } from "../components/LoadingState";
+import { FavoritesAnnouncer } from "../favorites/FavoritesAnnouncer";
 import { LandmarkMap } from "../map/LandmarkMap";
 import { LandmarkMarkersRenderer } from "../map/LandmarkMarkersRenderer";
 import { MapViewportTracker } from "../map/MapViewportTracker";
@@ -148,7 +149,12 @@ export function DiscoveryPage() {
       </LandmarkMap>
 
       <GeoDiscoveryControls controls={geo} />
-      <GeographicResultsList status={markerStatus} onRetry={retryMarkers} />
+      {/* Shared announcements for the favorite controls in the geographic list,
+          rendered just outside that list's section, which must contain no live
+          regions (M02-T08; M03-T06 resolution B2). */}
+      <FavoritesAnnouncer>
+        <GeographicResultsList status={markerStatus} onRetry={retryMarkers} />
+      </FavoritesAnnouncer>
       <DiscoveryFilters controls={filters} />
       <LandmarkSearch
         committedQuery={filters.committedQuery}

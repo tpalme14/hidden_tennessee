@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 import { getCategories } from "../api/categories";
 import { getLandmarkGeoMarkers, searchLandmarks } from "../api/landmarks";
 import type { LandmarkCollectionResponse } from "../api/types";
+import { WithFakeFavorites } from "../favorites/testFavorites";
 import { GEO_RESULTS_HEADING_ID } from "./GeographicResultsList";
 
 /**
@@ -57,10 +58,14 @@ function fireEnter(element: HTMLElement) {
 }
 
 function renderPage() {
+  // Favorites context for the geographic list's favorite controls (M03-T06
+  // Increment 4) — wrapper only; no assertion below changed.
   const utils = render(
-    <MemoryRouter initialEntries={["/?lat=35.75&lng=-85.95&zoom=7"]}>
-      <DiscoveryPage />
-    </MemoryRouter>,
+    <WithFakeFavorites>
+      <MemoryRouter initialEntries={["/?lat=35.75&lng=-85.95&zoom=7"]}>
+        <DiscoveryPage />
+      </MemoryRouter>
+    </WithFakeFavorites>,
   );
   const icons = () =>
     Array.from(utils.container.querySelectorAll<HTMLElement>(".leaflet-marker-icon"));

@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import App from "./App";
 import { AuthProvider } from "./auth/AuthProvider";
+import { FavoritesProvider } from "./favorites/FavoritesProvider";
 
 // The shell's account area checks the session (M03-T03 Increment 2); answer
 // "signed out" so these routing tests never depend on a real request.
@@ -47,5 +48,23 @@ describe("App routing and layout", () => {
     expect(screen.getByRole("status")).toHaveTextContent(/loading/i);
     // The shell is still present on a direct non-home route.
     expect(screen.getByRole("banner")).toBeInTheDocument();
+  });
+
+  it("renders the My Favorites route (signed out: a sign-in prompt returning there)", async () => {
+    render(
+      <MemoryRouter initialEntries={["/favorites"]}>
+        <AuthProvider>
+          <FavoritesProvider>
+            <App />
+          </FavoritesProvider>
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole("heading", { level: 2, name: "My Favorites" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("link", { name: "Sign in to see your favorites" }),
+    ).toHaveAttribute("href", "/sign-in?returnTo=%2Ffavorites");
+    expect(screen.queryByRole("link", { name: "My Favorites" })).not.toBeInTheDocument();
   });
 });

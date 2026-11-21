@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router";
 import { ResetTokenGuard } from "./auth/ResetTokenGuard";
 import { AppLayout } from "./layout/AppLayout";
 import { DiscoveryPage } from "./routes/DiscoveryPage";
+import { FavoritesPage } from "./routes/FavoritesPage";
 import { LandmarkProfilePage } from "./routes/LandmarkProfilePage";
 import { RegisterPage } from "./routes/RegisterPage";
 import { SignInPage } from "./routes/SignInPage";
@@ -16,6 +17,7 @@ export default function App() {
         <Route element={<AppLayout />}>
           <Route index element={<DiscoveryPage />} />
           <Route path="landmarks/:id" element={<LandmarkProfilePage />} />
+          <Route path="favorites" element={<FavoritesPage />} />
           <Route path="register" element={<RegisterPage />} />
           <Route path="sign-in" element={<SignInPage />} />
           <Route path="forgot-password" element={<ForgotPasswordPage />} />

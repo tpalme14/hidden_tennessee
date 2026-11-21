@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { EmptyState } from "../components/EmptyState";
+import { FavoriteButton } from "../favorites/FavoriteButton";
 import { categoryLabel } from "../map/categoryMarkerStyle";
 import type { MapMarkersStatus } from "../map/useMapMarkers";
 
@@ -98,6 +99,16 @@ export function GeographicResultsList({ status, onRetry }: GeographicResultsList
                 {marker.distance_miles !== undefined ? (
                   <> — Approx. {marker.distance_miles.toFixed(1)} mi (straight-line distance)</>
                 ) : null}
+                {/* Geographic results are active PUBLIC landmarks only (M01-T05),
+                    so each can be favorited (M03-T06, D1). The list variant has
+                    no live regions of its own — it announces through the
+                    FavoritesAnnouncer that DiscoveryPage renders outside this
+                    section (M02-T08; M03-T06 resolution B2). */}
+                <FavoriteButton
+                  landmarkId={marker.id}
+                  displayName={marker.display_name}
+                  variant="list"
+                />
               </li>
             ))}
           </ul>

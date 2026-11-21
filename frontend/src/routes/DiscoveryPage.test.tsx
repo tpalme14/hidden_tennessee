@@ -129,6 +129,23 @@ function renderPage() {
   );
 }
 
+describe("DiscoveryPage — shared favorites announcer (M03-T06 Increment 4, resolution B2)", () => {
+  it("renders one polite favorites region OUTSIDE the geographic results list, with no alert when idle", () => {
+    setup({ markerStatus: { kind: "success", markers: [], isTruncated: false } });
+    const { container } = renderPage();
+
+    const regions = container.querySelectorAll('[aria-live="polite"]');
+    expect(regions).toHaveLength(1);
+    const list = screen.getByTestId("geo-results-list");
+    expect(list.contains(regions[0]!)).toBe(false);
+    // Immediately precedes the list it serves, inside the discovery section.
+    expect(
+      regions[0]!.compareDocumentPosition(list) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+});
+
 describe("DiscoveryPage composition and marker status messaging (M02-T07)", () => {
   it("shows a loading state outside the map while markers are loading", () => {
     setup({ markerStatus: { kind: "loading" } });

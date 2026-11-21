@@ -7,6 +7,7 @@ import { ApiError } from "../api/client";
 import { getCategories } from "../api/categories";
 import { getLandmarkGeoMarkers } from "../api/landmarks";
 import type { LandmarkCollectionResponse } from "../api/types";
+import { WithFakeFavorites } from "../favorites/testFavorites";
 
 /**
  * Real `useDiscoveryUrlState`/`useDiscoveryFilters`/`useGeographicDiscovery`/
@@ -96,10 +97,14 @@ function response(
 }
 
 function renderReal() {
+  // Favorites context for the geographic list's favorite controls (M03-T06
+  // Increment 4) — wrapper only; no assertion below changed.
   return render(
-    <MemoryRouter>
-      <DiscoveryPage />
-    </MemoryRouter>,
+    <WithFakeFavorites>
+      <MemoryRouter>
+        <DiscoveryPage />
+      </MemoryRouter>
+    </WithFakeFavorites>,
   );
 }
 

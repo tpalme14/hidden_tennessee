@@ -31,10 +31,21 @@ export class ApiError extends Error {
 
 const REQUEST_DEFAULTS = { mode: "cors", credentials: "same-origin" } as const;
 
-export async function getJson<T>(path: string): Promise<T> {
+/** A successful response's HTTP status and parsed JSON body. */
+export interface JsonResponse<T> {
+  status: number;
+  body: T;
+}
+
+/**
+ * The one `fetch` call: sends the request with the defaults above, parses the
+ * JSON body, and maps any non-2xx response to an `ApiError`. Every helper below
+ * is a thin wrapper, so they all share identical error behaviour.
+ */
+async function requestJson<T>(path: string, init: RequestInit): Promise<JsonResponse<T>> {
   let response: Response;
   try {
-    response = await fetch(path, { ...REQUEST_DEFAULTS, headers: { Accept: "application/json" } });
+    response = await fetch(path, { ...REQUEST_DEFAULTS, ...init });
   } catch {
     throw networkError();
   }
@@ -50,7 +61,11 @@ export async function getJson<T>(path: string): Promise<T> {
     throw errorFromBody(response, body);
   }
 
-  return body as T;
+  return { status: response.status, body: body as T };
+}
+
+export async function getJson<T>(path: string): Promise<T> {
+  return (await requestJson<T>(path, { headers: { Accept: "application/json" } })).body;
 }
 
 /**
@@ -60,30 +75,29 @@ export async function getJson<T>(path: string): Promise<T> {
  * limiter's `{ message }` with an `X-Retry-After` header.
  */
 export async function postJson<T>(path: string, payload: unknown): Promise<T> {
-  let response: Response;
-  try {
-    response = await fetch(path, {
-      ...REQUEST_DEFAULTS,
+  return (
+    await requestJson<T>(path, {
       method: "POST",
       headers: { Accept: "application/json", "Content-Type": "application/json" },
       body: JSON.stringify(payload),
-    });
-  } catch {
-    throw networkError();
-  }
+    })
+  ).body;
+}
 
-  let body: unknown;
-  try {
-    body = await response.json();
-  } catch {
-    throw invalidResponse(response.status);
-  }
+/**
+ * Body-less PUT (M03-T06). Returns the status as well as the body, because
+ * some endpoints distinguish outcomes by status alone (the favorites API
+ * answers 201 for a new favorite and 200 for an existing one). No body and no
+ * `Content-Type` are sent: the favorites API accepts only an absent or empty
+ * body. The browser adds the `Origin` header the backend's CSRF check needs.
+ */
+export async function putJson<T>(path: string): Promise<JsonResponse<T>> {
+  return requestJson<T>(path, { method: "PUT", headers: { Accept: "application/json" } });
+}
 
-  if (!response.ok) {
-    throw errorFromBody(response, body);
-  }
-
-  return body as T;
+/** Body-less DELETE with the same behaviour as `putJson` (M03-T06). */
+export async function deleteJson<T>(path: string): Promise<JsonResponse<T>> {
+  return requestJson<T>(path, { method: "DELETE", headers: { Accept: "application/json" } });
 }
 
 function networkError(): ApiError {
