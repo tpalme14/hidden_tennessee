@@ -121,7 +121,8 @@ npm run test:e2e
 
 ## Favorites API
 
-Account-scoped favorites (M03-T05; backend only — the interface is M03-T06). Mounted with
+Account-scoped favorites (API: M03-T05; the interface that uses it, M03-T06, is described in the
+next section). Mounted with
 `mountProtected` (ADR-012), so every request needs a valid session cookie, and its responses —
 including errors — carry `Cache-Control: private, no-store` (the one exception: a malformed JSON
 body still gets Express's default HTML `400`, an existing app-wide limitation). The full contract
