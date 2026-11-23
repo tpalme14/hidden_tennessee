@@ -108,7 +108,7 @@ describe("API route guard (structural, M03-T02 Increment 4)", () => {
     expect(unguardedStateChangingApiRoutes(createApp())).toEqual([]);
   });
 
-  it("the real application's state-changing routes are exactly the favorites PUT/DELETE, verified via the protected mount", () => {
+  it("the real application's state-changing routes are exactly the favorites PUT/DELETE and reviews POST/PATCH/DELETE, verified via the protected mount", () => {
     const inventory = inspectApp(createApp(), policy);
     const stateChanging = inventory.endpoints.filter(
       (e) =>
@@ -134,6 +134,24 @@ describe("API route guard (structural, M03-T02 Increment 4)", () => {
         route: "delete /api/v1/favorites/:landmarkId",
         protection: "protected-mount",
         mount: "/api/v1/favorites",
+        problems: [],
+      },
+      {
+        route: "post /api/v1/reviews",
+        protection: "protected-mount",
+        mount: "/api/v1/reviews",
+        problems: [],
+      },
+      {
+        route: "patch /api/v1/reviews/:reviewId",
+        protection: "protected-mount",
+        mount: "/api/v1/reviews",
+        problems: [],
+      },
+      {
+        route: "delete /api/v1/reviews/:reviewId",
+        protection: "protected-mount",
+        mount: "/api/v1/reviews",
         problems: [],
       },
     ]);

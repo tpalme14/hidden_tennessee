@@ -213,23 +213,28 @@ describe("route inventory (integration, M03-T04 Increment 2)", () => {
       expect(result.staleAllowlistEntries).toEqual([]);
     });
 
-    it("the inventory is the expected set — the favorites endpoints (M03-T05) are the only protected ones", () => {
+    it("the inventory is the expected set — the favorites (M03-T05) and reviews (M04-T02) endpoints are the only protected ones", () => {
       expect(inventory.endpoints.map((e) => `${e.kind} ${e.path}`)).toEqual([
         "route /api/auth/*",
         "route /api/v1/landmarks",
         "route /api/v1/landmarks/:id",
         "route /api/v1/categories",
+        "route /api/v1/landmarks/:landmarkId/reviews",
         "route /api/v1/favorites",
         "route /api/v1/favorites/:landmarkId",
         "route /api/v1/favorites/:landmarkId",
+        "route /api/v1/reviews",
+        "route /api/v1/reviews",
+        "route /api/v1/reviews/:reviewId",
+        "route /api/v1/reviews/:reviewId",
         "route /health",
         "middleware /api",
         "route *",
       ]);
-      expect(inventory.endpoints.filter((e) => e.protection === "protected-mount")).toHaveLength(3);
+      expect(inventory.endpoints.filter((e) => e.protection === "protected-mount")).toHaveLength(7);
     });
 
-    it("exactly three protected favorites endpoints, verified by HTTP method AND path", () => {
+    it("exactly three protected favorites and four protected reviews endpoints, verified by HTTP method AND path", () => {
       const protectedEndpoints = inventory.endpoints
         .filter((e) => e.protection === "protected-mount")
         .map((e) => `${e.kind} ${e.methods.join(",")} ${e.path}`);
@@ -237,13 +242,31 @@ describe("route inventory (integration, M03-T04 Increment 2)", () => {
         "route get /api/v1/favorites",
         "route put /api/v1/favorites/:landmarkId",
         "route delete /api/v1/favorites/:landmarkId",
+        "route post /api/v1/reviews",
+        "route get /api/v1/reviews",
+        "route patch /api/v1/reviews/:reviewId",
+        "route delete /api/v1/reviews/:reviewId",
       ]);
-      // Nothing else under /api/v1/favorites exists, protected or not.
+      // Nothing else under /api/v1/favorites or /api/v1/reviews exists, protected or not.
+      for (const prefix of ["/api/v1/favorites", "/api/v1/reviews"]) {
+        expect(
+          inventory.endpoints
+            .filter((e) => e.path.startsWith(prefix))
+            .every((e) => e.protection === "protected-mount" && e.kind === "route"),
+          prefix,
+        ).toBe(true);
+      }
+      // The public review list is one unprotected GET route, matched by exactly one
+      // GET-only allowlist entry — nothing more.
+      const publicReviews = inventory.endpoints.filter(
+        (e) => e.path === "/api/v1/landmarks/:landmarkId/reviews",
+      );
+      expect(publicReviews.map((e) => `${e.kind} ${e.methods.join(",")} ${e.protection}`)).toEqual([
+        "route get none",
+      ]);
       expect(
-        inventory.endpoints
-          .filter((e) => e.path.startsWith("/api/v1/favorites"))
-          .every((e) => e.protection === "protected-mount" && e.kind === "route"),
-      ).toBe(true);
+        PUBLIC_ENDPOINT_ALLOWLIST.filter((e) => e.path === "/api/v1/landmarks/:landmarkId/reviews"),
+      ).toEqual([expect.objectContaining({ kind: "application", methods: ["get"] })]);
     });
 
     it("Better Auth's mount is classified as externally managed, identified by its error handler", () => {
@@ -273,12 +296,12 @@ describe("route inventory (integration, M03-T04 Increment 2)", () => {
       }
     });
 
-    it("the behavioural sweep rejects anonymous and forged-cookie requests to every real protected endpoint (3 endpoints × 2 = 6 requests)", async () => {
+    it("the behavioural sweep rejects anonymous and forged-cookie requests to every real protected endpoint (7 endpoints × 2 = 14 requests)", async () => {
       const result = await sweepProtectedEndpoints(
         app,
         inventory.endpoints.filter((e) => e.protection === "protected-mount"),
       );
-      expect(result).toEqual({ failures: [], requests: 6 });
+      expect(result).toEqual({ failures: [], requests: 14 });
     });
 
     it("an unprotected router attached to a fresh copy of the real app is detected", () => {

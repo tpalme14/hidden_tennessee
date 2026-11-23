@@ -33,6 +33,15 @@ export const PUBLIC_ENDPOINT_ALLOWLIST: readonly AllowlistEntry[] = [
     kind: "application",
     endpointKind: "route",
     methods: ["get"],
+    path: "/api/v1/landmarks/:landmarkId/reviews",
+    reason:
+      "Public review list for a visible landmark; identical for every caller, never reads the " +
+      "session; visibility enforced in the service (Specification 4 v1.1 §§6–7; ADR-013).",
+  },
+  {
+    kind: "application",
+    endpointKind: "route",
+    methods: ["get"],
     path: "/api/v1/categories",
     reason: "Public category list for discovery filters (Specification 2).",
   },

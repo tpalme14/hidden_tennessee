@@ -171,6 +171,21 @@ The API must never allow the client to set `user_id`, timestamps, publication st
 15. CSRF/origin protection rejects untrusted state-changing requests; authenticated tests use real HTTP sessions.
 16. Integration tests use a dedicated PostgreSQL database; no tests mutate production data.
 
+### 9.1 Backend verification disposition (non-normative, added November 22, 2026)
+
+*This subsection records verification evidence only. It adds, removes, or changes no requirement, API contract, or architectural decision; §§1–8, 9 (tests #1–#16), 10, and 11 are unchanged, and ADR-013 governs the design.*
+
+The backend of this specification was implemented and verified in M04-T02 (Complete November 22, 2026; full record in `docs/IMPLEMENTATION_PLAN.md`). Local results at closure: backend unit 328/328, backend integration 466/466 (dedicated `landmarks_test` database only), frontend unit 754/754, and Playwright 80/80 with no accessibility violations; the `reviews` migration applied to `landmarks_test` and `landmarks_dev` with existing landmark data verified unchanged.
+
+| Test | Disposition |
+|---|---|
+| #1–#9, #11–#13, #15, #16 | Verified for the API through real HTTP requests, real sessions, and the dedicated test database. #12 was exercised through the real GPX import pipeline (update, retirement, reactivation). |
+| #10 | Backend half verified: review text is stored and returned verbatim as JSON data. Inert rendering in the interface belongs to M04-T03. |
+| #13 (interface part) | The API returns the fixed `Community Member` label and the own-review lookup; showing **You**/**Your Review** belongs to M04-T03. |
+| #14 | Not yet verified — belongs to M04-T03 (reviews interface). |
+
+Additional abuse, hostile-input, and stress verification remains with M04-T04. All verification used synthetic `PUBLIC` landmarks, because the sensitive-location classification policy is unresolved and no real landmark is classified `PUBLIC`.
+
 ## 10. Approved behavior and remaining decisions
 
 ### 10.1 Approved by developer
@@ -235,6 +250,10 @@ Prepared from the M04-T01 design decisions the developer approved on November 21
 - §10.1.2: "**Optional written reviews:** Rating alone is sufficient. The body is optional; missing, `null`, empty, or whitespace-only text is normalized to `null`. Nonempty text is plain text, trimmed, and limited to 2,000 characters. Preserve internal line breaks; do not render user HTML or Markdown."
 
 **Known limitation recorded with this amendment (not a requirement change):** when a landmark becomes retired, `SENSITIVE`, or `UNREVIEWED`, its reviews are hidden from the public list and the own-review lookup returns `404`, including for the author. Deletion by review ID remains available through the API (§§4.2, 7, 10.1.6), but the initial-release interface provides no way to discover such a review, so authors cannot find or delete it through the application. A future authenticated "My reviews" page is a deferred improvement requiring its own amendment and approval (see ADR-013).
+
+### Non-normative addition — November 22, 2026 (M04-T02 closure)
+
+§9.1 (backend verification disposition) was added with the developer's approval (decision R9 of M04-T02). It records verification evidence only; the specification remains Version 1.1 and no requirement, contract, or acceptance test changed.
 
 ---
 

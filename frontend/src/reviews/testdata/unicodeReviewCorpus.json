@@ -1,0 +1,322 @@
+{
+  "description": "M04-T04 Increment 2: shared Unicode corpus for review-text validation parity (spec v1.1 section 4.1; ADR-013 decision 8; decision D1). Test data only; never imported by application code. Every string is written as segments so this file stays ASCII: 'U+XXXX' is one code point (lone surrogates allowed), {\"text\": ...} is literal ASCII, and {\"repeat\": n, \"of\": [...]} repeats its segments n times. expect.kind is 'text' (the stored value, given as segments), 'null' (empty after trim), or 'reject' with reason 'characters' (NUL or unpaired surrogate; checked BEFORE trimming) or 'tooLong' (more than 2,000 code points AFTER trimming).",
+  "cases": [
+    {
+      "id": "zw-space-only",
+      "group": "zero-width only (D1: kept)",
+      "input": ["U+200B"],
+      "expect": { "kind": "text", "value": ["U+200B"] }
+    },
+    {
+      "id": "zw-non-joiner-only",
+      "group": "zero-width only (D1: kept)",
+      "input": ["U+200C"],
+      "expect": { "kind": "text", "value": ["U+200C"] }
+    },
+    {
+      "id": "zw-joiner-only",
+      "group": "zero-width only (D1: kept)",
+      "input": ["U+200D"],
+      "expect": { "kind": "text", "value": ["U+200D"] }
+    },
+    {
+      "id": "word-joiner-only",
+      "group": "zero-width only (D1: kept)",
+      "input": ["U+2060"],
+      "expect": { "kind": "text", "value": ["U+2060"] }
+    },
+    {
+      "id": "zw-all-four-padded",
+      "group": "zero-width only (D1: kept)",
+      "input": [{ "text": "  " }, "U+200B", "U+200C", "U+200D", "U+2060", { "text": "\t" }],
+      "expect": { "kind": "text", "value": ["U+200B", "U+200C", "U+200D", "U+2060"] }
+    },
+    {
+      "id": "bom-only",
+      "group": "removed by trim()",
+      "input": ["U+FEFF"],
+      "expect": { "kind": "null" }
+    },
+    {
+      "id": "nbsp-only",
+      "group": "removed by trim()",
+      "input": ["U+00A0"],
+      "expect": { "kind": "null" }
+    },
+    {
+      "id": "ideographic-space-only",
+      "group": "removed by trim()",
+      "input": ["U+3000"],
+      "expect": { "kind": "null" }
+    },
+    {
+      "id": "line-separator-only",
+      "group": "removed by trim()",
+      "input": ["U+2028"],
+      "expect": { "kind": "null" }
+    },
+    {
+      "id": "paragraph-separator-only",
+      "group": "removed by trim()",
+      "input": ["U+2029"],
+      "expect": { "kind": "null" }
+    },
+    {
+      "id": "all-trim-whitespace",
+      "group": "removed by trim()",
+      "input": [
+        "U+0009",
+        "U+000A",
+        "U+000B",
+        "U+000C",
+        "U+000D",
+        "U+0020",
+        "U+00A0",
+        "U+1680",
+        "U+2000",
+        "U+2005",
+        "U+200A",
+        "U+2028",
+        "U+2029",
+        "U+202F",
+        "U+205F",
+        "U+3000",
+        "U+FEFF"
+      ],
+      "expect": { "kind": "null" }
+    },
+    {
+      "id": "trim-edges-keep-inner",
+      "group": "removed by trim()",
+      "input": ["U+FEFF", "U+00A0", { "text": "a" }, "U+3000", { "text": "b" }, "U+2028", "U+2029"],
+      "expect": { "kind": "text", "value": [{ "text": "a" }, "U+3000", { "text": "b" }] }
+    },
+    {
+      "id": "nel-only",
+      "group": "kept by trim()",
+      "input": ["U+0085"],
+      "expect": { "kind": "text", "value": ["U+0085"] }
+    },
+    {
+      "id": "mongolian-vowel-separator-only",
+      "group": "kept by trim()",
+      "input": ["U+180E"],
+      "expect": { "kind": "text", "value": ["U+180E"] }
+    },
+    {
+      "id": "nel-and-mvs-at-edges",
+      "group": "kept by trim()",
+      "input": [{ "text": " " }, "U+0085", { "text": "a" }, "U+180E", { "text": " " }],
+      "expect": { "kind": "text", "value": ["U+0085", { "text": "a" }, "U+180E"] }
+    },
+    {
+      "id": "noncharacters",
+      "group": "noncharacters and private use (kept)",
+      "input": ["U+FFFE", "U+FFFF", "U+FDD0", "U+FDEF", "U+1FFFE", "U+10FFFF"],
+      "expect": {
+        "kind": "text",
+        "value": ["U+FFFE", "U+FFFF", "U+FDD0", "U+FDEF", "U+1FFFE", "U+10FFFF"]
+      }
+    },
+    {
+      "id": "private-use",
+      "group": "noncharacters and private use (kept)",
+      "input": ["U+E000", "U+F8FF", "U+F0000", "U+10FFFD"],
+      "expect": { "kind": "text", "value": ["U+E000", "U+F8FF", "U+F0000", "U+10FFFD"] }
+    },
+    {
+      "id": "combining-not-normalized",
+      "group": "combining marks and emoji (kept exactly; no normalization)",
+      "input": [{ "text": "e" }, "U+0301", { "text": " " }, "U+00E9"],
+      "expect": { "kind": "text", "value": [{ "text": "e" }, "U+0301", { "text": " " }, "U+00E9"] }
+    },
+    {
+      "id": "combining-2000",
+      "group": "combining marks and emoji (kept exactly; no normalization)",
+      "input": [{ "text": "a" }, { "repeat": 1999, "of": ["U+0301"] }],
+      "expect": { "kind": "text", "value": [{ "text": "a" }, { "repeat": 1999, "of": ["U+0301"] }] }
+    },
+    {
+      "id": "combining-2001",
+      "group": "combining marks and emoji (kept exactly; no normalization)",
+      "input": [{ "text": "a" }, { "repeat": 2000, "of": ["U+0301"] }],
+      "expect": { "kind": "reject", "reason": "tooLong" }
+    },
+    {
+      "id": "emoji-zwj-family",
+      "group": "combining marks and emoji (kept exactly; no normalization)",
+      "input": ["U+1F468", "U+200D", "U+1F469", "U+200D", "U+1F467", "U+200D", "U+1F466"],
+      "expect": {
+        "kind": "text",
+        "value": ["U+1F468", "U+200D", "U+1F469", "U+200D", "U+1F467", "U+200D", "U+1F466"]
+      }
+    },
+    {
+      "id": "emoji-flag-and-skin-tone",
+      "group": "combining marks and emoji (kept exactly; no normalization)",
+      "input": ["U+1F1FA", "U+1F1F8", { "text": " " }, "U+1F44B", "U+1F3FD", "U+FE0F"],
+      "expect": {
+        "kind": "text",
+        "value": ["U+1F1FA", "U+1F1F8", { "text": " " }, "U+1F44B", "U+1F3FD", "U+FE0F"]
+      }
+    },
+    {
+      "id": "ascii-2000",
+      "group": "length limit (code points, after trim)",
+      "input": [{ "repeat": 2000, "of": [{ "text": "a" }] }],
+      "expect": { "kind": "text", "value": [{ "repeat": 2000, "of": [{ "text": "a" }] }] }
+    },
+    {
+      "id": "ascii-2001",
+      "group": "length limit (code points, after trim)",
+      "input": [{ "repeat": 2001, "of": [{ "text": "a" }] }],
+      "expect": { "kind": "reject", "reason": "tooLong" }
+    },
+    {
+      "id": "astral-2000",
+      "group": "length limit (code points, after trim)",
+      "input": [{ "repeat": 2000, "of": ["U+1F600"] }],
+      "expect": { "kind": "text", "value": [{ "repeat": 2000, "of": ["U+1F600"] }] }
+    },
+    {
+      "id": "astral-2001",
+      "group": "length limit (code points, after trim)",
+      "input": [{ "repeat": 2001, "of": ["U+1F600"] }],
+      "expect": { "kind": "reject", "reason": "tooLong" }
+    },
+    {
+      "id": "zw-2000",
+      "group": "length limit (code points, after trim)",
+      "input": [{ "repeat": 2000, "of": ["U+200B"] }],
+      "expect": { "kind": "text", "value": [{ "repeat": 2000, "of": ["U+200B"] }] }
+    },
+    {
+      "id": "zw-2001",
+      "group": "length limit (code points, after trim)",
+      "input": [{ "repeat": 2001, "of": ["U+200B"] }],
+      "expect": { "kind": "reject", "reason": "tooLong" }
+    },
+    {
+      "id": "2000-with-trimmed-padding",
+      "group": "length limit (code points, after trim)",
+      "input": [
+        { "repeat": 50, "of": ["U+3000"] },
+        { "repeat": 2000, "of": [{ "text": "b" }] },
+        { "repeat": 50, "of": [{ "text": " " }] }
+      ],
+      "expect": { "kind": "text", "value": [{ "repeat": 2000, "of": [{ "text": "b" }] }] }
+    },
+    {
+      "id": "2000-plus-kept-nel",
+      "group": "length limit (code points, after trim)",
+      "input": [{ "repeat": 2000, "of": [{ "text": "c" }] }, "U+0085"],
+      "expect": { "kind": "reject", "reason": "tooLong" }
+    },
+    {
+      "id": "crlf-inner",
+      "group": "line breaks (inner kept exactly; edges trimmed)",
+      "input": [{ "text": "line one" }, "U+000D", "U+000A", { "text": "line two" }],
+      "expect": {
+        "kind": "text",
+        "value": [{ "text": "line one" }, "U+000D", "U+000A", { "text": "line two" }]
+      }
+    },
+    {
+      "id": "mixed-breaks-inner",
+      "group": "line breaks (inner kept exactly; edges trimmed)",
+      "input": [
+        { "text": "a" },
+        "U+000A",
+        "U+000A",
+        { "text": "b" },
+        "U+000D",
+        { "text": "c" },
+        "U+2028",
+        { "text": "d" },
+        "U+2029",
+        { "text": "e" }
+      ],
+      "expect": {
+        "kind": "text",
+        "value": [
+          { "text": "a" },
+          "U+000A",
+          "U+000A",
+          { "text": "b" },
+          "U+000D",
+          { "text": "c" },
+          "U+2028",
+          { "text": "d" },
+          "U+2029",
+          { "text": "e" }
+        ]
+      }
+    },
+    {
+      "id": "crlf-edges",
+      "group": "line breaks (inner kept exactly; edges trimmed)",
+      "input": ["U+000D", "U+000A", { "text": "middle" }, "U+000D", "U+000A", "U+000D", "U+000A"],
+      "expect": { "kind": "text", "value": [{ "text": "middle" }] }
+    },
+    {
+      "id": "nul-only",
+      "group": "rejected characters (checked before trim)",
+      "input": ["U+0000"],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "nul-inner",
+      "group": "rejected characters (checked before trim)",
+      "input": [{ "text": "a" }, "U+0000", { "text": "b" }],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "nul-in-trimmed-edge",
+      "group": "rejected characters (checked before trim)",
+      "input": [{ "text": "  " }, "U+0000", { "text": "  " }],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "lone-high-surrogate",
+      "group": "rejected characters (checked before trim)",
+      "input": ["U+D800"],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "lone-low-surrogate",
+      "group": "rejected characters (checked before trim)",
+      "input": [{ "text": "x" }, "U+DC00"],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "two-high-surrogates",
+      "group": "rejected characters (checked before trim)",
+      "input": ["U+DBFF", "U+DBFF"],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "reversed-surrogate-pair",
+      "group": "rejected characters (checked before trim)",
+      "input": ["U+DE00", "U+D83D"],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "surrogate-with-whitespace-only",
+      "group": "rejected characters (checked before trim)",
+      "input": [{ "text": " " }, "U+D800", { "text": " " }],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "too-long-and-nul",
+      "group": "rejected characters (checked before trim)",
+      "input": [{ "repeat": 2001, "of": [{ "text": "a" }] }, "U+0000"],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "valid-surrogate-pair",
+      "group": "rejected characters (checked before trim)",
+      "input": ["U+D83D", "U+DE00"],
+      "expect": { "kind": "text", "value": ["U+1F600"] }
+    }
+  ]
+}

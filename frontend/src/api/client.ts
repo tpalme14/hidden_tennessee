@@ -100,6 +100,20 @@ export async function deleteJson<T>(path: string): Promise<JsonResponse<T>> {
   return requestJson<T>(path, { method: "DELETE", headers: { Accept: "application/json" } });
 }
 
+/**
+ * JSON PATCH (M04-T03): sends `payload` as the JSON body, with the same
+ * request defaults and error mapping as every other helper, and returns the
+ * status as well as the body (as `putJson` does). The browser adds the
+ * `Origin` header the backend's CSRF check needs.
+ */
+export async function patchJson<T>(path: string, payload: unknown): Promise<JsonResponse<T>> {
+  return requestJson<T>(path, {
+    method: "PATCH",
+    headers: { Accept: "application/json", "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+}
+
 function networkError(): ApiError {
   return new ApiError(
     0,

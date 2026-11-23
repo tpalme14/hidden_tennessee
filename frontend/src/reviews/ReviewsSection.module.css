@@ -1,0 +1,75 @@
+.section {
+  margin-top: 1.5rem;
+}
+
+.summary {
+  font-weight: 600;
+}
+
+.stars {
+  letter-spacing: 0.05em;
+  margin-right: 0.35em;
+}
+
+.disclaimer {
+  font-size: 0.9rem;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item {
+  border-top: 1px solid #d0d7de;
+  padding: 0.75rem 0;
+}
+
+.meta {
+  font-size: 0.9rem;
+  margin: 0.25rem 0;
+}
+
+/* Review text: shown exactly as written — line breaks and spacing kept,
+   long unbroken text wrapped rather than overflowing. Direction is isolated
+   by the element's dir="auto" attribute.
+   overflow: hidden keeps every glyph's paint inside this box: valid text of
+   stacked combining marks can otherwise draw thousands of pixels outside the
+   review (M04-T04 Increment 2). The 0.25em of vertical padding (replacing the
+   former 0.25rem top margin) leaves headroom for ordinary accents above and
+   below the first and last lines. */
+.body {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  overflow: hidden;
+  margin: 0;
+  padding-block: 0.25em;
+}
+
+.panel {
+  margin: 1rem 0;
+}
+
+/* The polite announcement region stays in the layout but takes no space when empty. */
+.announcement:empty {
+  margin: 0;
+}
+
+.own {
+  border-left: 4px solid #1f6feb;
+  padding-left: 0.75rem;
+}
+
+.unsent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  max-width: 40rem;
+}
+
+.confirm {
+  border: 2px solid #b3261e;
+  padding: 0.5rem 0.75rem;
+  margin: 0.5rem 0;
+}

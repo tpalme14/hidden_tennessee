@@ -112,7 +112,8 @@ describe("AccountNav — retry", () => {
 
     pending.resolve(null);
     await waitFor(() => expect(screen.queryByRole("status")).not.toBeInTheDocument());
-    expect(screen.getByRole("link", { name: "Sign in" })).toHaveFocus();
+    // Focus moves in a passive effect that can run after the DOM change above.
+    await waitFor(() => expect(screen.getByRole("link", { name: "Sign in" })).toHaveFocus());
   });
 
   it("Retry that finds a session shows the signed-in UI with focus on Sign out", async () => {
@@ -166,7 +167,8 @@ describe("AccountNav — sign-out", () => {
 
     pending.resolve();
     const signIn = await screen.findByRole("link", { name: "Sign in" });
-    expect(signIn).toHaveFocus();
+    // Focus moves in a passive effect that can run after the link appears.
+    await waitFor(() => expect(signIn).toHaveFocus());
     expect(screen.queryByText(TEST_USER.email)).not.toBeInTheDocument();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     // Sign-out never re-reads the session to decide the outcome.
@@ -191,7 +193,8 @@ describe("AccountNav — sign-out", () => {
 
     mockedSignOut.mockResolvedValueOnce(undefined);
     await user.click(within(alert).getByRole("button", { name: "Try signing out again" }));
-    expect(await screen.findByRole("link", { name: "Sign in" })).toHaveFocus();
+    const signIn = await screen.findByRole("link", { name: "Sign in" });
+    await waitFor(() => expect(signIn).toHaveFocus());
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(mockedSignOut).toHaveBeenCalledTimes(2);
   });

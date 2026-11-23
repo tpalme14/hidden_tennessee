@@ -203,7 +203,7 @@ base.describe("partial failures and ownership checks (spy)", () => {
   base("teardown with nothing recorded sends nothing", async () => {
     const db = spy();
     const result = await createFixtureStore({ connect: db.connect }).teardownOwned(OWNER(), []);
-    expect(result).toEqual({ landmarksDeleted: 0, favoritesDeleted: 0 });
+    expect(result).toEqual({ landmarksDeleted: 0, favoritesDeleted: 0, reviewsDeleted: 0 });
     expect(db.connections()).toBe(0);
   });
 
@@ -294,11 +294,19 @@ base.describe("real landmarks_test", () => {
         await fixtures.retire();
         await expectServerView(request, fixtures.retired, "not_found");
       } finally {
-        expect(await fixtures.teardown()).toEqual({ landmarksDeleted: 3, favoritesDeleted: 0 });
+        expect(await fixtures.teardown()).toEqual({
+          landmarksDeleted: 3,
+          favoritesDeleted: 0,
+          reviewsDeleted: 0,
+        });
       }
       expect(await store.findLandmarks(ids)).toEqual([]);
       // Idempotent: nothing left to send.
-      expect(await fixtures.teardown()).toEqual({ landmarksDeleted: 0, favoritesDeleted: 0 });
+      expect(await fixtures.teardown()).toEqual({
+        landmarksDeleted: 0,
+        favoritesDeleted: 0,
+        reviewsDeleted: 0,
+      });
     },
   );
 
@@ -316,9 +324,55 @@ base.describe("real landmarks_test", () => {
         expect(put.status()).toBe(201);
         expect(await savedIds(request)).toEqual([fixtures.public.id]);
       } finally {
-        expect(await fixtures.teardown()).toEqual({ landmarksDeleted: 3, favoritesDeleted: 1 });
+        expect(await fixtures.teardown()).toEqual({
+          landmarksDeleted: 3,
+          favoritesDeleted: 1,
+          reviewsDeleted: 0,
+        });
       }
       expect(await savedIds(request)).toEqual([]);
+    },
+  );
+
+  base(
+    "teardown removes reviews written through the real API on this test's fixtures only (M04-T03)",
+    async ({ request }) => {
+      const store = createFixtureStore();
+      const mine = await store.createTestFixtures("aaaa05");
+      const other = await store.createTestFixtures("bbbb05");
+      try {
+        await expectServerView(request, mine.public, "full"); // before any API mutation
+        await expectServerView(request, other.public, "full");
+        await signedInUser(request);
+        for (const landmark of [mine.public, other.public]) {
+          const created = await request.post("/api/v1/reviews", {
+            headers: { Origin: ORIGIN },
+            data: { landmark_id: landmark.id, rating: 4, body: "fixture review" },
+          });
+          expect(created.status()).toBe(201);
+        }
+        expect(await mine.teardown()).toEqual({
+          landmarksDeleted: 3,
+          favoritesDeleted: 0,
+          reviewsDeleted: 1,
+        });
+        // The other test's fixture and its review are untouched.
+        const otherList = await request.get(`/api/v1/landmarks/${other.public.id}/reviews`);
+        expect(otherList.status()).toBe(200);
+        expect(
+          ((await otherList.json()) as { aggregate: { rating_count: number } }).aggregate
+            .rating_count,
+        ).toBe(1);
+        expect(await store.findLandmarks([other.public.id])).toHaveLength(1);
+      } finally {
+        await mine.teardown();
+        expect(await other.teardown()).toEqual({
+          landmarksDeleted: 3,
+          favoritesDeleted: 0,
+          reviewsDeleted: 1,
+        });
+      }
+      expect(await store.findLandmarks([mine.public.id, other.public.id])).toEqual([]);
     },
   );
 
@@ -367,6 +421,7 @@ base.describe("real landmarks_test", () => {
       const during = await store.reportAbandoned();
       expect(during.count).toBe(before.count);
       expect(during.runTags).not.toContain(currentRunTag());
+      expect(during.reviewCount).toBe(before.reviewCount);
     } finally {
       await fixtures.teardown();
     }

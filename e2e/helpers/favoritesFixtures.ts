@@ -29,9 +29,16 @@ import { getVerifiedTestDatabaseUrl } from "../../backend/tests/setup/test-db-gu
  *
  * WHAT IS WRITTEN HERE vs. THROUGH THE APP — this module inserts fixture
  * landmarks, changes their status, and tears them down. It never inserts or
- * updates favorites rows; favorites are created only through the real API/UI
- * (session cookie, trusted Origin, CSRF, throttling), and only after
+ * updates favorites or reviews rows; both are created only through the real
+ * API/UI (session cookie, trusted Origin, CSRF, throttling), and only after
  * `expectServerView` has shown the server reads the same database.
+ *
+ * REVIEWS (M04-T03 Increment 5) — reviews reference landmarks with ON DELETE
+ * RESTRICT, so teardown deletes the reviews on this test's VERIFIED fixture
+ * IDs (whoever wrote them — always synthetic test accounts) before the
+ * landmarks, in the same guarded transaction. Reviews on any other landmark
+ * are never touched. The abandoned-fixture report also counts reviews left on
+ * other runs' fixtures (reported, never deleted).
  *
  * GEOGRAPHY (R1) — fixtures sit near 0.5°N 160.5°W, far outside the default
  * Tennessee view, so unmocked discovery specs never fetch them. Names avoid
@@ -221,11 +228,15 @@ export interface AbandonedFixtureReport {
   count: number;
   runTags: string[];
   oldestCreatedAt: string | null;
+  /** Reviews on those other runs' fixture landmarks (M04-T03). Never deleted here. */
+  reviewCount: number;
 }
 
 export interface TeardownResult {
   landmarksDeleted: number;
   favoritesDeleted: number;
+  /** Reviews on this test's verified fixtures (M04-T03), deleted before the landmarks. */
+  reviewsDeleted: number;
 }
 
 export interface TestFixtures {
@@ -320,9 +331,11 @@ export function createFixtureStore(
     owner: FixtureOwner,
     owned: readonly FixtureLandmark[],
   ): Promise<TeardownResult> {
-    if (owned.length === 0) return { landmarksDeleted: 0, favoritesDeleted: 0 };
+    if (owned.length === 0) return { landmarksDeleted: 0, favoritesDeleted: 0, reviewsDeleted: 0 };
     return withGuardedTransaction(connect, "write", async (query) => {
       const ids = await verifyOwned(query, owner, owned);
+      // Only the verified fixture IDs: reviews on any other landmark are never touched.
+      const reviews = await query("DELETE FROM reviews WHERE landmark_id = ANY($1::uuid[])", [ids]);
       const favorites = await query("DELETE FROM favorites WHERE landmark_id = ANY($1::uuid[])", [
         ids,
       ]);
@@ -336,7 +349,11 @@ export function createFixtureStore(
           `Expected to delete ${ids.length} fixture landmarks, matched ${String(landmarks.rowCount)}. Rolled back.`,
         );
       }
-      return { landmarksDeleted: ids.length, favoritesDeleted: favorites.rowCount ?? 0 };
+      return {
+        landmarksDeleted: ids.length,
+        favoritesDeleted: favorites.rowCount ?? 0,
+        reviewsDeleted: reviews.rowCount ?? 0,
+      };
     });
   }
 
@@ -452,11 +469,17 @@ export function createFixtureStore(
         ...new Set(rows.map((r) => String(r.display_name).split(" ")[2] ?? "?")),
       ].sort();
       const oldest = rows[0]?.created_at;
+      const reviews = await query(
+        "SELECT count(*)::int AS n FROM reviews r JOIN landmarks l ON l.id = r.landmark_id " +
+          "WHERE l.source_code LIKE 'ZZ%' AND l.display_name LIKE $1 AND l.display_name NOT LIKE $2",
+        [`${NAME_PREFIX} %`, `${NAME_PREFIX} ${runTag} %`],
+      );
       return {
         count: rows.length,
         runTags,
         oldestCreatedAt:
           oldest instanceof Date ? oldest.toISOString() : oldest ? String(oldest) : null,
+        reviewCount: Number(reviews.rows[0]?.n ?? 0),
       };
     });
   }
@@ -510,7 +533,8 @@ export const test = base.extend<{ favoriteFixtures: TestFixtures }, { fixtureSto
         if (report.count > 0) {
           console.warn(
             `[fixtures] ${report.count} fixture landmark(s) from earlier runs remain ` +
-              `(runs: ${report.runTags.join(", ")}; oldest ${report.oldestCreatedAt}). Not deleted.`,
+              `(runs: ${report.runTags.join(", ")}; oldest ${report.oldestCreatedAt}; ` +
+              `${report.reviewCount} review(s) on them). Not deleted.`,
           );
         }
         await use(store);

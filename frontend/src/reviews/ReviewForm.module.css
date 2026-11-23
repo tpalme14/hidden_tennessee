@@ -1,0 +1,43 @@
+.form {
+  margin: 1rem 0;
+}
+
+.fieldset {
+  border: 1px solid #d0d7de;
+  margin: 0 0 1rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-right: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  max-width: 40rem;
+}
+
+.counter {
+  font-size: 0.9rem;
+}
+
+.counterOver {
+  font-size: 0.9rem;
+  color: #b3261e;
+  font-weight: 600;
+}
+
+.error {
+  color: #b3261e;
+}
+
+.summary {
+  border: 2px solid #b3261e;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+}

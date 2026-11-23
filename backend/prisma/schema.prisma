@@ -90,6 +90,8 @@ model Landmark {
   updatedAt         DateTime                              @updatedAt @map("updated_at")
   // Back-relation only (no column): required by Prisma for `Favorite.landmark`.
   favorites         Favorite[]
+  // Back-relation only (no column): required by Prisma for `Review.landmark`.
+  reviews           Review[]
 
   @@map("landmarks")
 }
@@ -134,6 +136,8 @@ model User {
   accounts      Account[]
   // Back-relation only (no column): required by Prisma for `Favorite.user`.
   favorites     Favorite[]
+  // Back-relation only (no column): required by Prisma for `Review.user`.
+  reviews       Review[]
 
   @@map("users")
 }
@@ -220,4 +224,42 @@ model Favorite {
   @@unique([userId, landmarkId])
   @@index([userId, createdAt(sort: Desc), id])
   @@map("favorites")
+}
+
+// Reviews, per M04-T01 / ADR-013 decisions 1–3 (implemented in M04-T02);
+// specs/RATINGS_REVIEWS_SPEC.md v1.1 §3.
+//
+// One review per (user, landmark): the composite unique constraint is also
+// the conflict target that makes create a single atomic statement. Both
+// foreign keys are RESTRICT (ADR-011 decision 7): no user deletion can
+// silently remove reviews, and landmark retirement (is_active = false — the
+// import never deletes landmarks) keeps them. `landmark_id` references the
+// internal landmark UUID, never `source_code`. No publication-status,
+// soft-delete, or stored aggregate columns (spec §10.1.4–5).
+//
+// `updated_at` carries a DATABASE default as well as `@updatedAt` (ADR-013
+// decision 3): repositories write with raw SQL, which bypasses Prisma's
+// client-side `@updatedAt`, so inserts get the default and every UPDATE must
+// set `updated_at = now()` explicitly. It is not guaranteed to increase
+// strictly.
+//
+// Two CHECK constraints Prisma cannot express are hand-written into the
+// migration: rating 1–5, and body NULL or 1–2,000 characters (char_length
+// counts Unicode code points in a UTF-8 database). The
+// (landmark_id, created_at DESC, id DESC) index serves the public list's
+// order (spec §6) and locates a landmark's rows for the aggregate.
+model Review {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  user       User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  landmarkId String   @map("landmark_id") @db.Uuid
+  landmark   Landmark @relation(fields: [landmarkId], references: [id], onDelete: Restrict)
+  rating     Int
+  body       String?
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([userId, landmarkId])
+  @@index([landmarkId, createdAt(sort: Desc), id(sort: Desc)])
+  @@map("reviews")
 }

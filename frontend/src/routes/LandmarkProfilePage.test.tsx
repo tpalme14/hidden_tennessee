@@ -16,6 +16,14 @@ vi.mock("../map/LandmarkLocationMap", () => ({
     <div data-testid="location-map" data-lat={props.latitude} data-lng={props.longitude} />
   ),
 }));
+// The reviews section (M04-T03) has its own tests (src/reviews/ and
+// LandmarkProfilePage.reviews.test.tsx). Stubbed here so these profile tests
+// never make a reviews request and need no session context.
+vi.mock("../reviews/ReviewsSection", () => ({
+  ReviewsSection: (props: { landmarkId: string }) => (
+    <div data-testid="reviews-section" data-landmark-id={props.landmarkId} />
+  ),
+}));
 
 const { LandmarkProfilePage } = await import("./LandmarkProfilePage");
 

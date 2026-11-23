@@ -62,6 +62,20 @@ export function rateLimitedEnvelope(): ErrorEnvelope {
   };
 }
 
+/**
+ * A second review by the same user for the same landmark (M04-T02;
+ * specs/RATINGS_REVIEWS_SPEC.md v1.1 §§4.1, 6; ADR-013 decision 7, A4). The
+ * plain envelope only — never the existing review's ID.
+ */
+export function reviewAlreadyExistsEnvelope(): ErrorEnvelope {
+  return {
+    error: {
+      code: "REVIEW_ALREADY_EXISTS",
+      message: "You have already reviewed this landmark.",
+    },
+  };
+}
+
 /** Matches the existing unknown-route 404 shape in src/app.ts, byte-for-byte, so every "not found" response in the API is identical. */
 export function notFoundEnvelope(): ErrorEnvelope {
   return { error: { code: "NOT_FOUND", message: "Resource not found." } };

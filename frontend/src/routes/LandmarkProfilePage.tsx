@@ -5,6 +5,7 @@ import { FavoriteButton } from "../favorites/FavoriteButton";
 import { LoadingState } from "../components/LoadingState";
 import { categoryLabel } from "../map/categoryMarkerStyle";
 import { LandmarkLocationMap } from "../map/LandmarkLocationMap";
+import { ReviewsSection } from "../reviews/ReviewsSection";
 import { useLandmarkProfile } from "./useLandmarkProfile";
 
 /**
@@ -142,6 +143,10 @@ function FullProfileContent({
         Coordinates and labels shown here do not establish public access, legal entry, maintained
         trails, or safety.
       </p>
+      {/* Reviews (M04-T03): full profiles only — the minimal (redacted),
+          unavailable, loading, and error states never mount this, so they
+          never request reviews. Keyed by landmark so nothing carries over. */}
+      <ReviewsSection key={id} landmarkId={id} />
     </>
   );
 }

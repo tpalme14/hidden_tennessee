@@ -171,3 +171,100 @@ journeys in `e2e/favorites.spec.ts` run against synthetic landmarks created by t
 - **Do not run backend integration tests and Playwright at the same time.** The integration
   suite resets `landmarks_test` (it truncates every application table), which would remove
   fixtures and accounts from under a running browser test. Run them one after the other.
+
+## Reviews API
+
+Landmark ratings and reviews (backend: M04-T02; the interface is M04-T03 — see "Reviews
+interface" below). Specified by `specs/RATINGS_REVIEWS_SPEC.md` v1.1 and ADR-013; the full contract
+and its verification are in the M04-T02 record of `docs/IMPLEMENTATION_PLAN.md`. The `reviews`
+table comes from migration `20261121000000_reviews`.
+
+| Method and path                             | Access      | Success                                                                                 |
+| ------------------------------------------- | ----------- | --------------------------------------------------------------------------------------- |
+| `GET /api/v1/landmarks/:landmarkId/reviews` | Public      | `200` `{ reviews, aggregate: { average_rating, rating_count }, page, limit, has_more }` |
+| `POST /api/v1/reviews`                      | Signed in   | `201` the new review                                                                    |
+| `GET /api/v1/reviews?landmark_id=…`         | Signed in   | `200` `{ "review": … }`, or `{ "review": null }` if you have none                       |
+| `PATCH /api/v1/reviews/:reviewId`           | Author only | `200` the updated review                                                                |
+| `DELETE /api/v1/reviews/:reviewId`          | Author only | `200` `{ "success": true }`                                                             |
+
+- **Review object:** `id`, `rating` (whole number 1–5), `body` (text or `null`), `created_at`,
+  `updated_at` (ISO 8601, UTC, with milliseconds), and `author_label`, always
+  `"Community Member"`. No user ID, email, or landmark data is ever returned.
+- **Creating:** the body is `{ landmark_id, rating, body? }`. `body` is trimmed; empty text is
+  stored as `null`; it may hold at most 2,000 characters, counted as Unicode code points; text
+  containing NUL or broken surrogate pairs is rejected; nothing is normalized. One review per
+  user per landmark — a second create is `409 REVIEW_ALREADY_EXISTS` (edit the existing review
+  instead).
+- **Editing:** send `rating`, `body`, or both. Leaving `body` out keeps the text; `body: null` (or
+  whitespace) clears it.
+- **Visibility:** only active landmarks classified `PUBLIC` have public reviews. For a missing,
+  retired, `SENSITIVE`, or `UNREVIEWED` landmark, the list, create, lookup, and edit all answer
+  the same `404 NOT_FOUND`; an author can still delete their own review by its ID. No landmark is
+  classified `PUBLIC` yet, so the API is exercised with synthetic test landmarks only.
+- **Public list:** identical for every caller (it never reads the session), newest first, `page`
+  default 1 and `limit` default 20 (maximum 100). The aggregate covers all of the landmark's
+  reviews; `average_rating` is the unrounded mean, or `null` when there are none.
+- **Signed-in routes:** the session comes only from the cookie, and every query is scoped to that
+  user; another user's review answers `404`, exactly like a missing one. Writes need a trusted
+  `Origin` (otherwise `403 INVALID_ORIGIN`). Responses, including errors, carry
+  `Cache-Control: private, no-store`.
+- **Errors:** `400 INVALID_REQUEST` (body or ID) / `400 INVALID_QUERY` (query string),
+  `401 UNAUTHENTICATED`, `403 INVALID_ORIGIN`, `404 NOT_FOUND`, `409 REVIEW_ALREADY_EXISTS`,
+  `429 RATE_LIMITED` with `Retry-After`, `503 SERVICE_UNAVAILABLE`, `500 INTERNAL_ERROR`. A
+  malformed or oversized (over 100 kB) JSON body still gets Express's default HTML response, and
+  an unexpected error on the public list uses Express's default error page — which shows error
+  details unless `NODE_ENV=production` (an existing app-wide follow-up).
+- **Throttling:** each signed-in user may make 20 changes (creates, edits, and deletes combined)
+  and 120 lookups per minute. Counters are kept per server process. The public list is not
+  throttled.
+
+### Review limits and protection
+
+Verified in M04-T04 (record in `docs/IMPLEMENTATION_PLAN.md`):
+
+- **Request size:** JSON bodies are limited to 100 kB (102,400 bytes; gzip is measured after
+  decompression). Larger bodies get `413` before any review processing.
+- **Rate-limit windows:** a user's 60-second window opens with their first allowed request and is
+  fixed; `Retry-After` gives the whole seconds left (at least 1). Every admitted request counts,
+  including invalid ones (`400`, `404`, `409`); refused requests (`429`) don't count and change
+  nothing. Changes and lookups have separate counters. The limiter tracks at most 10,000 users
+  at once: when full, a user it isn't already tracking gets `429` with `Retry-After: 60`, and one
+  log line is written each time it fills.
+- **Not covered:** there is no per-IP limit, so one person with several accounts gets each
+  account's allowance; counters reset on restart and aren't shared between server processes.
+- **Moderation:** valid reviews are published immediately. There is no approval queue, report
+  button, content filter, or in-app removal; authors can delete their own reviews.
+- **Text:** zero-width-only text (for example U+200B) is valid and can look empty. Text made of
+  many stacked combining marks is clipped to its own box on the page; the full text is kept and
+  shown when editing.
+- **Concurrency:** a duplicate create racing another from the same user gets `409`, and an edit
+  racing a delete of the same review gets `200` or `404`; aggregates always match the stored
+  reviews.
+
+`backend/tests/reviews-stress.integration.test.ts` (about 10 s) runs as part of the backend
+integration suite and can also be run on its own by path. It creates and removes only its own
+rows, and checks that every table's row count afterwards matches its count before the run.
+
+## Reviews interface
+
+The full profile of an active `PUBLIC` landmark (`/landmarks/:id`) has a **Reviews** section
+(M04-T03): the average rating to one decimal place and the review count (or "No reviews yet"), a
+reminder that reviews do not establish public access or safety, the reviews newest first with
+**Show more reviews**, and — for a signed-in visitor — a form to write a review, or their own
+review with **Edit** and **Delete** (deleting asks for confirmation first). Anonymous visitors
+see a "Sign in to write a review" link that returns them to the page.
+
+- Other people's reviews are attributed to "Community Member"; your own review is shown as
+  "Your review". Review text is shown as plain text (HTML is never interpreted), and its
+  direction is isolated so right-to-left or control characters cannot reorder the page.
+- Nothing is shown as posted, saved, or deleted until the server confirms it. Drafts stay on the
+  page if a request fails or your session ends (they are not stored anywhere else); signing in
+  as a different account clears them.
+- Forms have an error summary with links to the fields, success messages are announced, and
+  focus moves to the relevant heading or control after each action. Everything works from the
+  keyboard.
+
+End-to-end coverage is in `e2e/reviews.spec.ts`, using the guarded fixtures described under
+"Favorites UI and E2E Fixtures": teardown also deletes the reviews on the test's own fixture
+landmarks (and only those), and the leftover report counts reviews on abandoned fixtures.
+Test-created accounts (`e2e-rev-…@example.com`) are kept, like the favorites accounts.
