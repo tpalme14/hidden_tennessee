@@ -92,6 +92,8 @@ model Landmark {
   favorites         Favorite[]
   // Back-relation only (no column): required by Prisma for `Review.landmark`.
   reviews           Review[]
+  // Back-relation only (no column): required by Prisma for `TripStop.landmark`.
+  tripStops         TripStop[]
 
   @@map("landmarks")
 }
@@ -138,6 +140,8 @@ model User {
   favorites     Favorite[]
   // Back-relation only (no column): required by Prisma for `Review.user`.
   reviews       Review[]
+  // Back-relation only (no column): required by Prisma for `Trip.user`.
+  trips         Trip[]
 
   @@map("users")
 }
@@ -262,4 +266,79 @@ model Review {
   @@unique([userId, landmarkId])
   @@index([landmarkId, createdAt(sort: Desc), id(sort: Desc)])
   @@map("reviews")
+}
+
+// Trips, per M05-T01 / ADR-014 decision 14 (implemented in M05-T02);
+// specs/TRIP_PLANNING_SPEC.md v1.1 §§3, 6.4, 10.3.
+//
+// A trip belongs to one user: RESTRICT (ADR-011 decision 7) — no user deletion
+// can silently remove trips. `version` is the optimistic-concurrency counter
+// (spec §3.1): starts at 0 and is incremented by every successful trip or stop
+// mutation; the database never changes it by itself. `updated_at` carries a
+// DATABASE default as well as `@updatedAt` (ADR-013 decision 3 precedent): the
+// repository writes with raw SQL, so every UPDATE must set `updated_at = now()`
+// explicitly. `share_token_hash` is NULL for a private trip, otherwise the
+// lowercase hexadecimal SHA-256 digest of the share token (never the token
+// itself); it is unique when present, and any number of trips may be private.
+// The (user_id, updated_at DESC, id DESC) index serves the owner's trip list
+// (spec §10.1).
+//
+// Hand-written in the migration (not expressible in Prisma's schema language):
+//   - trips_name_length_check: char_length(name) BETWEEN 1 AND 100 — a backstop
+//     only; trimming and the control/visible-character rules (spec §5.1.1) are
+//     enforced by the service, as for review text;
+//   - trips_version_check: version >= 0;
+//   - trips_share_token_hash_format_check: NULL or exactly 64 lowercase hex
+//     characters.
+model Trip {
+  id             String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId         String     @map("user_id") @db.Uuid
+  user           User       @relation(fields: [userId], references: [id], onDelete: Restrict)
+  name           String
+  version        Int        @default(0)
+  shareTokenHash String?    @unique @map("share_token_hash")
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @default(now()) @updatedAt @map("updated_at")
+  // Back-relation only (no column): required by Prisma for `TripStop.trip`.
+  stops          TripStop[]
+
+  @@index([userId, updatedAt(sort: Desc), id(sort: Desc)])
+  @@map("trips")
+}
+
+// Trip stops, per M05-T01 / ADR-014 decision 14; spec v1.1 §§3.2, 6.4.
+//
+// Deleting a trip deletes its stops (CASCADE); a landmark that is a stop
+// cannot be deleted (RESTRICT — the import never deletes landmarks, and
+// retirement keeps stops). `landmark_id` is the internal landmark UUID, never
+// `source_code`. Stops are never updated except `position`, so there is no
+// `updated_at`.
+//
+// Integrity rules:
+//   - UNIQUE (trip_id, landmark_id): an ORDINARY constraint, because adding a
+//     stop uses it as the `ON CONFLICT` arbiter and PostgreSQL refuses a
+//     deferrable constraint as an arbiter.
+//   - UNIQUE (trip_id, position): hand-written in the migration as
+//     DEFERRABLE INITIALLY IMMEDIATE (see the migration for why). Prisma's
+//     schema language cannot express deferrability; the `@@unique` below
+//     declares the key for the client only, and Prisma-generated migration
+//     output that would drop or recreate this constraint must never be
+//     applied. Every future migration must preserve it.
+//   - trip_stops_position_check: position BETWEEN 0 AND 24 (hand-written).
+//     Together with UNIQUE (trip_id, position) this limits a trip to at most
+//     25 stops, but it does NOT make positions contiguous (0 … n-1): a trip
+//     with stops at positions 0 and 7 satisfies every constraint. Contiguity
+//     is the service's responsibility (spec §3.2, §6.4; M05-T02 decision D2).
+model TripStop {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tripId     String   @map("trip_id") @db.Uuid
+  trip       Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  landmarkId String   @map("landmark_id") @db.Uuid
+  landmark   Landmark @relation(fields: [landmarkId], references: [id], onDelete: Restrict)
+  position   Int
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@unique([tripId, landmarkId])
+  @@unique([tripId, position])
+  @@map("trip_stops")
 }

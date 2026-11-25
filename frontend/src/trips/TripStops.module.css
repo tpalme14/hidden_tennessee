@@ -1,0 +1,110 @@
+/* Trip detail stop list and distances (M05-T04 Increment 2). Focus styles come
+   from the global :focus-visible rule; colours match the favorites page. */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.heading {
+  margin: 0;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.stop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #ddd;
+  min-width: 0;
+}
+
+.number {
+  flex: 0 0 auto;
+  font-weight: 600;
+}
+
+.details {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  flex: 1 1 12rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.category {
+  color: #444;
+}
+
+.leg {
+  flex-basis: 100%;
+  color: #444;
+  font-size: 0.95em;
+}
+
+.unavailable {
+  color: #444;
+  font-style: italic;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.button {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #fff;
+  color: #111;
+  cursor: pointer;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  color: #666;
+  border-color: #999;
+}
+
+.button[aria-disabled="true"] {
+  cursor: progress;
+  color: #444;
+}
+
+.empty p {
+  margin: 0 0 0.5rem;
+}
+
+.summary {
+  padding: 0.5rem 0;
+}
+
+.total,
+.disclaimer {
+  margin: 0 0 0.25rem;
+  overflow-wrap: anywhere;
+}
+
+.disclaimer {
+  color: #444;
+  font-size: 0.95em;
+}

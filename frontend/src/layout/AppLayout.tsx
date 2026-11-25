@@ -11,7 +11,9 @@ import styles from "./AppLayout.module.css";
  * account area (`AccountNav`), which needs `AuthProvider` above it. Since
  * M03-T06 Increment 5 the primary navigation adds "My Favorites" for a
  * VERIFIED signed-in user only (K6) — never while the session is loading,
- * unavailable, or anonymous.
+ * unavailable, or anonymous. M05-T06 Increment 2 adds "My Trips" after it
+ * under the same rule; it is current on `/trips` only (`end`), not on a trip
+ * page.
  */
 export function AppLayout() {
   const { session } = useAuth();
@@ -31,12 +33,21 @@ export function AppLayout() {
             Discover
           </NavLink>
           {session.status === "authenticated" ? (
-            <NavLink
-              to="/favorites"
-              className={({ isActive }) => (isActive ? styles.navLinkActive : styles.navLink)}
-            >
-              My Favorites
-            </NavLink>
+            <>
+              <NavLink
+                to="/favorites"
+                className={({ isActive }) => (isActive ? styles.navLinkActive : styles.navLink)}
+              >
+                My Favorites
+              </NavLink>
+              <NavLink
+                to="/trips"
+                end
+                className={({ isActive }) => (isActive ? styles.navLinkActive : styles.navLink)}
+              >
+                My Trips
+              </NavLink>
+            </>
           ) : null}
         </nav>
         <AccountNav />

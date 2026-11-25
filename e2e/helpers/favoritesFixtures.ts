@@ -95,7 +95,15 @@ export function testTagFor(testInfo: Pick<TestInfo, "testId" | "retry">): string
     .slice(0, 6);
 }
 
-export type FixtureRole = "public" | "hidden" | "retired";
+export type FixtureRole = "public" | "hidden" | "retired" | StopRole;
+
+/**
+ * Extra PUBLIC landmarks for trip journeys (M05-T04 Increment 6), created only
+ * by `createStopFixtures`. Distinct coordinates inside the fixture region,
+ * except stop4, which deliberately shares stop3's point (coincident markers).
+ */
+export type StopRole = "stop1" | "stop2" | "stop3" | "stop4";
+export const STOP_ROLES: readonly StopRole[] = ["stop1", "stop2", "stop3", "stop4"];
 
 const ROLE_SPEC: Record<
   FixtureRole,
@@ -121,6 +129,34 @@ const ROLE_SPEC: Record<
     category: "BALD",
     latitude: 0.54,
     longitude: -160.46,
+  },
+  stop1: {
+    label: "Stop1",
+    sourceFile: "TNFALLS",
+    category: "FALLS",
+    latitude: 0.45,
+    longitude: -160.55,
+  },
+  stop2: {
+    label: "Stop2",
+    sourceFile: "TNARCHES",
+    category: "ARCH",
+    latitude: 0.47,
+    longitude: -160.53,
+  },
+  stop3: {
+    label: "Stop3",
+    sourceFile: "TNFALLS",
+    category: "FALLS",
+    latitude: 0.49,
+    longitude: -160.51,
+  },
+  stop4: {
+    label: "Stop4",
+    sourceFile: "TNFALLS",
+    category: "FALLS",
+    latitude: 0.49,
+    longitude: -160.51,
   },
 };
 
@@ -270,6 +306,14 @@ export interface FixtureStore {
   >;
   /** Guarded READ ONLY: fixture rows left by OTHER runs (reported, never deleted). */
   reportAbandoned(): Promise<AbandonedFixtureReport>;
+  /** Inserts four extra active PUBLIC fixtures (`stop1`…`stop4`) in ONE guarded transaction. */
+  createStopFixtures(testTag: string): Promise<FixtureLandmark[]>;
+  /** Guarded: deletes this test's trip data (see the implementation) before any landmark teardown. */
+  deleteTripData(
+    owner: FixtureOwner,
+    owned: readonly FixtureLandmark[],
+    accountEmails: readonly string[],
+  ): Promise<{ tripsDeleted: number; stopsDeleted: number }>;
 }
 
 /**
@@ -379,6 +423,89 @@ export function createFixtureStore(
     });
   }
 
+  /** Inserts one active PUBLIC fixture for `role` (inside a guarded write transaction). */
+  async function insertFixture(
+    query: Query,
+    testTag: string,
+    role: FixtureRole,
+  ): Promise<FixtureLandmark> {
+    const spec = ROLE_SPEC[role];
+    const displayName = fixtureName(runTag, testTag, role);
+    for (let attempt = 0; attempt < MAX_CODE_ATTEMPTS; attempt += 1) {
+      const sourceCode = randomSourceCode();
+      const result = await query(
+        "INSERT INTO landmarks (source_code, source_file, category, display_name, latitude, " +
+          "longitude, is_active, sensitivity_status, updated_at) VALUES ($1, " +
+          `$2::"LandmarkSourceFile", $3::"LandmarkCategory", $4, $5, $6, true, ` +
+          `'PUBLIC'::"SensitivityReviewStatus", now()) ` +
+          "ON CONFLICT (source_code) DO NOTHING RETURNING id::text AS id",
+        [sourceCode, spec.sourceFile, spec.category, displayName, spec.latitude, spec.longitude],
+      );
+      const id = result.rows[0]?.id;
+      if (typeof id === "string") return { role, id, sourceCode, displayName };
+    }
+    throw new FixtureGuardError(
+      `No free ZZ source code after ${MAX_CODE_ATTEMPTS} attempts. Rolled back.`,
+    );
+  }
+
+  async function createStopFixtures(testTag: string): Promise<FixtureLandmark[]> {
+    if (!TAG_SYNTAX.test(testTag)) {
+      throw new FixtureGuardError("A test tag must be 6 characters [a-z0-9].");
+    }
+    return withGuardedTransaction(connect, "write", async (query) => {
+      const rows: FixtureLandmark[] = [];
+      for (const role of STOP_ROLES) rows.push(await insertFixture(query, testTag, role));
+      return rows;
+    });
+  }
+
+  /**
+   * Trip data created by this test (M05-T04 Increment 6), removed BEFORE its
+   * landmarks (trip stops reference landmarks with RESTRICT): every trip of the
+   * given test accounts — which must be this run's `e2e-trip-<run>-…` addresses —
+   * and then any remaining stop on this test's verified fixtures that belongs to
+   * such an account. Nothing else is touched; a stop on these fixtures owned by
+   * any other account is left in place (the landmark teardown then fails loudly).
+   */
+  async function deleteTripData(
+    owner: FixtureOwner,
+    owned: readonly FixtureLandmark[],
+    accountEmails: readonly string[],
+  ): Promise<{ tripsDeleted: number; stopsDeleted: number }> {
+    const accountPattern = `e2e-trip-${runTag}-%@example.com`;
+    const accountSyntax = new RegExp(`^e2e-trip-${runTag}-[a-z0-9-]+@example[.]com$`);
+    for (const email of accountEmails) {
+      if (!accountSyntax.test(email)) {
+        throw new FixtureOwnershipError(
+          "A recorded account is outside this run's e2e-trip namespace.",
+        );
+      }
+    }
+    if (owned.length === 0 && accountEmails.length === 0)
+      return { tripsDeleted: 0, stopsDeleted: 0 };
+    return withGuardedTransaction(connect, "write", async (query) => {
+      const ids = owned.length === 0 ? [] : await verifyOwned(query, owner, owned);
+      const trips =
+        accountEmails.length === 0
+          ? { rowCount: 0 }
+          : await query(
+              "DELETE FROM trips t USING users u WHERE u.id = t.user_id AND u.email = ANY($1::text[]) " +
+                "AND u.email LIKE $2",
+              [[...accountEmails], accountPattern],
+            );
+      const stops =
+        ids.length === 0
+          ? { rowCount: 0 }
+          : await query(
+              "DELETE FROM trip_stops s USING trips t, users u WHERE s.landmark_id = ANY($1::uuid[]) " +
+                "AND t.id = s.trip_id AND u.id = t.user_id AND u.email LIKE $2",
+              [ids, accountPattern],
+            );
+      return { tripsDeleted: trips.rowCount ?? 0, stopsDeleted: stops.rowCount ?? 0 };
+    });
+  }
+
   async function createTestFixtures(testTag: string): Promise<TestFixtures> {
     if (!TAG_SYNTAX.test(testTag)) {
       throw new FixtureGuardError("A test tag must be 6 characters [a-z0-9].");
@@ -388,35 +515,7 @@ export function createFixtureStore(
     const created = await withGuardedTransaction(connect, "write", async (query) => {
       const rows: FixtureLandmark[] = [];
       for (const role of ["public", "hidden", "retired"] as const) {
-        const spec = ROLE_SPEC[role];
-        const displayName = fixtureName(runTag, testTag, role);
-        let inserted: FixtureLandmark | null = null;
-        for (let attempt = 0; attempt < MAX_CODE_ATTEMPTS && inserted === null; attempt += 1) {
-          const sourceCode = randomSourceCode();
-          const result = await query(
-            "INSERT INTO landmarks (source_code, source_file, category, display_name, latitude, " +
-              "longitude, is_active, sensitivity_status, updated_at) VALUES ($1, " +
-              `$2::"LandmarkSourceFile", $3::"LandmarkCategory", $4, $5, $6, true, ` +
-              `'PUBLIC'::"SensitivityReviewStatus", now()) ` +
-              "ON CONFLICT (source_code) DO NOTHING RETURNING id::text AS id",
-            [
-              sourceCode,
-              spec.sourceFile,
-              spec.category,
-              displayName,
-              spec.latitude,
-              spec.longitude,
-            ],
-          );
-          const id = result.rows[0]?.id;
-          if (typeof id === "string") inserted = { role, id, sourceCode, displayName };
-        }
-        if (inserted === null) {
-          throw new FixtureGuardError(
-            `No free ZZ source code after ${MAX_CODE_ATTEMPTS} attempts. Rolled back.`,
-          );
-        }
-        rows.push(inserted);
+        rows.push(await insertFixture(query, testTag, role));
       }
       return rows;
     });
@@ -484,7 +583,15 @@ export function createFixtureStore(
     });
   }
 
-  return { runTag, createTestFixtures, teardownOwned, findLandmarks, reportAbandoned };
+  return {
+    runTag,
+    createTestFixtures,
+    createStopFixtures,
+    deleteTripData,
+    teardownOwned,
+    findLandmarks,
+    reportAbandoned,
+  };
 }
 
 // ---------------------------------------------------------------------------

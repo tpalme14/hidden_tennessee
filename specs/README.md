@@ -12,7 +12,7 @@ work is performed; `docs/DECISIONS.md` records *why* architectural choices were 
 | 2 | Landmark Discovery, Search, Filtering, and Profiles | `LANDMARK_DISCOVERY_SPEC.md` | 1.0 | **Approved** (2026-10-29). §9.4 (retired-landmark profile page) resolved: a generic "Landmark unavailable" page, no location metadata exposed. Sensitive-location classification criteria and initial dataset classification remain unresolved and release-blocking (§9.5). | ADR-001–004, ADR-009 |
 | 3 | Authentication and Favorites | `AUTHENTICATION_FAVORITES_SPEC.md` | 0.3 | **Approved** (2026-10-29). Authentication implemented (M03-T02, M03-T03); favorites backend implemented and verified (M03-T05, Complete 2026-11-20); favorites UI implemented and verified (M03-T06, Complete 2026-11-20; committed as `c34d161` and verified by GitHub Actions run #24). Milestone 03 formally closed 2026-11-20. Verification disposition in §11.1 (non-normative, added 2026-11-20). Sensitive-location classification criteria and initial dataset classification remain unresolved and release-blocking (§10.3). | ADR-001–003, ADR-006–009 |
 | 4 | Landmark Ratings and Reviews | `RATINGS_REVIEWS_SPEC.md` | 1.1 | **Approved** (v1.1, 2026-11-21; amends v1.0 of 2026-10-29, whose replaced text and amendment history are in §12). v1.1 aligns the review routes and error codes with ADR-012, adds the authenticated own-review lookup, and defines Unicode code-point body validation (M04-T01; ADR-013). Sensitive-location classification criteria and initial dataset classification remain unresolved and release-blocking (§10.2.3). | ADR-001–003, ADR-005, ADR-006, ADR-008, ADR-009, ADR-011–013 |
-| 5 | Trip Planning and Management | `TRIP_PLANNING_SPEC.md` | 1.0 | **Approved** (2026-10-29), including public read-only trip sharing (see `docs/PROJECT_PLAN.md` FR-12). Sensitive-location classification criteria and initial dataset classification remain unresolved and release-blocking (§10.5). | ADR-002, ADR-003, ADR-006, ADR-007, ADR-009 |
+| 5 | Trip Planning and Management | `TRIP_PLANNING_SPEC.md` | 1.1 | **Approved** (v1.1, 2026-11-23; amends v1.0 of 2026-10-29, whose replaced text and amendment history are in §11), including public read-only trip sharing (see `docs/PROJECT_PLAN.md` FR-12). v1.1 aligns the trip API with ADR-011/ADR-012 conventions and defines the trip-name Unicode rule, transactions and the deferrable position constraint, read-time redaction in owner and shared views, straight-line distances, the map, and a production sharing release gate (M05-T01; ADR-014). Sensitive-location classification criteria and initial dataset classification remain unresolved and release-blocking (§10.5); production sharing is also gated on the share-token access-log review (§10.6, v1.1). | ADR-002, ADR-003, ADR-006, ADR-007, ADR-009–014 |
 | 6 | Offline Access and Progressive Web App | `OFFLINE_PWA_SPEC.md` | 1.0 | **Approved** (2026-10-29) for FR-13 (installable PWA; explicit offline saves). FR-14 (offline map downloads) remains conditional on M00-T06 feasibility, by design. Sensitive-location classification criteria and initial dataset classification remain unresolved and release-blocking (§9.8). | ADR-004, ADR-007, ADR-008, ADR-009 |
 | 7 | Deployment, Testing, and Release Readiness | `DEPLOYMENT_TESTING_RELEASE_SPEC.md` | 1.0 | **Approved** (individual task implementation still requires separate authorization) | ADR-001–009 |
 
@@ -25,7 +25,11 @@ work is performed; `docs/DECISIONS.md` records *why* architectural choices were 
   the redaction mechanics is not the same as approving a classification policy — no specific
   landmark has been classified sensitive or confirmed safe to disclose.
 - **Public trip sharing** (Spec 5): approved, and now reflected in `docs/PROJECT_PLAN.md`
-  FR-12 and §5.1.
+  FR-12 and §5.1. Spec 5 v1.1 (approved 2026-11-23) adds a production release
+  gate: sharing must not be enabled in production until the sensitive-location classification
+  policy and the review of share-token exposure in access logs are both resolved and the
+  developer approves; the `TRIP_SHARING_ENABLED` setting enforces the gate but does not satisfy
+  it.
 - **Production hosting cost** (Spec 7 §10.4.1): production requires a paid Render PostgreSQL
   plan; the specific tier and cost are not yet selected or approved.
 

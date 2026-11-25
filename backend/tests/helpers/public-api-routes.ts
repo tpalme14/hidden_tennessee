@@ -42,6 +42,17 @@ export const PUBLIC_ENDPOINT_ALLOWLIST: readonly AllowlistEntry[] = [
     kind: "application",
     endpointKind: "route",
     methods: ["get"],
+    path: "/api/v1/shared/trips/:shareToken",
+    reason:
+      "Public read-only view of a trip by possession of an unguessable share token; never reads " +
+      "the session, sets no cookie, no-store and noindex; generic 404 for malformed, unknown, or " +
+      "revoked tokens and whenever TRIP_SHARING_ENABLED is off; redaction enforced in the " +
+      "service (Specification 5 v1.1 §§4, 5.4, 7.1–7.2; ADR-012 decision 9; ADR-014 decision 10).",
+  },
+  {
+    kind: "application",
+    endpointKind: "route",
+    methods: ["get"],
     path: "/api/v1/categories",
     reason: "Public category list for discovery filters (Specification 2).",
   },

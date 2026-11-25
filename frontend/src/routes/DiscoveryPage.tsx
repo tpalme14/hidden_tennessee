@@ -2,6 +2,7 @@ import { EmptyState } from "../components/EmptyState";
 import { ErrorState } from "../components/ErrorState";
 import { LoadingState } from "../components/LoadingState";
 import { FavoritesAnnouncer } from "../favorites/FavoritesAnnouncer";
+import { TripsAnnouncer } from "../trips/TripsAnnouncer";
 import { LandmarkMap } from "../map/LandmarkMap";
 import { LandmarkMarkersRenderer } from "../map/LandmarkMarkersRenderer";
 import { MapViewportTracker } from "../map/MapViewportTracker";
@@ -153,7 +154,10 @@ export function DiscoveryPage() {
           rendered just outside that list's section, which must contain no live
           regions (M02-T08; M03-T06 resolution B2). */}
       <FavoritesAnnouncer>
-        <GeographicResultsList status={markerStatus} onRetry={retryMarkers} />
+        {/* Likewise for the list's "Add to trip" controls (M05-T04 Increment 5). */}
+        <TripsAnnouncer>
+          <GeographicResultsList status={markerStatus} onRetry={retryMarkers} />
+        </TripsAnnouncer>
       </FavoritesAnnouncer>
       <DiscoveryFilters controls={filters} />
       <LandmarkSearch

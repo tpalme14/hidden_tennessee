@@ -1,0 +1,105 @@
+/* Rename and delete on the trip page (M05-T06 Increment 3). Matches the trip
+   page's buttons and the New trip form; focus styles come from the global
+   :focus-visible rule. */
+
+.toolbar,
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.form,
+.confirm {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  width: 100%;
+  max-width: 32rem;
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid #999;
+  border-radius: 4px;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.input {
+  width: 100%;
+  max-width: 24rem;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid #555;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.note {
+  margin: 0;
+  color: #444;
+  overflow-wrap: anywhere;
+}
+
+.fieldError {
+  margin: 0;
+  color: #8a1c1c;
+  overflow-wrap: anywhere;
+}
+
+.confirmText {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.button {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #fff;
+  color: #111;
+  cursor: pointer;
+}
+
+.button[aria-disabled="true"] {
+  cursor: progress;
+  color: #444;
+}
+
+/* Sharing (M05-T06 Increment 4). */
+.sharing {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  min-width: 0;
+  max-width: 40rem;
+}
+
+.sharingHeading {
+  margin: 0;
+}
+
+.explain {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.linkRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.linkRow .input {
+  flex: 1 1 16rem;
+  max-width: 100%;
+  font-family: monospace;
+}
+
+.danger {
+  border-color: #8a1c1c;
+  color: #8a1c1c;
+}

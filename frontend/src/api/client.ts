@@ -69,6 +69,24 @@ export async function getJson<T>(path: string): Promise<T> {
 }
 
 /**
+ * Public, unauthenticated JSON GET (M05-T06 Increment 1, decision D5) — only
+ * for public reads that must not carry the session (the shared-trip page).
+ * `credentials: "omit"` keeps cookies (and any other browser credentials) off
+ * the request; the only header sent is `Accept`. Parsing and error mapping are
+ * exactly `getJson`'s; nothing here re-checks the session, retries, or logs —
+ * callers pass paths that may contain capability tokens, so neither the path
+ * nor the response is ever written anywhere.
+ */
+export async function getPublicJson<T>(path: string): Promise<T> {
+  return (
+    await requestJson<T>(path, {
+      credentials: "omit",
+      headers: { Accept: "application/json" },
+    })
+  ).body;
+}
+
+/**
  * JSON POST with the same error mapping as `getJson`, plus the two shapes the
  * authentication endpoints produce that the application envelope does not
  * cover (M03-T02): Better Auth's flat `{ code, message }` and the rate
@@ -112,6 +130,55 @@ export async function patchJson<T>(path: string, payload: unknown): Promise<Json
     headers: { Accept: "application/json", "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
+}
+
+/**
+ * JSON PUT with a body (M05-T04; the trip reorder request). Like `patchJson`:
+ * sends `payload` as JSON and returns the status as well as the body. The
+ * body-less `putJson` above is unchanged (the favorites API accepts no body).
+ */
+export async function putJsonBody<T>(path: string, payload: unknown): Promise<JsonResponse<T>> {
+  return requestJson<T>(path, {
+    method: "PUT",
+    headers: { Accept: "application/json", "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+}
+
+/**
+ * A request whose success is `204 No Content` (M05-T04; the trips API's stop
+ * removal, trip deletion, and share revocation). Same request defaults and
+ * the same error mapping as every JSON helper:
+ *  - a `204` resolves, whatever headers it carries; its body is never read;
+ *  - any other 2xx is unexpected for these endpoints → `INVALID_RESPONSE`
+ *    with that status;
+ *  - a non-2xx response is parsed as JSON and mapped exactly like
+ *    `requestJson` (application envelope, `Retry-After`, a non-JSON body →
+ *    `INVALID_RESPONSE`); a transport failure is `NETWORK_ERROR`.
+ */
+export async function requestNoContent(path: string, init: RequestInit): Promise<void> {
+  let response: Response;
+  try {
+    response = await fetch(path, { ...REQUEST_DEFAULTS, ...init });
+  } catch {
+    throw networkError();
+  }
+
+  if (response.status === 204) return;
+  if (response.ok) throw invalidResponse(response.status);
+
+  let body: unknown;
+  try {
+    body = await response.json();
+  } catch {
+    throw invalidResponse(response.status);
+  }
+  throw errorFromBody(response, body);
+}
+
+/** Body-less DELETE that succeeds only with `204 No Content` (M05-T04). */
+export async function deleteNoContent(path: string): Promise<void> {
+  return requestNoContent(path, { method: "DELETE", headers: { Accept: "application/json" } });
 }
 
 function networkError(): ApiError {

@@ -1,3 +1,5 @@
+import { TRIP_SHARING_ENABLED_VARIABLE, resolveTripSharingEnabled } from "./trip-sharing.js";
+
 function required(name: string): string {
   const value = process.env[name];
   if (!value) {
@@ -77,5 +79,11 @@ export const env = {
     // verified sender identity; both required only when transport is "smtp".
     smtpUrl: mailTransport === "smtp" ? required("SMTP_URL") : undefined,
     from: mailTransport === "smtp" ? required("MAIL_FROM") : undefined,
+  },
+  trips: {
+    // M05-T03 (spec v1.1 §10.6; ADR-014 decision 10): off by default in
+    // production, on elsewhere; explicit values are respected. Enforces the
+    // production sharing release gate but does not satisfy it.
+    sharingEnabled: resolveTripSharingEnabled(process.env[TRIP_SHARING_ENABLED_VARIABLE], nodeEnv),
   },
 };

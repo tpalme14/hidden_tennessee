@@ -1,0 +1,359 @@
+{
+  "description": "M05-T03 Increment 1: shared corpus for trip-name validation parity (specs/TRIP_PLANNING_SPEC.md v1.1 section 5.1.1; ADR-014 decision 5; M05-T03 decision T3-5). Test data only; never imported by application code. The backend tests read it now; the frontend parity tests read it in M05-T04. Every string is written as segments so this file stays ASCII: 'U+XXXX' is one code point (lone surrogates allowed), {\"text\": ...} is literal ASCII, and {\"repeat\": n, \"of\": [...]} repeats its segments n times. expect.kind is 'name' (accepted; value is the stored, trimmed name, given as segments) or 'reject' with reason 'characters' (an unpaired surrogate, checked before trimming, or a control or line-separator character anywhere after trimming), 'noVisible' (no letter, number, punctuation, or symbol after trimming), or 'tooLong' (more than 100 code points after trimming). Non-string values ('type') are covered by unit tests, not by this corpus.",
+  "cases": [
+    {
+      "id": "ascii-simple",
+      "group": "ordinary names",
+      "input": [{ "text": "Weekend Waterfalls" }],
+      "expect": { "kind": "name", "value": [{ "text": "Weekend Waterfalls" }] }
+    },
+    {
+      "id": "outer-space-and-line-feed",
+      "group": "outer whitespace (trimmed, allowed)",
+      "input": [{ "text": "  Smoky Falls" }, "U+000A"],
+      "expect": { "kind": "name", "value": [{ "text": "Smoky Falls" }] }
+    },
+    {
+      "id": "outer-tab-cr-lf",
+      "group": "outer whitespace (trimmed, allowed)",
+      "input": ["U+0009", { "text": "Falls" }, "U+000D", "U+000A"],
+      "expect": { "kind": "name", "value": [{ "text": "Falls" }] }
+    },
+    {
+      "id": "outer-line-and-paragraph-separator",
+      "group": "outer whitespace (trimmed, allowed)",
+      "input": ["U+2028", { "text": "Arch" }, "U+2029"],
+      "expect": { "kind": "name", "value": [{ "text": "Arch" }] }
+    },
+    {
+      "id": "outer-byte-order-mark",
+      "group": "outer whitespace (trimmed, allowed)",
+      "input": ["U+FEFF", { "text": "Trip" }],
+      "expect": { "kind": "name", "value": [{ "text": "Trip" }] }
+    },
+    {
+      "id": "internal-tab",
+      "group": "control characters inside (rejected)",
+      "input": [{ "text": "Day 1" }, "U+0009", { "text": "Falls" }],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "internal-line-feed",
+      "group": "control characters inside (rejected)",
+      "input": [{ "text": "Line one" }, "U+000A", { "text": "two" }],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "internal-carriage-return",
+      "group": "control characters inside (rejected)",
+      "input": [{ "text": "a" }, "U+000D", { "text": "b" }],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "internal-nul",
+      "group": "control characters inside (rejected)",
+      "input": [{ "text": "a" }, "U+0000", { "text": "b" }],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "leading-nul",
+      "group": "control characters inside (rejected)",
+      "input": ["U+0000", { "text": "Trip" }],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "internal-delete",
+      "group": "control characters inside (rejected)",
+      "input": [{ "text": "a" }, "U+007F", { "text": "b" }],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "c1-first",
+      "group": "control characters inside (rejected)",
+      "input": [{ "text": "a" }, "U+0080", { "text": "b" }],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "c1-last",
+      "group": "control characters inside (rejected)",
+      "input": [{ "text": "a" }, "U+009F", { "text": "b" }],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "trailing-next-line",
+      "group": "control characters inside (rejected)",
+      "input": [{ "text": "Cafe" }, "U+0085"],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "internal-line-separator",
+      "group": "control characters inside (rejected)",
+      "input": [{ "text": "a" }, "U+2028", { "text": "b" }],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "internal-paragraph-separator",
+      "group": "control characters inside (rejected)",
+      "input": [{ "text": "a" }, "U+2029", { "text": "b" }],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "lone-high-surrogate",
+      "group": "malformed Unicode (rejected)",
+      "input": [{ "text": "a" }, "U+D83C"],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "lone-low-surrogate",
+      "group": "malformed Unicode (rejected)",
+      "input": ["U+DF1E", { "text": "a" }],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "lone-surrogate-padded",
+      "group": "malformed Unicode (rejected)",
+      "input": [{ "text": "  " }, "U+D83C", { "text": "  " }],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "combining-acute-after-letter",
+      "group": "combining marks",
+      "input": [{ "text": "e" }, "U+0301"],
+      "expect": { "kind": "name", "value": [{ "text": "e" }, "U+0301"] }
+    },
+    {
+      "id": "combining-acute-alone",
+      "group": "combining marks",
+      "input": ["U+0301"],
+      "expect": { "kind": "reject", "reason": "noVisible" }
+    },
+    {
+      "id": "combining-marks-only",
+      "group": "combining marks",
+      "input": ["U+0301", "U+0302", "U+0303"],
+      "expect": { "kind": "reject", "reason": "noVisible" }
+    },
+    {
+      "id": "combining-marks-padded",
+      "group": "combining marks",
+      "input": [{ "text": " " }, "U+0301", "U+0301", { "text": " " }],
+      "expect": { "kind": "reject", "reason": "noVisible" }
+    },
+    {
+      "id": "emoji-with-presentation-selector",
+      "group": "emoji sequences",
+      "input": ["U+1F3DE", "U+FE0F"],
+      "expect": { "kind": "name", "value": ["U+1F3DE", "U+FE0F"] }
+    },
+    {
+      "id": "emoji-zwj-family",
+      "group": "emoji sequences",
+      "input": ["U+1F469", "U+200D", "U+1F469", "U+200D", "U+1F467"],
+      "expect": { "kind": "name", "value": ["U+1F469", "U+200D", "U+1F469", "U+200D", "U+1F467"] }
+    },
+    {
+      "id": "emoji-flag",
+      "group": "emoji sequences",
+      "input": ["U+1F1F9", "U+1F1F3"],
+      "expect": { "kind": "name", "value": ["U+1F1F9", "U+1F1F3"] }
+    },
+    {
+      "id": "emoji-keycap",
+      "group": "emoji sequences",
+      "input": [{ "text": "1" }, "U+FE0F", "U+20E3"],
+      "expect": { "kind": "name", "value": [{ "text": "1" }, "U+FE0F", "U+20E3"] }
+    },
+    {
+      "id": "emoji-skin-tone-modifier-alone",
+      "group": "emoji sequences",
+      "input": ["U+1F3FB"],
+      "expect": { "kind": "name", "value": ["U+1F3FB"] }
+    },
+    {
+      "id": "variation-selector-alone",
+      "group": "invisible only (rejected)",
+      "input": ["U+FE0F"],
+      "expect": { "kind": "reject", "reason": "noVisible" }
+    },
+    {
+      "id": "zero-width-space-alone",
+      "group": "invisible only (rejected)",
+      "input": ["U+200B"],
+      "expect": { "kind": "reject", "reason": "noVisible" }
+    },
+    {
+      "id": "zero-width-joiner-alone",
+      "group": "invisible only (rejected)",
+      "input": ["U+200D"],
+      "expect": { "kind": "reject", "reason": "noVisible" }
+    },
+    {
+      "id": "word-joiner-alone",
+      "group": "invisible only (rejected)",
+      "input": ["U+2060"],
+      "expect": { "kind": "reject", "reason": "noVisible" }
+    },
+    {
+      "id": "zero-width-mix-padded",
+      "group": "invisible only (rejected)",
+      "input": [{ "text": "  " }, "U+200B", "U+200C", "U+200D", "U+2060", { "text": "  " }],
+      "expect": { "kind": "reject", "reason": "noVisible" }
+    },
+    {
+      "id": "private-use-alone",
+      "group": "invisible only (rejected)",
+      "input": ["U+E000"],
+      "expect": { "kind": "reject", "reason": "noVisible" }
+    },
+    {
+      "id": "private-use-range-ends",
+      "group": "invisible only (rejected)",
+      "input": ["U+E000", "U+F8FF"],
+      "expect": { "kind": "reject", "reason": "noVisible" }
+    },
+    {
+      "id": "unassigned-alone",
+      "group": "invisible only (rejected)",
+      "input": ["U+0378"],
+      "expect": { "kind": "reject", "reason": "noVisible" }
+    },
+    {
+      "id": "empty",
+      "group": "empty after trimming (rejected)",
+      "input": [],
+      "expect": { "kind": "reject", "reason": "noVisible" }
+    },
+    {
+      "id": "spaces-only",
+      "group": "empty after trimming (rejected)",
+      "input": [{ "text": "   " }],
+      "expect": { "kind": "reject", "reason": "noVisible" }
+    },
+    {
+      "id": "tab-and-line-feed-only",
+      "group": "empty after trimming (rejected)",
+      "input": ["U+0009", "U+000A"],
+      "expect": { "kind": "reject", "reason": "noVisible" }
+    },
+    {
+      "id": "no-break-space-only",
+      "group": "empty after trimming (rejected)",
+      "input": ["U+00A0"],
+      "expect": { "kind": "reject", "reason": "noVisible" }
+    },
+    {
+      "id": "ideographic-space-only",
+      "group": "empty after trimming (rejected)",
+      "input": ["U+3000"],
+      "expect": { "kind": "reject", "reason": "noVisible" }
+    },
+    {
+      "id": "punctuation-only",
+      "group": "single visible categories",
+      "input": [{ "text": "!" }],
+      "expect": { "kind": "name", "value": [{ "text": "!" }] }
+    },
+    {
+      "id": "currency-symbol-only",
+      "group": "single visible categories",
+      "input": [{ "text": "$" }],
+      "expect": { "kind": "name", "value": [{ "text": "$" }] }
+    },
+    {
+      "id": "digit-only",
+      "group": "single visible categories",
+      "input": [{ "text": "7" }],
+      "expect": { "kind": "name", "value": [{ "text": "7" }] }
+    },
+    {
+      "id": "math-symbol-only",
+      "group": "single visible categories",
+      "input": ["U+2211"],
+      "expect": { "kind": "name", "value": ["U+2211"] }
+    },
+    {
+      "id": "astral-letter-only",
+      "group": "single visible categories",
+      "input": ["U+1D400"],
+      "expect": { "kind": "name", "value": ["U+1D400"] }
+    },
+    {
+      "id": "visible-plus-unassigned",
+      "group": "allowed inside a name",
+      "input": [{ "text": "a" }, "U+0378"],
+      "expect": { "kind": "name", "value": [{ "text": "a" }, "U+0378"] }
+    },
+    {
+      "id": "internal-no-break-space",
+      "group": "allowed inside a name",
+      "input": [{ "text": "a" }, "U+00A0", { "text": "b" }],
+      "expect": { "kind": "name", "value": [{ "text": "a" }, "U+00A0", { "text": "b" }] }
+    },
+    {
+      "id": "internal-zero-width-joiner",
+      "group": "allowed inside a name",
+      "input": [{ "text": "a" }, "U+200D", { "text": "b" }],
+      "expect": { "kind": "name", "value": [{ "text": "a" }, "U+200D", { "text": "b" }] }
+    },
+    {
+      "id": "internal-right-to-left-override",
+      "group": "allowed inside a name",
+      "input": [{ "text": "a" }, "U+202E", { "text": "b" }],
+      "expect": { "kind": "name", "value": [{ "text": "a" }, "U+202E", { "text": "b" }] }
+    },
+    {
+      "id": "internal-soft-hyphen",
+      "group": "allowed inside a name",
+      "input": [{ "text": "a" }, "U+00AD", { "text": "b" }],
+      "expect": { "kind": "name", "value": [{ "text": "a" }, "U+00AD", { "text": "b" }] }
+    },
+    {
+      "id": "ascii-100",
+      "group": "length (code points after trimming)",
+      "input": [{ "repeat": 100, "of": [{ "text": "a" }] }],
+      "expect": { "kind": "name", "value": [{ "repeat": 100, "of": [{ "text": "a" }] }] }
+    },
+    {
+      "id": "ascii-101",
+      "group": "length (code points after trimming)",
+      "input": [{ "repeat": 101, "of": [{ "text": "a" }] }],
+      "expect": { "kind": "reject", "reason": "tooLong" }
+    },
+    {
+      "id": "ascii-100-padded",
+      "group": "length (code points after trimming)",
+      "input": [{ "text": "  " }, { "repeat": 100, "of": [{ "text": "a" }] }, { "text": "  " }],
+      "expect": { "kind": "name", "value": [{ "repeat": 100, "of": [{ "text": "a" }] }] }
+    },
+    {
+      "id": "astral-100",
+      "group": "length (code points after trimming)",
+      "input": [{ "repeat": 100, "of": ["U+1F3DE"] }],
+      "expect": { "kind": "name", "value": [{ "repeat": 100, "of": ["U+1F3DE"] }] }
+    },
+    {
+      "id": "astral-101",
+      "group": "length (code points after trimming)",
+      "input": [{ "repeat": 101, "of": ["U+1F3DE"] }],
+      "expect": { "kind": "reject", "reason": "tooLong" }
+    },
+    {
+      "id": "decomposed-accent-counts-twice",
+      "group": "length (code points after trimming)",
+      "input": [{ "repeat": 99, "of": [{ "text": "a" }] }, { "text": "e" }, "U+0301"],
+      "expect": { "kind": "reject", "reason": "tooLong" }
+    },
+    {
+      "id": "control-checked-before-length",
+      "group": "length (code points after trimming)",
+      "input": [{ "repeat": 101, "of": [{ "text": "a" }] }, "U+0085"],
+      "expect": { "kind": "reject", "reason": "characters" }
+    },
+    {
+      "id": "visibility-checked-before-length",
+      "group": "length (code points after trimming)",
+      "input": [{ "repeat": 101, "of": ["U+200B"] }],
+      "expect": { "kind": "reject", "reason": "noVisible" }
+    }
+  ]
+}

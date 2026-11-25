@@ -8,10 +8,23 @@ import { requireTrustedOrigin } from "./auth/require-trusted-origin.js";
 import { env } from "./config/env.js";
 import { apiRouter } from "./routes/index.js";
 import { healthRouter } from "./routes/health.js";
+import { SHARED_TRIP_CACHE_CONTROL, SHARED_TRIP_ROBOTS_TAG } from "./trips/shared-router.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Built frontend output, once `frontend` is built (ADR-008 single-origin deployment).
 const frontendDistPath = path.resolve(__dirname, "../../frontend/dist");
+
+/**
+ * The public shared-trip PAGE (`/shared/trips/:shareToken`; M05-T06
+ * Increment 5b, decisions D1/D1a; spec v1.1 §7.2). Mirrors the paths the
+ * frontend router actually matches to that route (checked against React
+ * Router's `matchRoutes`): exactly one non-empty segment after
+ * `/shared/trips/`, any number of trailing slashes, case-insensitive. Purely
+ * structural — any segment qualifies (valid, malformed, revoked, or unknown
+ * token alike), so no lookup, authentication, or sharing setting is
+ * involved. Tested against `req.path`, which never includes the query string.
+ */
+export const SHARED_TRIP_PAGE_PATH = /^\/shared\/trips\/[^/]+\/*$/i;
 
 export function createApp() {
   const app = express();
@@ -57,7 +70,16 @@ export function createApp() {
   // 6. SPA fallback — GET only, registered last, for client-side routed
   //    navigation requests only. Never intercepts /api/* (already handled
   //    above) or non-GET methods.
-  app.get("*", (_req: Request, res: Response) => {
+  //    The shared-trip page's HTML is never indexed or stored (D1/D1a): the
+  //    headers are set before sendFile, which leaves an existing
+  //    Cache-Control in place (send 0.19: it sets its own only when none is
+  //    present). Defensive measures only — not access control; the token in
+  //    the URL is neither read nor logged here.
+  app.get("*", (req: Request, res: Response) => {
+    if (SHARED_TRIP_PAGE_PATH.test(req.path)) {
+      res.setHeader("X-Robots-Tag", SHARED_TRIP_ROBOTS_TAG);
+      res.setHeader("Cache-Control", SHARED_TRIP_CACHE_CONTROL);
+    }
     res.sendFile(path.join(frontendDistPath, "index.html"), (err) => {
       if (err) {
         res.status(404).json({ error: { code: "NOT_FOUND", message: "Resource not found." } });

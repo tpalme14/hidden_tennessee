@@ -1,0 +1,87 @@
+/* Trip map (M05-T04 Increment 4). Sizing follows the landmark profile map;
+   marker focus styles follow the discovery markers (M02-T08). */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.heading {
+  margin: 0;
+}
+
+.note {
+  margin: 0;
+  color: #444;
+}
+
+.wrapper {
+  width: 100%;
+}
+
+.map {
+  width: 100%;
+  height: min(45vh, 22rem);
+  border-radius: 4px;
+}
+
+/* The element Leaflet makes focusable (tabindex="0", role="button"). */
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  /* Matches the badge, so the focus ring follows a circle or a pill. */
+  border-radius: 14px;
+}
+
+/* The visible numbered badge: dark text on white with a dark ring (contrast
+   well above 4.5:1). Decorative; the name is on the focusable parent. */
+.badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 5px;
+  border: 2px solid #1f2937;
+  /* A circle for one number; a pill for a shared location ("2,3 +1"). */
+  border-radius: 12px;
+  white-space: nowrap;
+  background: #fff;
+  color: #111;
+  font:
+    700 12px/1 system-ui,
+    sans-serif;
+  box-sizing: border-box;
+}
+
+.icon:focus-visible {
+  outline: 3px solid #1a5fb4;
+  outline-offset: 2px;
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 5px #1a5fb4;
+}
+
+.popupList {
+  /* Up to 25 stops can share a location: the list scrolls rather than growing past the map. */
+  max-height: 12rem;
+  overflow-y: auto;
+  margin: 0.25rem 0 0;
+  padding: 0 0 0 1.1rem;
+}
+
+.popupList li {
+  margin: 0 0 0.35rem;
+  overflow-wrap: anywhere;
+}
+
+.popupContent:focus-visible {
+  outline: 3px solid #1a5fb4;
+  outline-offset: -3px;
+  border-radius: 4px;
+}

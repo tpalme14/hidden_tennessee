@@ -1,0 +1,95 @@
+/* Supplementary nearby map (M05-T05 Increment 3). Sizing and focus styles
+   follow the trip map; the origin and results differ in SHAPE and TEXT as well
+   as colour (square "Stop N" vs round markers). */
+
+.wrapper {
+  width: 100%;
+  min-width: 0;
+}
+
+.map {
+  width: 100%;
+  height: min(40vh, 18rem);
+  border-radius: 4px;
+}
+
+/* The element Leaflet makes focusable (tabindex="0", role="button"). */
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  border-radius: 14px;
+}
+
+.icon:focus-visible {
+  outline: 3px solid #1a5fb4;
+  outline-offset: 2px;
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 5px #1a5fb4;
+}
+
+/* Search origin: a dark square with white text ("Stop 2", "Stop 2 +3"). */
+.originBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 5px;
+  border: 2px solid #fff;
+  border-radius: 2px;
+  outline: 2px solid #111;
+  white-space: nowrap;
+  background: #1f2937;
+  color: #fff;
+  font:
+    700 12px/1 system-ui,
+    sans-serif;
+  box-sizing: border-box;
+}
+
+/* Nearby results: round, white with a dark ring; empty for one result, a count for several. */
+.resultBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border: 3px solid #1f2937;
+  border-radius: 12px;
+  white-space: nowrap;
+  background: #fff;
+  color: #111;
+  font:
+    700 12px/1 system-ui,
+    sans-serif;
+  box-sizing: content-box;
+}
+
+.popupContent:focus-visible {
+  outline: 3px solid #1a5fb4;
+  outline-offset: -3px;
+  border-radius: 4px;
+}
+
+.popupOrigin {
+  margin: 0 0 0.5rem;
+  overflow-wrap: anywhere;
+}
+
+.popupList {
+  /* Up to 200 results can share a location. The popup's whole content scrolls
+     (Leaflet `maxHeight`, sized from the map in NearbyMap.tsx), so this list
+     has no scroll area of its own. */
+  margin: 0.25rem 0 0;
+  padding: 0 0 0 1.1rem;
+}
+
+.popupList li {
+  margin: 0 0 0.35rem;
+  overflow-wrap: anywhere;
+}

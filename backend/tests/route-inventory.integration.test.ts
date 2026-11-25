@@ -213,13 +213,14 @@ describe("route inventory (integration, M03-T04 Increment 2)", () => {
       expect(result.staleAllowlistEntries).toEqual([]);
     });
 
-    it("the inventory is the expected set — the favorites (M03-T05) and reviews (M04-T02) endpoints are the only protected ones", () => {
+    it("the inventory is the expected set — the favorites (M03-T05), reviews (M04-T02), and trips (M05-T03) endpoints are the only protected ones", () => {
       expect(inventory.endpoints.map((e) => `${e.kind} ${e.path}`)).toEqual([
         "route /api/auth/*",
         "route /api/v1/landmarks",
         "route /api/v1/landmarks/:id",
         "route /api/v1/categories",
         "route /api/v1/landmarks/:landmarkId/reviews",
+        "route /api/v1/shared/trips/:shareToken",
         "route /api/v1/favorites",
         "route /api/v1/favorites/:landmarkId",
         "route /api/v1/favorites/:landmarkId",
@@ -227,14 +228,26 @@ describe("route inventory (integration, M03-T04 Increment 2)", () => {
         "route /api/v1/reviews",
         "route /api/v1/reviews/:reviewId",
         "route /api/v1/reviews/:reviewId",
+        "route /api/v1/trips",
+        "route /api/v1/trips",
+        "route /api/v1/trips/:tripId",
+        "route /api/v1/trips/:tripId",
+        "route /api/v1/trips/:tripId",
+        "route /api/v1/trips/:tripId/stops",
+        "route /api/v1/trips/:tripId/stops/:stopId",
+        "route /api/v1/trips/:tripId/stops/order",
+        "route /api/v1/trips/:tripId/share",
+        "route /api/v1/trips/:tripId/share",
         "route /health",
         "middleware /api",
         "route *",
       ]);
-      expect(inventory.endpoints.filter((e) => e.protection === "protected-mount")).toHaveLength(7);
+      expect(inventory.endpoints.filter((e) => e.protection === "protected-mount")).toHaveLength(
+        17,
+      );
     });
 
-    it("exactly three protected favorites and four protected reviews endpoints, verified by HTTP method AND path", () => {
+    it("exactly three protected favorites, four protected reviews, and ten protected trips endpoints, verified by HTTP method AND path", () => {
       const protectedEndpoints = inventory.endpoints
         .filter((e) => e.protection === "protected-mount")
         .map((e) => `${e.kind} ${e.methods.join(",")} ${e.path}`);
@@ -246,9 +259,36 @@ describe("route inventory (integration, M03-T04 Increment 2)", () => {
         "route get /api/v1/reviews",
         "route patch /api/v1/reviews/:reviewId",
         "route delete /api/v1/reviews/:reviewId",
+        "route get /api/v1/trips",
+        "route post /api/v1/trips",
+        "route get /api/v1/trips/:tripId",
+        "route patch /api/v1/trips/:tripId",
+        "route delete /api/v1/trips/:tripId",
+        "route post /api/v1/trips/:tripId/stops",
+        "route delete /api/v1/trips/:tripId/stops/:stopId",
+        "route put /api/v1/trips/:tripId/stops/order",
+        "route post /api/v1/trips/:tripId/share",
+        "route delete /api/v1/trips/:tripId/share",
       ]);
-      // Nothing else under /api/v1/favorites or /api/v1/reviews exists, protected or not.
-      for (const prefix of ["/api/v1/favorites", "/api/v1/reviews"]) {
+      // Every trips endpoint is under the one /api/v1/trips protected mount.
+      expect(
+        inventory.endpoints
+          .filter((e) => e.path.startsWith("/api/v1/trips"))
+          .every((e) => e.protectedMountPath === "/api/v1/trips" && e.problems.length === 0),
+      ).toBe(true);
+      // The only trips-related allowlist entry is the GET-only shared-trip read (M05-T03 Increment 5);
+      // no owner trips path is public.
+      expect(
+        PUBLIC_ENDPOINT_ALLOWLIST.filter(
+          (e) => e.path.includes("/trips") || e.path.includes("/shared"),
+        ).map((e) => `${e.kind} ${e.endpointKind} ${JSON.stringify(e.methods)} ${e.path}`),
+      ).toEqual(['application route ["get"] /api/v1/shared/trips/:shareToken']);
+      const shared = inventory.endpoints.filter((e) => e.path.startsWith("/api/v1/shared"));
+      expect(shared.map((e) => `${e.kind} ${e.methods.join(",")} ${e.protection}`)).toEqual([
+        "route get none",
+      ]);
+      // Nothing else under /api/v1/favorites, /api/v1/reviews, or /api/v1/trips exists, protected or not.
+      for (const prefix of ["/api/v1/favorites", "/api/v1/reviews", "/api/v1/trips"]) {
         expect(
           inventory.endpoints
             .filter((e) => e.path.startsWith(prefix))
@@ -284,6 +324,24 @@ describe("route inventory (integration, M03-T04 Increment 2)", () => {
       expect(app.every((e) => e.methods !== "*" && e.methods.every((m) => m === "get"))).toBe(true);
     });
 
+    it("the public allowlist is exactly the reviewed set: the shared-trip read is the only entry added in M05", () => {
+      expect(
+        PUBLIC_ENDPOINT_ALLOWLIST.map(
+          (e) => `${e.kind} ${e.endpointKind} ${JSON.stringify(e.methods)} ${e.path}`,
+        ),
+      ).toEqual([
+        'application route ["get"] /api/v1/landmarks',
+        'application route ["get"] /api/v1/landmarks/:id',
+        'application route ["get"] /api/v1/landmarks/:landmarkId/reviews',
+        'application route ["get"] /api/v1/shared/trips/:shareToken',
+        'application route ["get"] /api/v1/categories',
+        'application route ["get"] /health',
+        'external-auth route "*" /api/auth/*',
+        'spa route ["get"] *',
+        'api-not-found middleware "*" /api',
+      ]);
+    });
+
     it("anonymous requests to literal public endpoints still succeed; unknown and look-alike /api paths still 404", async () => {
       for (const path of ["/api/v1/landmarks", "/api/v1/categories", "/health"]) {
         const response = await request(app).get(path);
@@ -296,12 +354,26 @@ describe("route inventory (integration, M03-T04 Increment 2)", () => {
       }
     });
 
-    it("the behavioural sweep rejects anonymous and forged-cookie requests to every real protected endpoint (7 endpoints × 2 = 14 requests)", async () => {
+    it("the behavioural sweep rejects anonymous and forged-cookie requests to every real protected endpoint (17 endpoints × 2 = 34 requests)", async () => {
       const result = await sweepProtectedEndpoints(
         app,
         inventory.endpoints.filter((e) => e.protection === "protected-mount"),
       );
-      expect(result).toEqual({ failures: [], requests: 14 });
+      expect(result).toEqual({ failures: [], requests: 34 });
+    });
+
+    it("the public shared-trip path answers GET only: anonymous writes to it are the generic JSON 404, never a handler", async () => {
+      const path = `/api/v1/shared/trips/${"A".repeat(43)}`;
+      for (const method of ["post", "put", "patch", "delete"] as const) {
+        const response = await request(app)[method](path).send({});
+        expect(response.status, method).toBe(404);
+        expect(response.body).toEqual(NOT_FOUND);
+        expect(response.headers["x-robots-tag"], method).toBeUndefined();
+      }
+      const read = await request(app).get(path);
+      expect(read.status).toBe(404);
+      expect(read.body).toEqual(NOT_FOUND);
+      expect(read.headers["x-robots-tag"]).toBe("noindex, nofollow");
     });
 
     it("an unprotected router attached to a fresh copy of the real app is detected", () => {

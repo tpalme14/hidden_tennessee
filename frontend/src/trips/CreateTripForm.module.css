@@ -1,0 +1,41 @@
+/* Create trip form on My Trips (M05-T06 Increment 2). Matches the picker's
+   New trip form (AddToTrip.module.css); focus styles come from the global
+   :focus-visible rule. */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.input {
+  width: 100%;
+  max-width: 24rem;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid #555;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.fieldError {
+  margin: 0;
+  color: #8a1c1c;
+  overflow-wrap: anywhere;
+}
+
+.button {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #fff;
+  color: #111;
+  cursor: pointer;
+}
+
+.button[aria-disabled="true"] {
+  cursor: progress;
+  color: #444;
+}

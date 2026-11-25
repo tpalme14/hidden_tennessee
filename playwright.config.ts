@@ -58,6 +58,14 @@ export default defineConfig({
       // 10 minutes) would throttle. Limiting itself is verified by the
       // backend's own rate-limit integration tests, not here.
       AUTH_RATE_LIMIT_ENABLED: "false",
+      // M05-T06 decision D11 — TEST-ONLY: this production-mode E2E server enables
+      // trip sharing so the sharing journeys can run against the real API. It
+      // does NOT change the production default (off when NODE_ENV=production,
+      // backend/src/config/trip-sharing.ts) and is not approval to share in
+      // production (release blockers under M07-T05). Sharing-disabled behavior
+      // is covered by backend integration, frontend unit, and intercepted
+      // browser tests; there is no second server.
+      TRIP_SHARING_ENABLED: "true",
     },
   },
 });

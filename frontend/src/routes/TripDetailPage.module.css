@@ -1,0 +1,40 @@
+/* Trip detail page (M05-T04 Increment 2). Focus styles come from the global
+   :focus-visible rule; colours and buttons match the favorites page. */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.heading {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.status {
+  margin: 0;
+}
+
+.status:empty {
+  display: none;
+}
+
+.alert {
+  color: #8a1c1c;
+}
+
+.alert p,
+.notFound p {
+  margin: 0 0 0.5rem;
+}
+
+.button {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #fff;
+  color: #111;
+  cursor: pointer;
+}

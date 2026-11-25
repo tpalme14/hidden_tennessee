@@ -1,0 +1,140 @@
+/* Add to trip (M05-T04 Increment 5). Focus styles come from the global
+   :focus-visible rule; buttons match the favorite control. */
+
+.addToTrip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* List variant: below the item's text, still full width when open. */
+.compact {
+  margin: 0.25rem 0 0.5rem;
+}
+
+.button,
+.link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #fff;
+  color: #111;
+  cursor: pointer;
+}
+
+.link {
+  text-decoration: none;
+}
+
+.button[aria-disabled="true"] {
+  cursor: progress;
+  color: #444;
+}
+
+.status {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.status:empty {
+  display: none;
+}
+
+.alert {
+  color: #8a1c1c;
+  overflow-wrap: anywhere;
+}
+
+.alert p {
+  margin: 0 0 0.5rem;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 32rem;
+  padding: 0.75rem;
+  border: 1px solid #999;
+  border-radius: 4px;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.fieldset {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 0;
+}
+
+.options {
+  list-style: none;
+  margin: 0 0 0.5rem;
+  padding: 0;
+}
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+}
+
+.optionText {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.count,
+.note {
+  color: #444;
+}
+
+.note {
+  margin: 0;
+}
+
+.inlineError {
+  color: #8a1c1c;
+  margin: 0;
+}
+
+.newTrip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  width: 100%;
+}
+
+.input {
+  width: 100%;
+  max-width: 24rem;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid #555;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.fieldError {
+  margin: 0;
+  color: #8a1c1c;
+}

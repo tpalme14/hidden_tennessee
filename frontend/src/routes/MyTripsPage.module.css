@@ -1,0 +1,95 @@
+/* My Trips (M05-T06 Increment 2). Matches the My Favorites page; focus styles
+   come from the global :focus-visible rule. */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.heading {
+  margin: 0;
+}
+
+.status {
+  margin: 0;
+}
+
+.status:empty {
+  display: none;
+}
+
+.alert {
+  color: #8a1c1c;
+  overflow-wrap: anywhere;
+}
+
+.alert p {
+  margin: 0 0 0.5rem;
+}
+
+.button {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #fff;
+  color: #111;
+  cursor: pointer;
+}
+
+.empty p,
+p.empty {
+  margin: 0 0 0.5rem;
+}
+
+.listSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.listHeading {
+  margin: 0;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.trip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #ddd;
+  min-width: 0;
+}
+
+.name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  color: #444;
+}
+
+.shared {
+  padding: 0 0.4rem;
+  border: 1px solid #555;
+  border-radius: 4px;
+  color: #111;
+  font-size: 0.9em;
+}
+
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}

@@ -76,6 +76,57 @@ export function reviewAlreadyExistsEnvelope(): ErrorEnvelope {
   };
 }
 
+/**
+ * Adding a landmark that is already a stop of the trip (M05-T03;
+ * specs/TRIP_PLANNING_SPEC.md v1.1 §§6.1, 6.4, 7.3; ADR-014 decision 3).
+ * The plain envelope only — never the existing stop's ID.
+ */
+export function tripStopAlreadyExistsEnvelope(): ErrorEnvelope {
+  return {
+    error: {
+      code: "TRIP_STOP_ALREADY_EXISTS",
+      message: "This landmark is already in the trip.",
+    },
+  };
+}
+
+/** Adding a 26th stop (spec v1.1 §§3.2, 6.1, 6.4, 7.3; ADR-014 decision 3). */
+export function tripStopLimitReachedEnvelope(): ErrorEnvelope {
+  return {
+    error: {
+      code: "TRIP_STOP_LIMIT_REACHED",
+      message: "A trip can have at most 25 stops.",
+    },
+  };
+}
+
+/**
+ * A stale `version` on reorder (or on rename, when supplied) — spec v1.1
+ * §§5.5, 6.3, 6.4, 7.3; ADR-014 decision 4. Nothing was changed.
+ */
+export function tripVersionConflictEnvelope(): ErrorEnvelope {
+  return {
+    error: {
+      code: "TRIP_VERSION_CONFLICT",
+      message: "This trip has changed. Reload it and try again.",
+    },
+  };
+}
+
+/**
+ * Enabling or rotating a share link while `TRIP_SHARING_ENABLED` is off —
+ * returned only to the trip's owner, after the owner-scoped lookup (spec v1.1
+ * §§5.4, 7.3, 10.6; ADR-014 decision 10; M05-T03 decision T3-2).
+ */
+export function tripSharingUnavailableEnvelope(): ErrorEnvelope {
+  return {
+    error: {
+      code: "TRIP_SHARING_UNAVAILABLE",
+      message: "Trip sharing is not available.",
+    },
+  };
+}
+
 /** Matches the existing unknown-route 404 shape in src/app.ts, byte-for-byte, so every "not found" response in the API is identical. */
 export function notFoundEnvelope(): ErrorEnvelope {
   return { error: { code: "NOT_FOUND", message: "Resource not found." } };

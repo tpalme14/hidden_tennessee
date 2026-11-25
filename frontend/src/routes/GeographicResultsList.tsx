@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { EmptyState } from "../components/EmptyState";
 import { FavoriteButton } from "../favorites/FavoriteButton";
 import { categoryLabel } from "../map/categoryMarkerStyle";
+import { AddToTripButton } from "../trips/AddToTripButton";
 import type { MapMarkersStatus } from "../map/useMapMarkers";
 
 export interface GeographicResultsListProps {
@@ -105,6 +106,13 @@ export function GeographicResultsList({ status, onRetry }: GeographicResultsList
                     FavoritesAnnouncer that DiscoveryPage renders outside this
                     section (M02-T08; M03-T06 resolution B2). */}
                 <FavoriteButton
+                  landmarkId={marker.id}
+                  displayName={marker.display_name}
+                  variant="list"
+                />
+                {/* Add to trip (M05-T04 Increment 5; D2): the same PUBLIC-only
+                    results, so each can be added; the server still decides. */}
+                <AddToTripButton
                   landmarkId={marker.id}
                   displayName={marker.display_name}
                   variant="list"

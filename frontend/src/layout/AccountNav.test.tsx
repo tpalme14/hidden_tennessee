@@ -222,12 +222,15 @@ describe("AccountNav — sign-out", () => {
     await renderSignedIn();
     mockedSignOut.mockResolvedValueOnce(undefined);
 
-    // Skip link → Discover → My Favorites (signed in only; M03-T06 K6) → Sign out.
+    // Skip link → Discover → My Favorites → My Trips (signed in only; M03-T06 K6,
+    // M05-T06 Increment 2) → Sign out.
     await user.tab();
     await user.tab();
     expect(screen.getByRole("link", { name: "Discover" })).toHaveFocus();
     await user.tab();
     expect(screen.getByRole("link", { name: "My Favorites" })).toHaveFocus();
+    await user.tab();
+    expect(screen.getByRole("link", { name: "My Trips" })).toHaveFocus();
     await user.tab();
     expect(screen.getByRole("button", { name: "Sign out" })).toHaveFocus();
     await user.keyboard("{Enter}");

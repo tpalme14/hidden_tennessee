@@ -1,0 +1,26 @@
+/* Shared add-to-trip announcements for list controls (M05-T04 Increment 5).
+   Visible so sighted users see the same feedback; empty regions take no space. */
+
+.status:not(:empty) {
+  margin: 0.5rem 0;
+  overflow-wrap: anywhere;
+}
+
+.alert {
+  margin: 0.5rem 0;
+  color: #8a1c1c;
+  overflow-wrap: anywhere;
+}
+
+.alert p {
+  margin: 0 0 0.5rem;
+}
+
+.button {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #fff;
+  color: #111;
+  cursor: pointer;
+}

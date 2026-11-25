@@ -6,6 +6,7 @@ import { LoadingState } from "../components/LoadingState";
 import { categoryLabel } from "../map/categoryMarkerStyle";
 import { LandmarkLocationMap } from "../map/LandmarkLocationMap";
 import { ReviewsSection } from "../reviews/ReviewsSection";
+import { AddToTripButton } from "../trips/AddToTripButton";
 import { useLandmarkProfile } from "./useLandmarkProfile";
 
 /**
@@ -124,6 +125,10 @@ function FullProfileContent({
           that can be favorited (M03-T06; D1). Never rendered for the minimal
           (redacted), unavailable, loading, or error states. */}
       <FavoriteButton landmarkId={id} displayName={displayName} />
+      {/* Add to trip (M05-T04 Increment 5): like Favorite, offered only on the
+          full profile of an active PUBLIC landmark. Keyed by landmark so no
+          picker state carries over to another landmark. */}
+      <AddToTripButton key={id} landmarkId={id} displayName={displayName} />
       <LandmarkLocationMap
         latitude={latitude}
         longitude={longitude}
