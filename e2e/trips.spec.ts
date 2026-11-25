@@ -555,12 +555,22 @@ test("[real + intercepted] map keyboard: Tab, focus ring, Enter/Space/Escape/clo
   await expect(first).toBeFocused();
 
   // Viewport kept during a reorder: marker positions do not move, only their numbers.
-  const positionsBefore = await markers(page).evaluateAll((els) =>
-    els.map((e) => ({
-      label: (e.getAttribute("aria-label") ?? "").replace(/^Stop \d+: /, ""),
-      box: e.getBoundingClientRect().toJSON() as DOMRect,
-    })),
-  );
+  // Measured relative to the trip map's Leaflet container (M05 post-closure CI
+  // correction, CI run #30): page scrolling or layout changes around the map move
+  // the whole map in the browser viewport, which is not a change of the map's
+  // geographic view; a refit or pan moves markers within the map.
+  const mapRelativePositions = () =>
+    markers(page).evaluateAll((els) =>
+      els.map((e) => {
+        const map = e.closest(".leaflet-container")!.getBoundingClientRect();
+        const box = e.getBoundingClientRect();
+        return {
+          label: (e.getAttribute("aria-label") ?? "").replace(/^Stop \d+: /, ""),
+          box: { x: box.x - map.x, y: box.y - map.y },
+        };
+      }),
+    );
+  const positionsBefore = await mapRelativePositions();
 
   // Renumbering while a marker has focus: start a move from the list (held), then focus a marker.
   const held = await gate(page, `**/api/v1/trips/${tripId}/stops/order`, "PUT");
@@ -578,12 +588,8 @@ test("[real + intercepted] map keyboard: Tab, focus ring, Enter/Space/Escape/clo
   expect(await activeLabel(page)).toBe(`Stop 3: ${b.displayName}, Natural Arch`);
   await page.unroute(`**/api/v1/trips/${tripId}/stops/order`);
 
-  const positionsAfter = await markers(page).evaluateAll((els) =>
-    els.map((e) => ({
-      label: (e.getAttribute("aria-label") ?? "").replace(/^Stop \d+: /, ""),
-      box: e.getBoundingClientRect().toJSON() as DOMRect,
-    })),
-  );
+  const positionsAfter = await mapRelativePositions();
+  expect(positionsAfter).toHaveLength(positionsBefore.length);
   for (const before of positionsBefore) {
     const after = positionsAfter.find((p) => p.label === before.label)!;
     expect(Math.abs(after.box.x - before.box.x)).toBeLessThanOrEqual(1);

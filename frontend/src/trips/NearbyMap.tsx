@@ -450,10 +450,19 @@ export function NearbyMap({ origin, set, landmarks, onFocusLost }: NearbyMapProp
       onKeyDownCapture={onKeyDownCapture}
       onKeyDown={onKeyDown}
     >
+      {/*
+        zoomAnimation off (M05 post-closure CI correction, CI run #30): while
+        Leaflet animates a zoom (about 250 ms after a zoom-control click), it
+        drops further view changes, so a new result set arriving in that window
+        was never fitted and its markers could sit outside the map. Zoom changes
+        now apply at once, and every new set is fitted. Accepted tradeoff: the
+        nearby map's zoom transitions are not animated.
+      */}
       <MapContainer
         ref={mapRef}
         center={[origin.latitude, origin.longitude]}
         zoom={SINGLE_LOCATION_ZOOM}
+        zoomAnimation={false}
         scrollWheelZoom={false}
         className={styles.map}
       >

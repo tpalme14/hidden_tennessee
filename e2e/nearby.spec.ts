@@ -1434,3 +1434,80 @@ test("[intercepted] maximum results: 200 distinct points plus the origin, 200 at
     body: JSON.stringify(timings, null, 2),
   });
 });
+
+/**
+ * M05 post-closure CI correction (CI run #30): a new result set that arrives
+ * while a zoom-control click is still taking effect must still be fitted.
+ * Ordering is controlled, not timed: the radius request is held, zoom-in is
+ * clicked, and only then is the response released — so the new set lands
+ * immediately after the zoom interaction began. Before the correction, Leaflet
+ * dropped the fit during its zoom animation and the new marker stayed outside
+ * the map, where a pointer could not reach it.
+ */
+test("[intercepted] a new result set arriving during a zoom interaction is fitted, contained, and clickable", async ({
+  page,
+  trips,
+}) => {
+  const { tripId, s3 } = await ownerWithTrip(page, trips);
+  // A tight first set near the origin (fitted at the maximum zoom), then a set
+  // of three results at one point far enough away to lie outside the zoomed view.
+  let items: NearbyItem[] = [0, 1, 2].map((i) =>
+    synthetic(400 + i, `Close ${i}`, 0.492 + i * 0.002, -160.508, 0.2),
+  );
+  let release: () => void = () => undefined;
+  let held: Promise<void> | null = null;
+  await page.route(
+    (u) => isNearbyUrl(u.toString()),
+    async (route) => {
+      const answer = body(items);
+      if (held) await held;
+      await route.fulfill({ status: 200, json: answer });
+    },
+  );
+  await openTrip(page, tripId);
+  await findNearby(page, 1, s3.displayName).click();
+  await expect(nearbyMarkers(page)).toHaveCount(4);
+  await settleMap(page);
+
+  items = [0, 1, 2].map((i) => synthetic(500 + i, `Far stacked ${i}`, 0.6, -160.4, 8.5));
+  held = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const requested = page.waitForRequest((r) => isNearbyUrl(r.url()));
+  await radiusSelect(page).selectOption("50");
+  await requested; // the new set is on its way, held
+  await nearbyMap(page).locator(".leaflet-control-zoom-in").click(); // the zoom interaction begins
+  release(); // the new set arrives right after it
+
+  await expect(nearbyMarkers(page)).toHaveCount(2);
+  const stack = nearbyMarkers(page).nth(1);
+  await expect(stack).toHaveText("3");
+  await settleMap(page);
+  // The view fits the new set: the origin and the new marker both lie inside the map.
+  const containment = await nearbyMap(page).evaluate((region) => {
+    const map = region.querySelector(".leaflet-container")!.getBoundingClientRect();
+    return Array.from(region.querySelectorAll(".leaflet-marker-icon")).map((el) => {
+      const b = el.getBoundingClientRect();
+      return {
+        marker: el.textContent,
+        inside:
+          b.left >= map.left - 1 &&
+          b.right <= map.right + 1 &&
+          b.top >= map.top - 1 &&
+          b.bottom <= map.bottom + 1,
+      };
+    });
+  });
+  expect(containment, "every marker of the new set lies inside the nearby map").toEqual([
+    { marker: "Stop 1", inside: true },
+    { marker: "3", inside: true },
+  ]);
+  // A real pointer click reaches the marker and opens its popup.
+  await stack.click();
+  const popup = nearbyMap(page).locator(".leaflet-popup");
+  await expect(popup.getByRole("link")).toHaveCount(3);
+  await expect(
+    popup.getByRole("link", { name: "View profile: Far stacked 2", exact: true }),
+  ).toBeVisible();
+  await expectPopupInsideMap(page, "new set after zoom");
+});

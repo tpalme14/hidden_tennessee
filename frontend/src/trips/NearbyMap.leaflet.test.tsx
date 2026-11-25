@@ -252,6 +252,13 @@ describe("viewport", () => {
     expect(fit).toHaveBeenCalledTimes(1);
   });
 
+  it("zoom changes are not animated, so a new result set arriving mid-zoom is still fitted (CI run #30 correction)", () => {
+    const setView = vi.spyOn(LeafletMap.prototype, "setView");
+    renderMap({ set: setOf(THREE) });
+    const map = setView.mock.contexts.at(-1) as LeafletMap;
+    expect(map.options.zoomAnimation).toBe(false);
+  });
+
   it("panning and zooming request nothing", () => {
     const { container } = renderMap({ set: setOf(THREE) });
     const zoomIn = container.querySelector<HTMLElement>(".leaflet-control-zoom-in")!;
