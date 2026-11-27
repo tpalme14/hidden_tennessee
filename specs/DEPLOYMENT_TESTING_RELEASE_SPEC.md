@@ -65,6 +65,24 @@ The release test suite must demonstrate the following behaviors, with exact expe
 
 Security tests must verify that a user cannot access another user's favorites, reviews management, or private trips by changing identifiers. Public APIs must not reveal restricted landmark coordinates through alternate endpoints, error responses, caches, or shared-trip payloads.
 
+**PWA/offline browser verification projects** *(amendment of November 25, 2026 — M06-T01, developer decision D16; accepted by the developer November 25, 2026, together with Specification 6 v1.1 §12.12; previously proposed and awaiting final review)*:
+
+- All existing Playwright browser tests (165 at the Milestone 05 baseline) and their assertions are preserved. The existing regression project may block service workers so that its request interception continues to work.
+- A separate, service-worker-enabled browser-test project runs against the actual production build and verifies:
+  - application-shell precaching;
+  - offline navigation;
+  - service-worker updates;
+  - authentication and sign-out behavior;
+  - representative existing API operations;
+  - shared-trip navigation and its response headers;
+  - cache exclusions;
+  - account isolation;
+  - offline snapshot behavior;
+  - relevant failure and recovery scenarios.
+- Both projects must ultimately participate in required regression verification (§4 item 7 and this section).
+- Playwright configuration, CI workflows, and test files are changed only in later approved Milestone 06 tasks, not in M06-T01.
+- Automated accessibility scans in either project are evidence, not complete WCAG conformance.
+
 ## 6. Release smoke tests
 
 On the deployed production-like build, manually verify at least:
@@ -88,7 +106,7 @@ The following must be resolved before enabling affected production features:
 - **Sensitive-location policy:** establish how `sensitivity_status` (`UNREVIEWED`/`PUBLIC`/`SENSITIVE`) is assigned, who can change it, how public API responses and offline snapshots respond to newly restricted landmarks, and how existing data is handled. Until resolved, do not publish potentially sensitive coordinates through discovery, reviews, shared trips, or offline exports; treat `UNREVIEWED` the same as `SENSITIVE` for disclosure purposes.
 - **Better Auth compatibility:** verify selected package/version supports the approved session renewal, password-reset, revocation, and Prisma model requirements. Adapt implementation only through documented approval if a mismatch is found.
 - **Email delivery:** choose and configure a production-capable password-reset provider, with domain/origin verification and secure secret storage.
-- **Tile licensing:** complete M00-T06 provider evaluation. FR-14 remains conditional. Do not implement persistent tile downloads against public OSM tile servers or another provider without explicit permission.
+- **Tile licensing:** complete M00-T06 provider evaluation. FR-14 remains conditional. Do not implement persistent tile downloads against public OSM tile servers or another provider without explicit permission. *(Clarification, November 25, 2026 — accepted by the developer November 25, 2026: the M00-T06 evaluation is complete and FR-14 was formally deferred by the developer on October 30, 2026; see §10.4.2. The prohibition on persistent tile downloads stands. A production tile provider for the interactive online map is still unselected; ADR-004 approves the current tile service for development and demonstration only, so that selection remains a release prerequisite.)*
 - **Infrastructure feasibility:** confirm Render/PostGIS support, resource limits, and a workable backup/restore approach for the chosen tier.
 
 A blocked conditional feature may be deferred only by an explicit recorded scope decision; it must not be presented as delivered.
@@ -111,7 +129,7 @@ Release may be approved only when:
 - No unresolved critical security, privacy, data-loss, or authorization defect remains.
 - Production configuration, migrations, backup/restore steps, and import outcomes are documented.
 - Sensitive-location policy and password-reset email delivery are resolved for features exposed publicly.
-- FR-14 has a documented **supported-and-tested** or **formally deferred** decision following M00-T06.
+- FR-14 has a documented **supported-and-tested** or **formally deferred** decision following M00-T06. *(Clarification, November 25, 2026: the formally deferred decision is recorded — §10.4.2. The release checklist records FR-14 as **Deferred with approval**, and the release must not present offline map downloads as delivered.)*
 - The developer explicitly authorizes release after reviewing the evidence.
 
 A release checklist shall record each criterion as **Pass**, **Fail**, **Deferred with approval**, or **Not applicable**, with evidence links and an approver. Failed mandatory criteria cannot be waived implicitly.
@@ -145,6 +163,7 @@ The target browser baseline is the **latest stable Chrome, Firefox, and Safari**
 - FR-13 (installable PWA and explicitly saved structured landmark/owned-trip snapshots) is required for Phase 1 and may be implemented independently.
 - FR-14 (bounded offline map downloads) remains **conditional on M00-T06**, the tile-provider feasibility study. It is not authorized for implementation until provider licensing, offline caching permissions, pricing/quotas, storage constraints, and a developer-approved feasibility decision are documented.
 - If M00-T06 finds no feasible option, record an explicit Phase 1 deferral without blocking FR-13 or the remainder of the release.
+- **Phase 1 deferral record** *(clarification, November 25, 2026 — M06-T01 Increment 1; accepted by the developer November 25, 2026)*: M00-T06 (October 30, 2026) found offline map downloads feasible only with significant constraints and could not confirm from public documentation that any provider's terms permit them in a web PWA. The developer **deferred FR-14 for Phase 1 on October 30, 2026**. No tile provider is selected; Stadia Maps remains a research candidate only. FR-13 is unaffected and remains required. Milestone 06 task M06-T04 is recorded as Deferred. Reconsidering FR-14 or selecting a provider requires a new, explicit developer decision. Evidence: `docs/IMPLEMENTATION_PLAN.md` M00-T06; Specification 6 §7.4.
 
 ### 10.4.3 Unified Sensitive-Location Disclosure Policy
 

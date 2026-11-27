@@ -1,4 +1,6 @@
 import { useId } from "react";
+import { OnlineOnlyReason } from "../connectivity/OnlineOnlyReason";
+import { useOnlineOnlyAction } from "../connectivity/useOnlineOnlyAction";
 import { NewTripForm } from "./NewTripForm";
 import { NEW_TRIP, type UseAddToTrip } from "./useAddToTrip";
 import type { TripFailure } from "./useTrip";
@@ -35,6 +37,10 @@ export function TripPicker({ flow, landmarkName }: TripPickerProps) {
   const busy = flow.action !== null;
   const blocked = flow.landmarkUnavailable;
   const { list } = flow;
+  // M06-T02 Increment 3b-ii: adding to the selected trip needs the server
+  // (OFF-UX-5). Choosing a trip, loading the list, and closing stay available,
+  // and the selection is never cleared by a connectivity change.
+  const online = useOnlineOnlyAction();
 
   return (
     <div className={styles.picker}>
@@ -94,6 +100,7 @@ export function TripPicker({ flow, landmarkName }: TripPickerProps) {
               type="button"
               className={styles.button}
               aria-disabled={list.loadingMore ? true : undefined}
+              data-pending={list.loadingMore ? "true" : undefined}
               onClick={flow.loadMore}
             >
               {list.loadingMore ? "Loading more trips…" : "Show more trips"}
@@ -112,15 +119,22 @@ export function TripPicker({ flow, landmarkName }: TripPickerProps) {
       ) : null}
 
       {list.status === "ready" && flow.selection !== null && flow.selection !== NEW_TRIP ? (
-        <button
-          type="button"
-          className={styles.button}
-          aria-disabled={busy || blocked ? true : undefined}
-          aria-label={`Add to the selected trip: ${landmarkName}`}
-          onClick={() => void flow.addToSelected()}
-        >
-          Add to the selected trip
-        </button>
+        <>
+          <button
+            type="button"
+            className={styles.button}
+            aria-disabled={busy || blocked || online.unavailable ? true : undefined}
+            data-pending={busy ? "true" : undefined}
+            aria-label={`Add to the selected trip: ${landmarkName}`}
+            aria-describedby={online.describedBy}
+            onClick={() => {
+              if (!online.unavailable) void flow.addToSelected();
+            }}
+          >
+            Add to the selected trip
+          </button>
+          <OnlineOnlyReason action={online} className={styles.note} />
+        </>
       ) : null}
 
       {list.status === "ready" && flow.selection === NEW_TRIP ? (

@@ -1,5 +1,11 @@
-import { useCallback, useMemo } from "react";
-import { useSearchParams } from "react-router";
+import { useCallback, useContext, useMemo } from "react";
+import {
+  UNSAFE_DataRouterContext,
+  UNSAFE_NavigationContext,
+  useLocation,
+  useSearchParams,
+  type SetURLSearchParams,
+} from "react-router";
 import {
   formatBboxParam,
   formatNearParam,
@@ -37,8 +43,43 @@ export interface DiscoveryUrlActions {
  * here, per spec §5.2's "device-derived origins are not placed in shareable
  * URLs."
  */
+/**
+ * Route ownership (M06-T02 Increment 5a). `setSearchParams` navigates relative
+ * to the route this hook was rendered under, so a delayed write from Discover
+ * (a Leaflet `zoomend`/`moveend` viewport report, or the text debounce) that
+ * runs after the user has navigated elsewhere would replace the new location
+ * with `/?…` — observed when the browser router had already moved (history is
+ * updated synchronously; React's commit follows in a transition) before the
+ * page's cleanup ran. Every write therefore checks, at the moment it is made,
+ * that the router's CURRENT pathname is still the one this hook belongs to;
+ * otherwise it is dropped. Query-only changes on the same pathname are
+ * unaffected.
+ *
+ * The current location is read from the router itself, synchronously: a data
+ * router's `state.location`, or the history object a `BrowserRouter`/
+ * `MemoryRouter` provides as its navigator. Browser and memory locations are
+ * never compared with each other. Where neither exposes a location, writes
+ * proceed as before.
+ */
+function useOwnedSearchParamsWriter(setSearchParams: SetURLSearchParams): SetURLSearchParams {
+  const { pathname: ownerPathname } = useLocation();
+  const dataRouter = useContext(UNSAFE_DataRouterContext)?.router;
+  const { navigator } = useContext(UNSAFE_NavigationContext);
+  return useCallback<SetURLSearchParams>(
+    (nextInit, navigateOptions) => {
+      const currentPathname =
+        dataRouter?.state.location.pathname ??
+        (navigator as { location?: { pathname?: string } }).location?.pathname;
+      if (currentPathname !== undefined && currentPathname !== ownerPathname) return;
+      setSearchParams(nextInit, navigateOptions);
+    },
+    [dataRouter, navigator, ownerPathname, setSearchParams],
+  );
+}
+
 export function useDiscoveryUrlState(): [DiscoveryUrlState, DiscoveryUrlActions] {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setUnownedSearchParams] = useSearchParams();
+  const setSearchParams = useOwnedSearchParamsWriter(setUnownedSearchParams);
   const state = useMemo(() => parseDiscoveryParams(searchParams), [searchParams]);
 
   const commitText = useCallback(

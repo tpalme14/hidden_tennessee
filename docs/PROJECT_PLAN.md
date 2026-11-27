@@ -117,13 +117,13 @@ Trip planning will initially focus on geographic organization rather than automa
 #### Offline Access
 
 - Support downloading selected landmark information for offline use.
-- Investigate downloadable map regions using an appropriate mapping provider and permitted caching approach.
+- Investigate downloadable map regions using an appropriate mapping provider and permitted caching approach. *(Investigated in M00-T06; offline map-region downloads (FR-14) were deferred by the developer on 2026-10-30 — see FR-14 below.)*
 - Indicate which information is available offline.
 - Handle unavailable or outdated offline data gracefully.
 
 The exact offline implementation will be determined during technical planning.
 
-The final demonstration is intended to include the full planned feature set — landmark discovery, authentication, favorites, ratings/reviews, trip planning, offline landmark/trip data, and offline map-region downloads — subject to the mapping-provider licensing and technical feasibility contingency documented in Section 10.1 and `docs/IMPLEMENTATION_PLAN.md` Milestone 06.
+The final demonstration is intended to include the full planned feature set — landmark discovery, authentication, favorites, ratings/reviews, trip planning, offline landmark/trip data, and offline map-region downloads — subject to the mapping-provider licensing and technical feasibility contingency documented in Section 10.1 and `docs/IMPLEMENTATION_PLAN.md` Milestone 06. *(Contingency resolved 2026-10-30: offline map-region downloads (FR-14) are deferred and are not part of the final demonstration; offline landmark and owned-trip data (FR-13) remain in scope.)*
 
 ### 5.2 Out-of-Scope Features
 
@@ -216,6 +216,8 @@ The system shall support offline access to landmark information that users have 
 
 The system shall aim to support offline access to selected map regions, subject to technical feasibility and applicable mapping-provider restrictions.
 
+*Status (recorded 2026-11-25): **formally deferred** for this phase by developer decision on 2026-10-30, after the M00-T06 feasibility check (feasible only with significant constraints; no provider confirmed to permit offline downloads in a web PWA). No tile provider is selected. This requirement is preserved unchanged; reconsidering it, or selecting a provider, requires a new, explicit developer decision. See `docs/IMPLEMENTATION_PLAN.md` M00-T06 and Specification 6 §7.4.*
+
 ## 7. Non-Functional Requirements
 
 The application should satisfy the following high-level quality objectives. Measurable targets and verification methods will be established during specification and architecture development.
@@ -259,7 +261,7 @@ The application should satisfy the following high-level quality objectives. Meas
 ### 7.6 Offline Availability
 
 - Allow users to access previously downloaded landmark information without an active internet connection.
-- Support offline map regions where technically and legally feasible.
+- Support offline map regions where technically and legally feasible. *(FR-14 deferred 2026-10-30; see FR-14.)*
 - Clearly distinguish offline-capable features from those requiring connectivity.
 - Provide appropriate handling for unavailable, outdated, or incomplete offline data.
 
@@ -307,7 +309,7 @@ The following decisions were evaluated during architecture planning and are now 
 - Frontend framework and application structure. (ADR-001)
 - Backend framework and API architecture. (ADR-002)
 - Database technology and geographic query support. (ADR-003)
-- Mapping library and map data provider. (ADR-004; the final offline-capable tile provider remains pending — see M00-T06 and M06-T01 in `docs/IMPLEMENTATION_PLAN.md`)
+- Mapping library and map data provider. (ADR-004; the final offline-capable tile provider remains pending — see M00-T06 and M06-T01 in `docs/IMPLEMENTATION_PLAN.md`. *Update 2026-11-25: no offline-capable provider will be selected in M06; FR-14 was deferred on 2026-10-30. The production tile provider for the online map also remains unselected.*)
 - GPX parsing and import strategy. (ADR-005)
 - Authentication strategy. (ADR-006)
 - Offline storage and synchronization approach. (ADR-007)
@@ -361,10 +363,10 @@ The following questions must be resolved during subsequent planning and specific
 4. Should users be able to view favorites and create temporary itineraries without registering? — **Answered**: anonymous users may browse and explore landmarks; trip creation and persistence require authentication in the initial version (see FR-11, FR-12).
 5. What rating scale and review moderation rules should be used?
 6. How should geographic proximity be calculated and presented?
-7. What functionality should remain available while offline? — **Substantially answered**: see `docs/DECISIONS.md` ADR-007 (explicitly user-saved landmark/trip data and user-selected bounded map regions; no offline writes in the initial version).
-8. Which mapping provider permits the required offline behavior? — Still open; an early feasibility investigation is scheduled (see `docs/IMPLEMENTATION_PLAN.md` M00-T06), with final selection remaining at M06-T01.
+7. What functionality should remain available while offline? — **Substantially answered**: see `docs/DECISIONS.md` ADR-007 (explicitly user-saved landmark/trip data and user-selected bounded map regions; no offline writes in the initial version). *Update 2026-11-25: user-selected map regions (FR-14) were deferred on 2026-10-30; offline functionality in this phase is explicitly saved landmark and owned-trip data (FR-13).*
+8. Which mapping provider permits the required offline behavior? — Still open; an early feasibility investigation is scheduled (see `docs/IMPLEMENTATION_PLAN.md` M00-T06), with final selection remaining at M06-T01. *Update 2026-11-25: M00-T06 was completed 2026-10-30 without confirming a provider for web-PWA offline downloads; the developer deferred FR-14 instead of selecting one. No provider is selected, Stadia Maps remains a research candidate only, and this question stays open until FR-14 is explicitly reconsidered.*
 9. What are the project's development deadline and deployment requirements? — **Answered**: target deadline is early December 2026 (exact date to be confirmed), with December 1, 2026 targeted internally for feature completion; deployment is addressed in `docs/DECISIONS.md` ADR-008.
-10. Which features are mandatory for the final demonstration, and which may be deferred? — **Answered**: the full planned feature set is targeted for the final demonstration, subject to the offline map-download feasibility contingency (ADR-004/ADR-007, M00-T06, Milestone 06).
+10. Which features are mandatory for the final demonstration, and which may be deferred? — **Answered**: the full planned feature set is targeted for the final demonstration, subject to the offline map-download feasibility contingency (ADR-004/ADR-007, M00-T06, Milestone 06). *Update 2026-11-25: that contingency resolved as a deferral — offline map-region downloads (FR-14) are deferred and excluded from the final demonstration.*
 
 These questions should be resolved through explicit developer decisions rather than assumptions made during code generation.
 

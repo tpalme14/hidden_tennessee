@@ -1,0 +1,96 @@
+/* "Offline data on this device" (M06-T03 Increment 3c-2). Focus styles come
+   from the global :focus-visible rule; buttons match AccountNav.module.css. */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 48rem;
+}
+
+.heading {
+  margin: 0;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.section h3,
+.section p {
+  margin: 0;
+}
+
+.explanation {
+  padding: 0.75rem;
+  border: 1px solid #b0b0b0;
+  border-radius: 4px;
+  background: #f6f6f6;
+}
+
+.explanation dl {
+  margin: 0;
+}
+
+.explanation dt {
+  font-weight: 600;
+}
+
+.explanation dd {
+  margin: 0 0 0.5rem;
+}
+
+.explanation ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.button {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #fff;
+  color: #111;
+  cursor: pointer;
+}
+
+.button[aria-disabled="true"] {
+  cursor: progress;
+  color: #444;
+}
+
+.danger {
+  composes: button;
+  border-color: #8a1c1c;
+  color: #8a1c1c;
+}
+
+.confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 2px solid #8a1c1c;
+  border-radius: 4px;
+}
+
+.confirm p {
+  margin: 0;
+}
+
+.alert {
+  color: #8a1c1c;
+}
+
+.status:empty,
+.alert:empty {
+  display: none;
+}

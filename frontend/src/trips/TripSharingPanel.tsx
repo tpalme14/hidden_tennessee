@@ -1,4 +1,6 @@
 import { useId, type Ref } from "react";
+import { OnlineOnlyReason } from "../connectivity/OnlineOnlyReason";
+import { useOnlineOnlyAction } from "../connectivity/useOnlineOnlyAction";
 import styles from "./TripManage.module.css";
 
 export const SHARING_SECTION_ID = "trip-sharing";
@@ -6,18 +8,18 @@ export const SHARING_HEADING_ID = "trip-sharing-heading";
 
 /**
  * The owner's Sharing section on the trip page (M05-T06 Increment 4; spec
- * v1.1 §§4, 5.4, 8; decisions D7, D8). Presentational only: the trip, the
+ * v1.1 Â§Â§4, 5.4, 8; decisions D7, D8). Presentational only: the trip, the
  * held link, and every change live in `useTrip`; the page renders this
  * section only when the trip reports `sharing_enabled: true`.
  *
  * Three states, all explaining the consequences BEFORE any button is used
- * (D8 — no extra confirmation dialogs):
- * - not shared — who can see a shared trip, that recipients can forward the
+ * (D8 â€” no extra confirmation dialogs):
+ * - not shared â€” who can see a shared trip, that recipients can forward the
  *   link; "Create share link";
- * - shared, with the CONFIRMED link held in memory — a labelled read-only field
+ * - shared, with the CONFIRMED link held in memory â€” a labelled read-only field
  *   with the link, "Copy link", "Create new link", "Turn off sharing";
  * - shared, but no link held (after a reload, or when a link could not be
- *   confirmed) — the link cannot be shown again; "Create new link" (the
+ *   confirmed) â€” the link cannot be shown again; "Create new link" (the
  *   current link stops working) and "Turn off sharing". Nothing is
  *   reconstructed.
  * While any change is pending the buttons are `aria-disabled` (a focused
@@ -52,7 +54,19 @@ export function TripSharingPanel({
   onCopy,
 }: TripSharingPanelProps) {
   const fieldId = useId();
-  const busyFlag = busy ? true : undefined;
+  // M06-T02 Increment 3b-ii: creating, replacing, and turning off a link need
+  // the server (OFF-UX-5). Copying a link already shown is local and stays
+  // available; a connectivity change never clears the link or sends anything.
+  const online = useOnlineOnlyAction();
+  const blockedFlag = busy || online.unavailable ? true : undefined;
+  /** Presentation only (cursor): a change is genuinely in progress. */
+  const pendingFlag = busy ? "true" : undefined;
+  const create = (origin: HTMLElement) => {
+    if (!online.unavailable) onCreate(origin);
+  };
+  const revoke = (origin: HTMLElement) => {
+    if (!online.unavailable) onRevoke(origin);
+  };
 
   return (
     <section
@@ -75,8 +89,10 @@ export function TripSharingPanel({
               ref={createRef}
               type="button"
               className={styles.button}
-              aria-disabled={busyFlag}
-              onClick={(event) => onCreate(event.currentTarget)}
+              aria-disabled={blockedFlag}
+              data-pending={pendingFlag}
+              aria-describedby={online.describedBy}
+              onClick={(event) => create(event.currentTarget)}
             >
               Create share link
             </button>
@@ -109,7 +125,7 @@ export function TripSharingPanel({
           <p className={styles.explain}>
             {link !== null
               ? "Sharing is on. Anyone who has this link can view this trip without signing in, and can forward it."
-              : "Sharing is on, but the current link can't be shown again — links are shown only when they are created."}{" "}
+              : "Sharing is on, but the current link can't be shown again â€” links are shown only when they are created."}{" "}
             Create new link replaces the current link: the current link stops working. Turn off
             sharing stops the current link working.
           </p>
@@ -118,8 +134,10 @@ export function TripSharingPanel({
               ref={createRef}
               type="button"
               className={styles.button}
-              aria-disabled={busyFlag}
-              onClick={(event) => onCreate(event.currentTarget)}
+              aria-disabled={blockedFlag}
+              data-pending={pendingFlag}
+              aria-describedby={online.describedBy}
+              onClick={(event) => create(event.currentTarget)}
             >
               Create new link
             </button>
@@ -127,14 +145,17 @@ export function TripSharingPanel({
               ref={revokeRef}
               type="button"
               className={`${styles.button} ${styles.danger}`}
-              aria-disabled={busyFlag}
-              onClick={(event) => onRevoke(event.currentTarget)}
+              aria-disabled={blockedFlag}
+              data-pending={pendingFlag}
+              aria-describedby={online.describedBy}
+              onClick={(event) => revoke(event.currentTarget)}
             >
               Turn off sharing
             </button>
           </div>
         </>
       )}
+      <OnlineOnlyReason action={online} className={styles.note} />
     </section>
   );
 }

@@ -1,5 +1,7 @@
 import { Link } from "react-router";
 import type { TripStop } from "../api/trips";
+import { OnlineOnlyReason } from "../connectivity/OnlineOnlyReason";
+import { useOnlineOnlyAction } from "../connectivity/useOnlineOnlyAction";
 import { categoryLabel } from "../map/categoryMarkerStyle";
 import { previousLegText } from "./formatTripDistance";
 import { stopLabel } from "./tripMessages";
@@ -71,57 +73,79 @@ export function TripStopItem({ stop, controls }: { stop: TripStop; controls?: Tr
 
 function StopControls({ stop, controls }: { stop: TripStop; controls: TripStopControls }) {
   const label = stopLabel(stop);
-  const busy = controls.busy ? true : undefined;
+  // M06-T02 Increment 3b-ii: reordering and removing need the server
+  // (OFF-UX-5). Refused here, before the page is asked, so nothing changes
+  // locally; the first/last `disabled` rules and the page's lock are unchanged.
+  // Find nearby is read-only and stays available.
+  const online = useOnlineOnlyAction();
+  const busy = controls.busy || online.unavailable ? true : undefined;
+  /** Presentation only (cursor): the trip's change or its re-read is genuinely in progress. */
+  const pending = controls.busy ? "true" : undefined;
   const nearby = stop.is_available ? controls.nearby : undefined;
   return (
-    <span className={styles.controls}>
-      <button
-        ref={controls.setButtonRef("up")}
-        type="button"
-        className={styles.button}
-        aria-label={`Move up: ${label}`}
-        disabled={controls.isFirst}
-        aria-disabled={busy}
-        onClick={(event) => controls.onMove("up", event.currentTarget)}
-      >
-        Move up
-      </button>
-      <button
-        ref={controls.setButtonRef("down")}
-        type="button"
-        className={styles.button}
-        aria-label={`Move down: ${label}`}
-        disabled={controls.isLast}
-        aria-disabled={busy}
-        onClick={(event) => controls.onMove("down", event.currentTarget)}
-      >
-        Move down
-      </button>
-      <button
-        ref={controls.setButtonRef("remove")}
-        type="button"
-        className={styles.button}
-        aria-label={`Remove ${label} from the trip`}
-        aria-disabled={busy}
-        onClick={(event) => controls.onRemove(event.currentTarget)}
-      >
-        Remove
-      </button>
-      {nearby === undefined || !stop.is_available ? null : (
-        // Read-only, so not blocked while a change is pending. The name starts
-        // with the visible text: "Find nearby: Stop 2, Beta Arch".
+    <>
+      <span className={styles.controls}>
         <button
-          ref={controls.setButtonRef("nearby")}
+          ref={controls.setButtonRef("up")}
           type="button"
           className={styles.button}
-          aria-label={`Find nearby: Stop ${stop.position + 1}, ${stop.landmark.display_name}`}
-          aria-expanded={nearby.isOpen}
-          aria-controls={nearby.isOpen ? nearby.panelId : undefined}
-          onClick={(event) => nearby.onFind(event.currentTarget)}
+          aria-label={`Move up: ${label}`}
+          disabled={controls.isFirst}
+          aria-disabled={busy}
+          data-pending={pending}
+          aria-describedby={online.describedBy}
+          onClick={(event) => {
+            if (!online.unavailable) controls.onMove("up", event.currentTarget);
+          }}
         >
-          Find nearby
+          Move up
         </button>
-      )}
-    </span>
+        <button
+          ref={controls.setButtonRef("down")}
+          type="button"
+          className={styles.button}
+          aria-label={`Move down: ${label}`}
+          disabled={controls.isLast}
+          aria-disabled={busy}
+          data-pending={pending}
+          aria-describedby={online.describedBy}
+          onClick={(event) => {
+            if (!online.unavailable) controls.onMove("down", event.currentTarget);
+          }}
+        >
+          Move down
+        </button>
+        <button
+          ref={controls.setButtonRef("remove")}
+          type="button"
+          className={styles.button}
+          aria-label={`Remove ${label} from the trip`}
+          aria-disabled={busy}
+          data-pending={pending}
+          aria-describedby={online.describedBy}
+          onClick={(event) => {
+            if (!online.unavailable) controls.onRemove(event.currentTarget);
+          }}
+        >
+          Remove
+        </button>
+        {nearby === undefined || !stop.is_available ? null : (
+          // Read-only, so not blocked while a change is pending. The name starts
+          // with the visible text: "Find nearby: Stop 2, Beta Arch".
+          <button
+            ref={controls.setButtonRef("nearby")}
+            type="button"
+            className={styles.button}
+            aria-label={`Find nearby: Stop ${stop.position + 1}, ${stop.landmark.display_name}`}
+            aria-expanded={nearby.isOpen}
+            aria-controls={nearby.isOpen ? nearby.panelId : undefined}
+            onClick={(event) => nearby.onFind(event.currentTarget)}
+          >
+            Find nearby
+          </button>
+        )}
+      </span>
+      <OnlineOnlyReason action={online} className={styles.leg} />
+    </>
   );
 }

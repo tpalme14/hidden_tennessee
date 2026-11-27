@@ -16,6 +16,7 @@ const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 const REGISTERED_NOTICE = "Registration received. Sign in with your email address and password.";
 /** The home route on this origin; the discovery page then adds its own map state to the query. */
 const HOME = /^http:\/\/localhost:3000\/(\?.*)?$/;
+const SIGNED_OUT_CONFIRMED = "You're signed out. The server confirmed the sign-out.";
 
 function uniqueEmail(label: string): string {
   return `e2e-${label}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.com`;
@@ -185,6 +186,8 @@ test.describe("session journeys (real server)", () => {
 
     await accountNav(page).getByRole("button", { name: "Sign out" }).click();
     await expect(accountNav(page).getByRole("link", { name: "Sign in" })).toBeFocused();
+    // M06-T03 3c-1a: signed out on this device at once; the server confirmation follows.
+    await expect(page.getByRole("status").filter({ hasText: SIGNED_OUT_CONFIRMED })).toBeVisible();
     expect(await serverSession(page)).toBeNull();
     await page.reload();
     await expectSignedOutUi(page);
@@ -254,7 +257,9 @@ test.describe("session journeys (real server)", () => {
     await expectSignedInAs(page, email);
   });
 
-  test("a failed sign-out keeps the user signed in with an alert; retrying signs out", async ({
+  // M06-T03 3c-1a (Specification 6 OFF-OUT-1, OFF-OUT-3, OFF-OUT-4, OFF-OUT-5):
+  // replaces the M03 expectation that a failed sign-out keeps the user signed in.
+  test("a failed sign-out signs out on this device, says the server sign-out isn't confirmed, survives a reload, and Finish signing out confirms it", async ({
     page,
   }) => {
     const email = await createAccount(page.request, "signout-fail");
@@ -270,14 +275,21 @@ test.describe("session journeys (real server)", () => {
     );
     await accountNav(page).getByRole("button", { name: "Sign out" }).click();
     await expect(page.getByRole("alert")).toContainText(
-      "Sign-out didn't complete. You're still signed in.",
+      "You're signed out on this device, but the server sign-out isn't confirmed.",
     );
-    await expectSignedInAs(page, email);
+    await expectSignedOutUi(page);
+    // The browser's session is still valid on the server ...
     expect((await serverSession(page)).user.email).toBe(email);
+    // ... and a reload does not restore it (OFF-OUT-4); nothing is retried automatically.
+    await page.reload();
+    await expectSignedOutUi(page);
+    const finish = page.getByRole("button", { name: "Finish signing out" });
+    await expect(finish).toBeVisible();
 
     await page.unroute("**/api/auth/sign-out");
-    await page.getByRole("button", { name: "Try signing out again" }).click();
-    await expectSignedOutUi(page);
+    await finish.click();
+    await expect(page.getByRole("status").filter({ hasText: SIGNED_OUT_CONFIRMED })).toBeVisible();
+    await expect(finish).toHaveCount(0);
     expect(await serverSession(page)).toBeNull();
   });
 });

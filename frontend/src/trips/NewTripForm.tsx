@@ -1,4 +1,7 @@
 import { useId, useRef, useState, type FormEvent } from "react";
+import { OnlineOnlyReason } from "../connectivity/OnlineOnlyReason";
+import { useOnlineOnlyAction } from "../connectivity/useOnlineOnlyAction";
+import { useUnsavedInput } from "../pwa/useUnsavedInput";
 import { validateTripName } from "./tripNameRule";
 import styles from "./AddToTrip.module.css";
 
@@ -24,10 +27,16 @@ export function NewTripForm({ landmarkName, disabled, busy, onCreate }: NewTripF
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const submitRef = useRef<HTMLButtonElement>(null);
+  // M06-T02 Increment 3b-ii: creating the trip (and then adding) needs the
+  // server (OFF-UX-5). The typed name is kept; nothing resumes on recovery.
+  const online = useOnlineOnlyAction();
+  // M06-T02 Increment 4b-ii: a typed name is protected from an update reload (presence only).
+  const markNameEdited = useUnsavedInput("trip-name", name.trim() !== "");
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    if (disabled || busy) return;
+    // The form's own submit path (button click, Enter, or requestSubmit) is guarded.
+    if (disabled || busy || online.unavailable) return;
     const result = validateTripName(name);
     if (!result.ok) {
       setError(result.message);
@@ -57,7 +66,10 @@ export function NewTripForm({ landmarkName, disabled, busy, onCreate }: NewTripF
         className={styles.input}
         aria-invalid={error !== null ? true : undefined}
         aria-describedby={error !== null ? errorId : undefined}
-        onChange={(event) => setName(event.target.value)}
+        onChange={(event) => {
+          setName(event.target.value);
+          markNameEdited(event.target.value.trim() !== "");
+        }}
       />
       {error !== null ? (
         <p id={errorId} className={styles.fieldError}>
@@ -68,11 +80,14 @@ export function NewTripForm({ landmarkName, disabled, busy, onCreate }: NewTripF
         ref={submitRef}
         type="submit"
         className={styles.button}
-        aria-disabled={disabled || busy ? true : undefined}
+        aria-disabled={disabled || busy || online.unavailable ? true : undefined}
+        data-pending={busy ? "true" : undefined}
         aria-label={`Create trip and add ${landmarkName}`}
+        aria-describedby={online.describedBy}
       >
         Create trip and add
       </button>
+      <OnlineOnlyReason action={online} className={styles.note} />
     </form>
   );
 }

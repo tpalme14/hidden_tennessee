@@ -77,9 +77,17 @@
   cursor: pointer;
 }
 
+/* M06-T02 Increment 3b-iii: aria-disabled alone (for example, the server is
+   unreachable) is not progress; only a genuinely pending submission
+   (data-pending, presentation only) shows the progress cursor. Same
+   specificity, so the later data-pending rule wins when both apply. */
 .submit[aria-disabled="true"] {
-  cursor: progress;
+  cursor: not-allowed;
   background: #3d6fa8;
+}
+
+.submit[data-pending] {
+  cursor: progress;
 }
 
 .alternative {

@@ -36,6 +36,8 @@
 
 .nav {
   display: flex;
+  /* M06-T03 3e: four links ("Saved for offline") must wrap at 320 px. */
+  flex-wrap: wrap;
   gap: 0.5rem;
 }
 

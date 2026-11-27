@@ -1,6 +1,8 @@
 import { useContext, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import { Link, useLocation } from "react-router";
 import { AuthContext } from "../auth/session";
+import { OnlineOnlyReason } from "../connectivity/OnlineOnlyReason";
+import { useOnlineOnlyAction } from "../connectivity/useOnlineOnlyAction";
 import { addMessage } from "./addToTripMessages";
 import { MessageText } from "./MessageText";
 import { name } from "./messageParts";
@@ -92,6 +94,18 @@ function AddToTripControl({
   // List variant: mirror the current pending state / message into the shared announcer.
   const { retryAdd } = flow;
   const busy = flow.action !== null;
+  // M06-T02 Increment 3b-ii: "Try adding again" needs the server (OFF-UX-5).
+  // Opening the picker, choosing a trip, and closing are local and unaffected;
+  // the uncertain-add state (`pendingTrip`) is kept and nothing is retried on
+  // recovery. The list variant's button is rendered by `TripsAnnouncer` from
+  // an announcement made only when the outcome changes, so its handler reads
+  // the CURRENT availability through a ref.
+  const retryOnline = useOnlineOnlyAction();
+  const retryUnavailable = useRef(retryOnline.unavailable);
+  retryUnavailable.current = retryOnline.unavailable;
+  const guardedRetry = () => {
+    if (!retryUnavailable.current) void retryAdd();
+  };
   useEffect(() => {
     if (!isList || announcer === null) return;
     if (pendingText !== "") {
@@ -106,7 +120,7 @@ function AddToTripControl({
           message.tone === "status" ? message.parts : [name(displayName), ": ", ...message.parts],
         ...(message.viewTrip ? { viewTripId: message.viewTrip.id } : {}),
         ...(message.retryAdd && flow.pendingTrip !== null
-          ? { onRetry: () => void retryAdd(), retryDisabled: busy }
+          ? { onRetry: guardedRetry, retryDisabled: busy }
           : {}),
       });
     } else {
@@ -203,13 +217,19 @@ function AddToTripControl({
                 <button
                   type="button"
                   className={styles.button}
-                  aria-disabled={busy ? true : undefined}
-                  onClick={() => void retryAdd()}
+                  aria-disabled={busy || retryOnline.unavailable ? true : undefined}
+                  data-pending={busy ? "true" : undefined}
+                  aria-describedby={retryOnline.describedBy}
+                  onClick={guardedRetry}
                 >
                   Try adding again
                 </button>
               ) : null}
             </div>
+          ) : null}
+          {/* Outside the alert, so the reason never re-announces the alert. */}
+          {message?.tone === "alert" && message.retryAdd && flow.pendingTrip !== null ? (
+            <OnlineOnlyReason action={retryOnline} className={styles.note} />
           ) : null}
         </>
       )}

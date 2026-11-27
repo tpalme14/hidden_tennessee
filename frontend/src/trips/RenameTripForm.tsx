@@ -1,4 +1,6 @@
 import { useId, type FormEvent, type Ref } from "react";
+import { OnlineOnlyReason } from "../connectivity/OnlineOnlyReason";
+import { useOnlineOnlyAction } from "../connectivity/useOnlineOnlyAction";
 import styles from "./TripManage.module.css";
 
 /**
@@ -40,9 +42,15 @@ export function RenameTripForm({
   const describedBy = [error !== null ? errorId : null, note !== null ? noteId : null]
     .filter((id): id is string => id !== null)
     .join(" ");
+  // M06-T02 Increment 3b-ii: saving the name needs the server (OFF-UX-5). The
+  // draft (held by the page) and Cancel are unaffected; the page's own lock
+  // and version handling still apply when the submission does go ahead.
+  const online = useOnlineOnlyAction();
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    // The form's own submit path (button click, Enter, or requestSubmit) is guarded.
+    if (online.unavailable) return;
     onSubmit();
   }
 
@@ -75,7 +83,9 @@ export function RenameTripForm({
           ref={saveRef}
           type="submit"
           className={styles.button}
-          aria-disabled={busy ? true : undefined}
+          aria-disabled={busy || online.unavailable ? true : undefined}
+          data-pending={busy ? "true" : undefined}
+          aria-describedby={online.describedBy}
         >
           Save name
         </button>
@@ -83,6 +93,7 @@ export function RenameTripForm({
           Cancel
         </button>
       </div>
+      <OnlineOnlyReason action={online} className={styles.note} />
     </form>
   );
 }

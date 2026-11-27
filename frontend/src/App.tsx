@@ -5,6 +5,10 @@ import { DiscoveryPage } from "./routes/DiscoveryPage";
 import { FavoritesPage } from "./routes/FavoritesPage";
 import { LandmarkProfilePage } from "./routes/LandmarkProfilePage";
 import { MyTripsPage } from "./routes/MyTripsPage";
+import { OfflineDataPage } from "./routes/OfflineDataPage";
+import { OfflineLandmarkPage } from "./routes/OfflineLandmarkPage";
+import { OfflineLibraryPage } from "./routes/OfflineLibraryPage";
+import { OfflineTripPage } from "./routes/OfflineTripPage";
 import { RegisterPage } from "./routes/RegisterPage";
 import { SharedTripPage } from "./routes/SharedTripPage";
 import { SignInPage } from "./routes/SignInPage";
@@ -29,6 +33,12 @@ export default function App() {
           <Route path="sign-in" element={<SignInPage />} />
           <Route path="forgot-password" element={<ForgotPasswordPage />} />
           <Route path="reset-password" element={<ResetPasswordPage />} />
+          {/* Recovery and explanations for offline data (M06-T03 3c-2, R1). */}
+          <Route path="offline-data" element={<OfflineDataPage />} />
+          {/* The offline library and saved copies (M06-T03 3e; OFF-UX-2). */}
+          <Route path="offline" element={<OfflineLibraryPage />} />
+          <Route path="offline/landmarks/:id" element={<OfflineLandmarkPage />} />
+          <Route path="offline/trips/:tripId" element={<OfflineTripPage />} />
         </Route>
       </Routes>
     </>

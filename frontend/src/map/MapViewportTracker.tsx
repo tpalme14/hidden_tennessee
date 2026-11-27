@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import { useMap, useMapEvents } from "react-leaflet";
 import type { GeoBbox } from "./geo";
 
@@ -22,11 +22,30 @@ export interface MapViewportTrackerProps {
  * viewport change. Panning/zooming alone never commits a new search (spec
  * §3.2); the parent (`useGeographicDiscovery`) decides what to do with each
  * report.
+ *
+ * Lifecycle guard (M06-T02 Increment 5a): Leaflet can still deliver
+ * `zoomend`/`moveend` (for example at the end of a zoom animation) after the
+ * tracker's lifecycle has ended but before its listeners are removed in the
+ * passive cleanup, and a `whenReady` callback registered earlier is never
+ * unregistered. A report then would write the old viewport into the URL of a
+ * route the user has already navigated to. `active` is set in a layout
+ * effect and cleared synchronously in its cleanup — which runs before the
+ * passive cleanups — and every report path checks it. StrictMode's
+ * setup → cleanup → setup restores it.
  */
 export function MapViewportTracker({ onViewportChange }: MapViewportTrackerProps) {
   const map = useMap();
+  const active = useRef(false);
+
+  useLayoutEffect(() => {
+    active.current = true;
+    return () => {
+      active.current = false;
+    };
+  }, []);
 
   const report = useCallback(() => {
+    if (!active.current) return; // the tracker's lifecycle has ended: a stale report
     const bounds = map.getBounds();
     const bbox: GeoBbox = {
       minLng: bounds.getWest(),

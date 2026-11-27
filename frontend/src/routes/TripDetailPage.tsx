@@ -5,6 +5,7 @@ import { parseUuid } from "../api/tripValidation";
 import type { NearbyLandmarkView } from "../trips/nearbyLandmarks";
 import { useAuth } from "../auth/session";
 import { TripDistanceSummary } from "../trips/TripDistanceSummary";
+import { OfflineCopyControl, SavedCopyLink } from "../offline/OfflineCopyControl";
 import type { TripStopControls } from "../trips/TripStopItem";
 import { TripStopList } from "../trips/TripStopList";
 import { TripStopsMap } from "../trips/TripStopsMap";
@@ -26,6 +27,7 @@ import {
   staleText,
 } from "../trips/tripMessages";
 import { tripSignInHref } from "../trips/tripPaths";
+import { useUnsavedInput } from "../pwa/useUnsavedInput";
 import { useNearbyLandmarks } from "../trips/useNearbyLandmarks";
 import { useTrip, type MoveDirection, type MutationOutcome } from "../trips/useTrip";
 import styles from "./TripDetailPage.module.css";
@@ -492,6 +494,13 @@ export function TripDetailPage() {
   // ---- Rename (Increment 3) ----
 
   const currentDraft = renameDraft !== null && renameDraft.scope === scope ? renameDraft : null;
+  // M06-T02 Increment 4b-ii: a rename draft that differs from the current name is
+  // protected from an update reload (presence only).
+  const renameDiffers = (value: string) => value !== (trip?.name ?? "");
+  const markRenameEdited = useUnsavedInput(
+    "trip-rename",
+    currentDraft !== null && renameDiffers(currentDraft.value),
+  );
   const confirmOpen = confirmScope !== null && confirmScope === scope;
 
   function openRename(origin: HTMLElement) {
@@ -780,6 +789,8 @@ export function TripDetailPage() {
           <button type="button" className={styles.button} onClick={retry}>
             Try again
           </button>
+          {/* OFF-UX-2: a link to a saved copy, never a silent replacement. */}
+          <SavedCopyLink kind="trip" id={tripId ?? ""} />
         </div>
       );
     } else if (state.status === "stale") {
@@ -825,10 +836,13 @@ export function TripDetailPage() {
         return null;
       case "unavailable":
         return (
-          <p>
-            We couldn&apos;t check whether you&apos;re signed in, so this trip can&apos;t be shown
-            right now. Use Retry in the account area to check again.
-          </p>
+          <>
+            <p>
+              We couldn&apos;t check whether you&apos;re signed in, so this trip can&apos;t be shown
+              right now. Use Retry in the account area to check again.
+            </p>
+            <SavedCopyLink kind="trip" id={tripId ?? ""} />
+          </>
         );
       case "anonymous":
         return (
@@ -863,6 +877,7 @@ export function TripDetailPage() {
               type="button"
               className={manageStyles.button}
               aria-disabled={busyFlag}
+              data-pending={busy ? "true" : undefined}
               onClick={(event) => openRename(event.currentTarget)}
             >
               Rename
@@ -874,6 +889,7 @@ export function TripDetailPage() {
               type="button"
               className={`${manageStyles.button} ${manageStyles.danger}`}
               aria-disabled={busyFlag}
+              data-pending={busy ? "true" : undefined}
               onClick={(event) => openDelete(event.currentTarget)}
             >
               Delete trip
@@ -888,7 +904,10 @@ export function TripDetailPage() {
             busy={busy}
             inputRef={renameInputRef}
             saveRef={renameSaveRef}
-            onChange={(value) => updateDraft(currentDraft.scope, { value })}
+            onChange={(value) => {
+              updateDraft(currentDraft.scope, { value });
+              markRenameEdited(renameDiffers(value));
+            }}
             onSubmit={() => void submitRename()}
             onCancel={() => cancelRename(document.activeElement as HTMLElement)}
           />
@@ -902,6 +921,13 @@ export function TripDetailPage() {
             onCancel={() => cancelDelete(document.activeElement as HTMLElement)}
           />
         ) : null}
+        {/* Save for offline (M06-T03 3e): owner trips only; never the shared-trip page. */}
+        <OfflineCopyControl
+          key={`offline-${state.trip.id}`}
+          kind="trip"
+          id={state.trip.id}
+          name={state.trip.name}
+        />
         <TripStopList
           stops={state.trip.stops}
           headingRef={stopsHeadingRef}

@@ -145,7 +145,20 @@ test.describe("reset-token security", () => {
       return { fetches: w.__hrefAtFetch, firstRender: w.__hrefAtFirstRender };
     });
     expect(timing.firstRender).toBe(`${ORIGIN}/reset-password?keep=1#frag`);
-    expect(timing.fetches.length).toBeGreaterThan(0); // the session check
+    // M06-T03 3c-1b correction: since 3c-1a the startup session check is sent
+    // after the asynchronous offline security pre-checks, so wait for it
+    // deterministically. The fetch log accumulates from the first script, so
+    // re-reading it after the wait excludes no earlier request.
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () => (window as unknown as { __hrefAtFetch: string[] }).__hrefAtFetch.length,
+        ),
+      )
+      .toBeGreaterThan(0); // the session check
+    timing.fetches = await page.evaluate(
+      () => (window as unknown as { __hrefAtFetch: string[] }).__hrefAtFetch,
+    );
     for (const href of timing.fetches) expect(href).not.toContain(TOKEN);
 
     // Leaving for the map in the same document: tiles still get only the origin.

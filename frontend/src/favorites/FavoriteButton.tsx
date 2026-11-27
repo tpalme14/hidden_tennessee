@@ -1,5 +1,7 @@
 import { useId, useState } from "react";
 import { Link, useLocation } from "react-router";
+import { OnlineOnlyReason } from "../connectivity/OnlineOnlyReason";
+import { describedByIds, useOnlineOnlyAction } from "../connectivity/useOnlineOnlyAction";
 import { useFavoritesAnnouncer, type FavoritesAnnouncementKind } from "./FavoritesAnnouncer";
 import { useFavoriteStatus, useFavorites, type FavoritesFailure } from "./favoritesContext";
 import styles from "./FavoriteButton.module.css";
@@ -71,6 +73,8 @@ export function FavoriteButton({
   const location = useLocation();
   const [feedback, setFeedback] = useState<Feedback>(null);
   const noteId = useId();
+  // M06-T02 Increment 3b-i: saving or removing needs the server (OFF-UX-5).
+  const online = useOnlineOnlyAction();
 
   const isList = variant === "list";
   if (isList && announcer === null) {
@@ -116,7 +120,7 @@ export function FavoriteButton({
   const inactive = checking || pending;
 
   async function handleActivate() {
-    if (inactive) return;
+    if (inactive || online.unavailable) return;
     beginAction();
     if (status === "saved") {
       const outcome = await remove(landmarkId);
@@ -165,9 +169,12 @@ export function FavoriteButton({
         className={styles.button}
         aria-label={unknown ? `Save ${displayName} to favorites` : `Favorite ${displayName}`}
         aria-pressed={isToggle ? status === "saved" : undefined}
-        aria-disabled={inactive ? true : undefined}
+        aria-disabled={inactive || online.unavailable ? true : undefined}
         aria-busy={inactive ? true : undefined}
-        aria-describedby={unknown ? noteId : undefined}
+        // M06-T02 Increment 5: presentation-only marker for genuinely pending work
+        // (the status check or a save/remove in flight) — the progress cursor.
+        data-pending={inactive ? "true" : undefined}
+        aria-describedby={describedByIds(unknown ? noteId : null, online.describedBy)}
         onClick={() => void handleActivate()}
       >
         <span aria-hidden="true" className={styles.icon}>
@@ -180,6 +187,7 @@ export function FavoriteButton({
           We couldn&apos;t confirm whether this is already saved.
         </p>
       ) : null}
+      <OnlineOnlyReason action={online} className={styles.note} />
       {isList ? null : (
         <>
           <p role="status" className={styles.status}>

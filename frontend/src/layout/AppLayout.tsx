@@ -1,5 +1,9 @@
 import { NavLink, Outlet } from "react-router";
+import { useAccountSecurity } from "../auth/accountSecurity";
 import { useAuth } from "../auth/session";
+import { ConnectivityBanner } from "../connectivity/ConnectivityBanner";
+import { InstallAffordance } from "../pwa/InstallAffordance";
+import { UpdateNotice } from "../pwa/UpdateNotice";
 import { AccountNav } from "./AccountNav";
 import styles from "./AppLayout.module.css";
 
@@ -13,10 +17,12 @@ import styles from "./AppLayout.module.css";
  * VERIFIED signed-in user only (K6) — never while the session is loading,
  * unavailable, or anonymous. M05-T06 Increment 2 adds "My Trips" after it
  * under the same rule; it is current on `/trips` only (`end`), not on a trip
- * page.
+ * page. M06-T02 Increment 4d adds the installation affordance at the end of
+ * the header.
  */
 export function AppLayout() {
   const { session } = useAuth();
+  const { offline } = useAccountSecurity();
   return (
     <div className={styles.appShell}>
       <a href="#main-content" className={styles.skipLink}>
@@ -49,9 +55,24 @@ export function AppLayout() {
               </NavLink>
             </>
           ) : null}
+          {/* M06-T03 3e: the offline library, when this device may show saved copies. */}
+          {session.status === "authenticated" || offline === "offline-read" ? (
+            <NavLink
+              to="/offline"
+              className={({ isActive }) => (isActive ? styles.navLinkActive : styles.navLink)}
+            >
+              Saved for offline
+            </NavLink>
+          ) : null}
         </nav>
         <AccountNav />
+        {/* M06-T02 Increment 4d: installation affordance (event-driven; never prompts by itself). */}
+        <InstallAffordance />
       </header>
+      {/* M06-T02 Increment 3a: connection feedback (renders nothing visible when there is none). */}
+      <ConnectivityBanner />
+      {/* M06-T02 Increment 4a: application-update notices (informational; nothing visible when there is none). */}
+      <UpdateNotice />
       <main id="main-content" tabIndex={-1} className={styles.main}>
         <Outlet />
       </main>

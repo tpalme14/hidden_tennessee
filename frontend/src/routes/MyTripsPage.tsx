@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router";
-import { ApiError } from "../api/client";
+import { ApiError, UPDATE_IN_PROGRESS } from "../api/client";
 import { createTrip, type OwnerTrip, type TripListItem } from "../api/trips";
 import { useAuth } from "../auth/session";
 import { CreateTripForm } from "../trips/CreateTripForm";
@@ -94,6 +94,16 @@ type CreateFailure =
 /** How a failed creation is reported. Only definite refusals are reported as "not created". */
 function classifyCreateFailure(error: unknown): CreateFailure {
   if (!(error instanceof ApiError)) return { kind: "uncertain" };
+  // M06-T02 Increment 4b-iii (D2): a local refusal while the app updates is a
+  // KNOWN non-execution — nothing was sent — never an uncertain outcome, so no
+  // "couldn't confirm" message and no reconciliation read. Not retried.
+  if (error.code === UPDATE_IN_PROGRESS) {
+    return {
+      kind: "refused",
+      text: "The trip wasn't created because the app is updating. Nothing was sent; try again in a moment.",
+      unauthenticated: false,
+    };
+  }
   if (error.code === "NETWORK_ERROR" || error.code === "INVALID_RESPONSE" || error.status >= 500) {
     return { kind: "uncertain" };
   }

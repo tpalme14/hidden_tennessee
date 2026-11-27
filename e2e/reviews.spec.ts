@@ -643,23 +643,84 @@ test("a network failure on save keeps the edit; a failing list shows Try again a
   await openProfile(page, landmark);
   const region = reviewsRegion(page);
 
+  // M06-T02 Increment 3b-i (amendment approved by the developer 2026-11-25):
+  // a network-level failure is evidence that the server is unreachable, so
+  // saving is unavailable until an explicit recovery (OFF-UX-5). Every review
+  // mutation and every health check the page sends is counted.
+  const mutations: string[] = [];
+  const healthChecks: string[] = [];
+  page.on("request", (request) => {
+    const path = new URL(request.url()).pathname;
+    if (/^\/api\/v1\/reviews(\/|$)/.test(path) && request.method() !== "GET") {
+      mutations.push(request.method());
+    }
+    if (path === "/health") healthChecks.push(request.method());
+  });
+  /** One animation frame: any request an earlier action started has been reported. */
+  const settle = () =>
+    page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => resolve(null))));
+  const saveButton = region.getByRole("button", { name: "Save changes" });
+  const originalRating = () => region.getByRole("radio", { name: "3 stars" });
+
   // PATCH aborted at the network level.
   await page.route(/\/api\/v1\/reviews\/[0-9a-f-]+$/, (route) =>
     route.request().method() === "PATCH" ? route.abort("failed") : route.continue(),
   );
   await region.getByRole("button", { name: "Edit your review" }).click();
   await textArea(page).fill("After");
-  await region.getByRole("button", { name: "Save changes" }).click();
+  await saveButton.click();
   await expect(region.getByRole("alert")).toHaveText(
     "Your changes couldn't be saved. Please try again.",
   );
   await expect(textArea(page)).toHaveValue("After");
+  await expect(originalRating()).toBeChecked();
+  expect(mutations).toEqual(["PATCH"]);
+
+  // Saving is now unavailable, with a visible reason linked to the button.
+  const reason = "Unavailable while the server can't be reached.";
+  await expect(saveButton).toHaveAttribute("aria-disabled", "true");
+  await expect(region.getByText(reason)).toBeVisible();
+  await expect(saveButton).toHaveAccessibleDescription(reason);
+  // INTENTIONAL test action, not ordinary use: `force` presses the
+  // aria-disabled button to prove the handler itself refuses (Playwright would
+  // otherwise wait for it to become enabled).
+  await saveButton.click({ force: true });
+  await settle();
+  expect(mutations).toEqual(["PATCH"]);
+
+  // Removing the interception alone is not recovery and submits nothing.
   await page.unrouteAll();
   await stubTiles(page);
-  await region.getByRole("button", { name: "Save changes" }).click();
+  await settle();
+  await expect(saveButton).toHaveAttribute("aria-disabled", "true");
+  expect(mutations).toEqual(["PATCH"]);
+  expect(healthChecks).toEqual([]);
+
+  // Explicit recovery: exactly one healthy GET /health.
+  const health = page.waitForResponse((response) => new URL(response.url()).pathname === "/health");
+  await page.getByRole("button", { name: "Check connection" }).click();
+  const healthResponse = await health;
+  expect(healthResponse.status()).toBe(200);
+  expect(await healthResponse.json()).toMatchObject({ status: "ok" });
+  await expect(page.locator("[data-connectivity-banner] [aria-live='polite']")).toHaveText(
+    "Connected to the server.",
+  );
+  await settle();
+  expect(healthChecks).toEqual(["GET"]);
+
+  // Available again; the edit is unchanged and nothing was sent automatically.
+  await expect(saveButton).not.toHaveAttribute("aria-disabled");
+  await expect(saveButton).not.toHaveAccessibleDescription(reason);
+  await expect(textArea(page)).toHaveValue("After");
+  await expect(originalRating()).toBeChecked();
+  expect(mutations).toEqual(["PATCH"]);
+
+  // The explicit retry (an ordinary click, not forced).
+  await saveButton.click();
   await expect(
     region.getByRole("status").filter({ hasText: "Your review was updated." }),
   ).toBeVisible();
+  expect(mutations).toEqual(["PATCH", "PATCH"]);
 
   // The public list failing with a server error.
   const listPattern = (url: URL) => url.pathname === `/api/v1/landmarks/${landmark.id}/reviews`;

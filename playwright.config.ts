@@ -25,7 +25,27 @@ export default defineConfig({
   // journey worth cross-browser testing, per the testing-and-verification
   // skill's instruction to record limitations rather than imply coverage
   // that doesn't exist. This is a recorded limitation, not an oversight.
-  projects: [{ name: "chromium", use: { browserName: "chromium" } }],
+  //
+  // M06-T02 Increment 2 (Specification 7 §5, Specification 6 v1.1 §12.12):
+  // two projects against the same production build and server.
+  // - "chromium": the regression project — every original spec, with service
+  //   workers BLOCKED so their request interception (page.route) keeps
+  //   working; e2e/sw/** is excluded.
+  // - "chromium-sw": service workers ALLOWED — the dedicated e2e/sw/** specs
+  //   plus two representative existing specs (smoke, auth-navigation), the
+  //   only intentional duplicates.
+  projects: [
+    {
+      name: "chromium",
+      use: { browserName: "chromium", serviceWorkers: "block" },
+      testIgnore: ["sw/**"],
+    },
+    {
+      name: "chromium-sw",
+      use: { browserName: "chromium", serviceWorkers: "allow" },
+      testMatch: ["sw/**/*.spec.ts", "smoke.spec.ts", "auth-navigation.spec.ts"],
+    },
+  ],
   webServer: {
     // Assumes `npm run build` has already run (both local and CI pipelines
     // run build before e2e as a separate, explicit step). Invokes node

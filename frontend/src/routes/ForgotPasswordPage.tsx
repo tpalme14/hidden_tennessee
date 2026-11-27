@@ -8,6 +8,9 @@ import {
   validate,
   type FieldErrors,
 } from "../auth/validation";
+import { OnlineOnlyReason } from "../connectivity/OnlineOnlyReason";
+import { useOnlineOnlyAction } from "../connectivity/useOnlineOnlyAction";
+import { useUnsavedInput } from "../pwa/useUnsavedInput";
 import styles from "./AuthForm.module.css";
 
 export const FORGOT_PASSWORD_MESSAGES = {
@@ -61,6 +64,12 @@ export function ForgotPasswordPage() {
   const submitting = useRef(false);
   const emailInput = useRef<HTMLInputElement>(null);
   const confirmation = useRef<HTMLDivElement>(null);
+  // M06-T02 Increment 3b-iii: submitting needs the server (OFF-UX-5). Only the
+  // submission is refused while it is unreachable; typing, links, and messages
+  // are unaffected, and nothing is submitted on recovery.
+  const online = useOnlineOnlyAction();
+  // M06-T02 Increment 4b-ii: an entered address is protected from an update reload (presence only).
+  const markEmailEdited = useUnsavedInput("password-reset-request", email !== "" && !sent);
 
   useEffect(() => {
     if (sent) confirmation.current?.focus();
@@ -68,7 +77,8 @@ export function ForgotPasswordPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (submitting.current) return;
+    // The form's own submit path (button, Enter, or requestSubmit) is guarded.
+    if (submitting.current || online.unavailable) return;
 
     setFormError(null);
     const result = validate(passwordResetRequestSchema, { email });
@@ -131,6 +141,7 @@ export function ForgotPasswordPage() {
                 value={email}
                 onChange={(event) => {
                   setEmail(event.target.value);
+                  markEmailEdited(event.target.value !== "");
                   if (fieldErrors.email) setFieldErrors({});
                 }}
                 aria-invalid={"email" in fieldErrors}
@@ -143,9 +154,16 @@ export function ForgotPasswordPage() {
               ) : null}
             </div>
 
-            <button type="submit" className={styles.submit} aria-disabled={pending}>
+            <button
+              type="submit"
+              className={styles.submit}
+              aria-disabled={pending || online.unavailable}
+              aria-describedby={online.describedBy}
+              data-pending={pending ? "true" : undefined}
+            >
               {pending ? "Sending link…" : "Send reset link"}
             </button>
+            <OnlineOnlyReason action={online} className={styles.hint} />
           </form>
         </>
       )}

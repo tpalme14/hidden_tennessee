@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router";
 import App from "./App";
 import { AuthProvider } from "./auth/AuthProvider";
 import { FavoritesProvider } from "./favorites/FavoritesProvider";
+import { serviceWorker } from "./pwa/serviceWorker";
 import "./styles/global.css";
 
 // First statement to run: take a password-reset token out of the URL before
@@ -27,3 +28,7 @@ createRoot(rootElement).render(
     </BrowserRouter>
   </StrictMode>,
 );
+
+// M06-T02 Increment 2: application-shell service worker (production builds in
+// secure contexts only; never blocks or reloads the application).
+serviceWorker.register();

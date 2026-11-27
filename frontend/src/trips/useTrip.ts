@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ApiError } from "../api/client";
 import {
   MAX_TRIP_STOPS,
@@ -19,6 +19,7 @@ import {
 } from "../api/trips";
 import { parseUuid } from "../api/tripValidation";
 import { useAuth } from "../auth/session";
+import { updateSafety, type OperationHold, type Protection } from "../pwa/updateSafety";
 import { TRIP_NAME_MESSAGES } from "./tripNameRule";
 
 const NAME_MESSAGES = new Set<string>(Object.values(TRIP_NAME_MESSAGES));
@@ -301,6 +302,14 @@ export function useTrip(tripId: string | undefined): UseTripResult {
   const scopeRef = useRef<Scope | null>(null);
   const epochRef = useRef(0);
   const busyRef = useRef(false);
+  /**
+   * The update-safety hold of the change in progress (M06-T02 Increment 4b-i):
+   * taken in `begin()` before any side effect, released with the lock in
+   * `end()` or `invalidate()`. A change spans its request(s) AND its required
+   * re-read, so an application update can never reload between them — for
+   * example between a share request and the re-read that confirms the link.
+   */
+  const holdRef = useRef<OperationHold | null>(null);
   const mounted = useRef(true);
 
   useEffect(() => {
@@ -321,6 +330,26 @@ export function useTrip(tripId: string | undefined): UseTripResult {
   // mutation — rename, stop add/remove/reorder, share enable/rotate, share
   // revoke — increments `version` by exactly 1 under the owner's trip-row lock.
   const linkRef = useRef<{ url: string; version: number } | null>(null);
+  /**
+   * M06-T02 Increment 4b-ii: while a link is held, its PRESENCE is registered
+   * (never the URL) so an application-update reload cannot silently discard
+   * the only display of it. Registered in the same synchronous step that holds
+   * the link — before the change's operation hold is released — and released
+   * only where the held-link lifecycle clears the link, or on unmount.
+   * Copying the link does not end it.
+   */
+  const linkProtection = useRef<Protection | null>(null);
+  useLayoutEffect(() => {
+    // StrictMode's simulated remount: re-register a link that is still held.
+    if (linkRef.current !== null && linkProtection.current === null) {
+      linkProtection.current = updateSafety.protect("share-link");
+    }
+    const owned = linkProtection;
+    return () => {
+      owned.current?.release();
+      owned.current = null;
+    };
+  }, []);
   const [shareLink, setShareLink] = useState<string | null>(null);
   /**
    * Set immediately before committing the result of OUR OWN confirmed
@@ -337,6 +366,8 @@ export function useTrip(tripId: string | undefined): UseTripResult {
   const clearLink = useCallback(() => {
     if (linkRef.current === null) return;
     linkRef.current = null;
+    linkProtection.current?.release();
+    linkProtection.current = null;
     setShareLink(null);
   }, []);
 
@@ -381,13 +412,26 @@ export function useTrip(tripId: string | undefined): UseTripResult {
     [reconcileHeldLink],
   );
 
-  /** Starts a new epoch: every in-flight load or change becomes stale, and the change lock is released. */
+  const releaseHold = useCallback(() => {
+    const hold = holdRef.current;
+    holdRef.current = null;
+    hold?.release();
+  }, []);
+
+  /**
+   * Starts a new epoch: every in-flight load or change becomes stale, and the
+   * change lock — with its update-safety hold — is released. A stale change
+   * starts no further request after its current one (every step re-checks
+   * `isCurrent` first), and that request stays counted by the API client, so
+   * releasing the hold here leaves nothing reload-sensitive unprotected.
+   */
   const invalidate = useCallback(() => {
     epochRef.current += 1;
     busyRef.current = false;
     setPending(null);
+    releaseHold();
     return epochRef.current;
-  }, []);
+  }, [releaseHold]);
 
   const isCurrent = useCallback(
     (epoch: number, scope: Scope) =>
@@ -467,6 +511,11 @@ export function useTrip(tripId: string | undefined): UseTripResult {
       const current = stateRef.current;
       const scope = scopeRef.current;
       if (busyRef.current || current.status !== "ready" || scope === null) return null;
+      // Refused while an application update owns the transition gate — before any
+      // side effect (no lock, no pending state, no cleared share link, no request).
+      const hold = updateSafety.acquireHold();
+      if (hold === null) return null;
+      holdRef.current = hold;
       busyRef.current = true;
       setPending(kind);
       return { scope, epoch: epochRef.current, trip: current.trip };
@@ -475,11 +524,15 @@ export function useTrip(tripId: string | undefined): UseTripResult {
   );
 
   /** Releases the lock — only if no newer epoch has taken over meanwhile. */
-  const end = useCallback((epoch: number) => {
-    if (epochRef.current !== epoch) return;
-    busyRef.current = false;
-    setPending(null);
-  }, []);
+  const end = useCallback(
+    (epoch: number) => {
+      if (epochRef.current !== epoch) return;
+      busyRef.current = false;
+      setPending(null);
+      releaseHold();
+    },
+    [releaseHold],
+  );
 
   const removeStop = useCallback(
     async (stopId: string): Promise<MutationOutcome> => {
@@ -824,6 +877,11 @@ export function useTrip(tripId: string | undefined): UseTripResult {
         return { kind: "share_unconfirmed", reason: "version", trip: fresh };
       }
       linkRef.current = { url: provisional, version: fresh.version };
+      if (linkProtection.current === null) {
+        linkProtection.current = updateSafety.protect("share-link");
+      } else {
+        linkProtection.current.touch();
+      }
       setShareLink(provisional);
       return { kind: "share_created", rotated, trip: fresh };
     } finally {

@@ -459,6 +459,9 @@ describe("the ordered stop list", () => {
     expect(screen.getByRole("button", { name: "Rename" })).toHaveFocus();
     await user.tab();
     expect(screen.getByRole("button", { name: "Delete trip" })).toHaveFocus();
+    // M06-T03 3e: the offline-copy control follows the toolbar (here not eligible: its link).
+    await user.tab();
+    expect(screen.getByRole("link", { name: "Offline data on this device" })).toHaveFocus();
     await user.tab();
     expect(screen.getByRole("link", { name: "Example Falls" })).toHaveFocus();
     await user.keyboard("{Enter}");

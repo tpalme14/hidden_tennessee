@@ -124,3 +124,69 @@ test.describe("keyboard panning of the discovery map", () => {
     await expect(page.locator(".leaflet-container")).not.toBeFocused();
   });
 });
+
+/**
+ * M06-T02 Increment 5a — navigating away from Discover while the map is still
+ * animating keeps the destination. Before the correction, a Leaflet
+ * `zoomend`/`moveend` delivered after the navigation (or the text debounce)
+ * could make Discover replace the new route with `/?…` (observed 3/80 in
+ * instrumented runs). Every history operation is recorded; after the push to
+ * the destination, no `replaceState` back to `/` may follow.
+ *
+ * The final wait is an OBSERVATION boundary (longer than Leaflet's 250 ms zoom
+ * animation timer), not a synchronization: the destination is already
+ * asserted before it. A passing run is evidence, not proof, for an
+ * intermittent race; the deterministic guarantees are in
+ * `MapViewportTracker.test.tsx` and `useDiscoveryUrlState.test.tsx`.
+ */
+test("navigating away from Discover during a zoom animation keeps the destination (10 bounded attempts)", async ({
+  page,
+}) => {
+  test.setTimeout(90_000);
+  await blockTileRequests(page);
+  await page.addInitScript(() => {
+    const w = window as unknown as { __historyOps: string[] };
+    w.__historyOps = [];
+    const push = history.pushState.bind(history);
+    const replace = history.replaceState.bind(history);
+    history.pushState = (...args: Parameters<History["pushState"]>) => {
+      w.__historyOps.push(`push ${new URL(String(args[2]), location.href).pathname}`);
+      return push(...args);
+    };
+    history.replaceState = (...args: Parameters<History["replaceState"]>) => {
+      w.__historyOps.push(`replace ${new URL(String(args[2]), location.href).pathname}`);
+      return replace(...args);
+    };
+  });
+  const signIn = page.getByRole("link", { name: "Sign in" });
+
+  for (let attempt = 1; attempt <= 10; attempt++) {
+    await page.goto("/");
+    await expect(page.locator(".leaflet-container")).toBeVisible();
+    await expect(signIn).toBeVisible();
+    // The map's initial view has been reported to the URL (MapViewportTracker's whenReady).
+    await expect.poll(() => urlCenter(page)).not.toBeNull();
+    await page.evaluate(() => {
+      (window as unknown as { __historyOps: string[] }).__historyOps.length = 0;
+    });
+
+    await page.getByRole("button", { name: "Zoom in" }).click(); // starts Leaflet's zoom animation
+    await signIn.click(); // navigates away at once
+    await expect(page.getByRole("heading", { name: "Sign in", level: 2 })).toBeVisible();
+    await page.waitForTimeout(500); // observation boundary (see the comment above)
+
+    const ops = await page.evaluate(
+      () => (window as unknown as { __historyOps: string[] }).__historyOps,
+    );
+    const afterPush = ops.slice(ops.indexOf("push /sign-in") + 1);
+    expect(ops, `attempt ${attempt}: the navigation was a push to /sign-in`).toContain(
+      "push /sign-in",
+    );
+    expect(
+      afterPush.filter((op) => op === "replace /"),
+      `attempt ${attempt}: no Discover URL write after leaving (history: ${ops.join(", ")})`,
+    ).toEqual([]);
+    expect(new URL(page.url()).pathname, `attempt ${attempt}: destination kept`).toBe("/sign-in");
+    await expect(page.getByRole("heading", { name: "Sign in", level: 2 })).toBeVisible();
+  }
+});

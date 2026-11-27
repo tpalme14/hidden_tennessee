@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ApiError } from "../api/client";
 import {
   TRIP_STOP_ALREADY_EXISTS,
@@ -10,6 +10,7 @@ import {
   type TripListItem,
 } from "../api/trips";
 import { useAuth } from "../auth/session";
+import { updateSafety, type OperationHold, type Protection } from "../pwa/updateSafety";
 import type { TripFailure } from "./useTrip";
 
 /**
@@ -196,6 +197,13 @@ export function useAddToTrip(landmarkId: string, open: boolean): UseAddToTrip {
   const listRef = useRef<PickerListState>(list);
   const selectionRef = useRef<PickerSelection>(selection);
   const busyRef = useRef(false);
+  /**
+   * The update-safety hold of the action in progress (M06-T02 Increment 4b-i):
+   * taken in `begin()` before any side effect, released with the lock in
+   * `end()` or `clearAll()`. An action spans create-then-add and
+   * verify-then-add, so an application update can never reload between steps.
+   */
+  const holdRef = useRef<OperationHold | null>(null);
   const loadingMoreRef = useRef(false);
   /** The trip whose last add had an UNCERTAIN outcome; the next add to it verifies first. */
   const uncertainTripRef = useRef<string | null>(null);
@@ -230,11 +238,70 @@ export function useAddToTrip(landmarkId: string, open: boolean): UseAddToTrip {
     [commitSelection],
   );
 
+  /**
+   * M06-T02 Increment 4b-ii: the unfinished-retry state — a created trip the
+   * landmark could not (yet) be added to (`pendingTrip`) and the verify-first
+   * marker for an uncertain add (`uncertainTripRef`) — is unfinished user
+   * intent. Its PRESENCE is registered (never a trip or landmark identifier),
+   * synchronously wherever it is set or cleared — inside the action, before
+   * its operation hold is released — and released on unmount.
+   */
+  const pendingTripRef = useRef<TripRef | null>(null);
+  const retryProtection = useRef<Protection | null>(null);
+  const syncRetryProtection = useCallback((changed: boolean) => {
+    const active = pendingTripRef.current !== null || uncertainTripRef.current !== null;
+    if (active) {
+      if (retryProtection.current === null) {
+        retryProtection.current = updateSafety.protect("unfinished-trip-add");
+      } else if (changed) {
+        retryProtection.current.touch();
+      }
+    } else if (retryProtection.current !== null) {
+      retryProtection.current.release();
+      retryProtection.current = null;
+    }
+  }, []);
+  const commitPendingTrip = useCallback(
+    (trip: TripRef | null) => {
+      const changed = pendingTripRef.current?.id !== trip?.id;
+      pendingTripRef.current = trip;
+      setPendingTrip(trip);
+      syncRetryProtection(changed);
+    },
+    [syncRetryProtection],
+  );
+  const setUncertainTrip = useCallback(
+    (tripId: string | null) => {
+      const changed = uncertainTripRef.current !== tripId;
+      uncertainTripRef.current = tripId;
+      syncRetryProtection(changed);
+    },
+    [syncRetryProtection],
+  );
+  useLayoutEffect(() => {
+    // StrictMode's simulated remount: re-register retry state that still exists.
+    syncRetryProtection(false);
+    const owned = retryProtection;
+    return () => {
+      owned.current?.release();
+      owned.current = null;
+    };
+  }, [syncRetryProtection]);
+
+  const releaseHold = useCallback(() => {
+    const hold = holdRef.current;
+    holdRef.current = null;
+    hold?.release();
+  }, []);
+
   /** Clears every account-specific value and invalidates everything in flight. */
   const clearAll = useCallback(() => {
     scopeEpoch.current += 1;
     listEpoch.current += 1;
     busyRef.current = false;
+    // A stale action starts no further request after its current one (every step
+    // re-checks `currentScope` first); that request stays counted by the API client.
+    releaseHold();
     loadingMoreRef.current = false;
     commitList({ status: "idle" });
     commitSelection(null);
@@ -242,9 +309,9 @@ export function useAddToTrip(landmarkId: string, open: boolean): UseAddToTrip {
     setAction(null);
     setFeedback(null);
     setLandmarkUnavailable(false);
-    setPendingTrip(null);
-    uncertainTripRef.current = null;
-  }, [commitList, commitSelection]);
+    commitPendingTrip(null);
+    setUncertainTrip(null);
+  }, [commitList, commitSelection, releaseHold, commitPendingTrip, setUncertainTrip]);
 
   const unauthenticated = useCallback(() => {
     clearAll();
@@ -419,8 +486,8 @@ export function useAddToTrip(landmarkId: string, open: boolean): UseAddToTrip {
             return;
           }
           if (readError instanceof ApiError && readError.status === 404) {
-            uncertainTripRef.current = null;
-            setPendingTrip(null);
+            setUncertainTrip(null);
+            commitPendingTrip(null);
             setFeedback({ kind: "trip_gone" });
             refreshQuietly();
             return;
@@ -429,9 +496,9 @@ export function useAddToTrip(landmarkId: string, open: boolean): UseAddToTrip {
           return;
         }
         if (!currentScope(scope, epoch)) return;
-        uncertainTripRef.current = null;
+        setUncertainTrip(null);
         if (present) {
-          setPendingTrip(null);
+          commitPendingTrip(null);
           setFeedback({ kind: "added", trip, created });
           refreshQuietly();
           return;
@@ -448,15 +515,15 @@ export function useAddToTrip(landmarkId: string, open: boolean): UseAddToTrip {
         }
         if (created) {
           // The trip exists; keep it as the recovery target.
-          setPendingTrip(trip);
+          commitPendingTrip(trip);
           if (c.kind === "already_exists") {
-            setPendingTrip(null);
+            commitPendingTrip(null);
             setFeedback({ kind: "already_exists", trip });
             refreshQuietly();
             return;
           }
           if (c.kind === "not_found") setLandmarkUnavailable(true);
-          if (c.kind === "uncertain") uncertainTripRef.current = trip.id;
+          if (c.kind === "uncertain") setUncertainTrip(trip.id);
           setFeedback({
             kind: "partial",
             trip,
@@ -521,7 +588,7 @@ export function useAddToTrip(landmarkId: string, open: boolean): UseAddToTrip {
             return;
           }
           case "uncertain":
-            uncertainTripRef.current = trip.id;
+            setUncertainTrip(trip.id);
             setFeedback({ kind: "add_uncertain", trip });
             refreshQuietly();
             return;
@@ -531,8 +598,8 @@ export function useAddToTrip(landmarkId: string, open: boolean): UseAddToTrip {
         return;
       }
       if (!currentScope(scope, epoch)) return;
-      uncertainTripRef.current = null;
-      setPendingTrip(null);
+      setUncertainTrip(null);
+      commitPendingTrip(null);
       setFeedback({ kind: "added", trip, created });
       refreshQuietly();
     },
@@ -543,6 +610,11 @@ export function useAddToTrip(landmarkId: string, open: boolean): UseAddToTrip {
   const begin = (kind: ActionKind): { scope: Scope; epoch: number } | null => {
     const scope = scopeRef.current;
     if (busyRef.current || scope === null) return null;
+    // Refused while an application update owns the transition gate — before any
+    // side effect (no lock, no action state, no cleared feedback, no request).
+    const hold = updateSafety.acquireHold();
+    if (hold === null) return null;
+    holdRef.current = hold;
     busyRef.current = true;
     setAction(kind);
     setFeedback(null);
@@ -552,6 +624,7 @@ export function useAddToTrip(landmarkId: string, open: boolean): UseAddToTrip {
   const end = (epoch: number) => {
     if (scopeEpoch.current !== epoch) return;
     busyRef.current = false;
+    releaseHold();
     if (mounted.current) setAction(null);
   };
 

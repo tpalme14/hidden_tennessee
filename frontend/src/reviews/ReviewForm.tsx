@@ -1,4 +1,6 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
+import { OnlineOnlyReason } from "../connectivity/OnlineOnlyReason";
+import { useOnlineOnlyAction } from "../connectivity/useOnlineOnlyAction";
 import styles from "./ReviewForm.module.css";
 import {
   MAX_BODY_CODE_POINTS,
@@ -69,6 +71,10 @@ export function ReviewForm({
   focusHeadingOnMount = false,
 }: ReviewFormProps) {
   const id = useId();
+  // M06-T02 Increment 3b-i: posting or saving needs the server (OFF-UX-5).
+  // Only SUBMISSION is refused; typing, rating, and Cancel stay available, and
+  // the draft (held by the parent) is never touched.
+  const online = useOnlineOnlyAction();
   const headingRef = useRef<HTMLHeadingElement>(null);
   /** Read once: focus moves only when the form first appears. */
   const focusOnMount = useRef(focusHeadingOnMount);
@@ -101,7 +107,8 @@ export function ReviewForm({
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    if (submitting) return;
+    // The form's own submit path (button click, Enter, or requestSubmit) is guarded.
+    if (submitting || online.unavailable) return;
     const result = validateReviewDraft({ rating: draft.rating, body: draft.text });
     if (!result.ok) {
       setErrors(result.errors);
@@ -211,8 +218,9 @@ export function ReviewForm({
       <p>
         <button
           type="submit"
-          aria-disabled={submitting ? true : undefined}
+          aria-disabled={submitting || online.unavailable ? true : undefined}
           aria-busy={submitting ? true : undefined}
+          aria-describedby={online.describedBy}
         >
           {submitting ? submittingLabel : submitLabel}
         </button>
@@ -225,6 +233,7 @@ export function ReviewForm({
           </>
         ) : null}
       </p>
+      <OnlineOnlyReason action={online} className={styles.counter} />
     </form>
   );
 }

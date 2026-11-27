@@ -1,3 +1,5 @@
+import { connectivity, type RequestEvidence } from "../connectivity/connectivity";
+import { isMutationMethod, updateSafety } from "../pwa/updateSafety";
 import type { ApiErrorBody } from "./types";
 
 /**
@@ -38,15 +40,55 @@ export interface JsonResponse<T> {
 }
 
 /**
+ * Local refusal while an application update owns the transition gate
+ * (M06-T02 Increment 4b-i). A client-side code only — the server never sends
+ * it — meaning the request was NOT sent: no network request, no connectivity
+ * evidence, nothing queued or retried.
+ */
+export const UPDATE_IN_PROGRESS = "UPDATE_IN_PROGRESS";
+
+/**
+ * Update-safety accounting for one request (M06-T02 Increment 4b-i). A
+ * mutation (any method other than GET or HEAD) is counted synchronously,
+ * before connectivity accounting and `fetch`; while an update transition holds
+ * the gate it is refused here instead, before anything else happens. Returns
+ * the idempotent release, which callers run in `finally`.
+ */
+function accountForRequest(method: string | undefined): () => void {
+  if (!isMutationMethod(method)) return () => {};
+  const release = updateSafety.beginMutationRequest();
+  if (release === null) {
+    throw new ApiError(
+      0,
+      UPDATE_IN_PROGRESS,
+      "The request was not sent because the app is updating.",
+    );
+  }
+  return release;
+}
+
+/** `sendJson` within the update-safety accounting: counted until the response is read and mapped. */
+async function requestJson<T>(path: string, init: RequestInit): Promise<JsonResponse<T>> {
+  const release = accountForRequest(init.method);
+  try {
+    return await sendJson<T>(path, init);
+  } finally {
+    release();
+  }
+}
+
+/**
  * The one `fetch` call: sends the request with the defaults above, parses the
  * JSON body, and maps any non-2xx response to an `ApiError`. Every helper below
  * is a thin wrapper, so they all share identical error behaviour.
  */
-async function requestJson<T>(path: string, init: RequestInit): Promise<JsonResponse<T>> {
+async function sendJson<T>(path: string, init: RequestInit): Promise<JsonResponse<T>> {
+  const sequence = connectivity.beginRequest();
   let response: Response;
   try {
     response = await fetch(path, { ...REQUEST_DEFAULTS, ...init });
-  } catch {
+  } catch (error) {
+    connectivity.reportOutcome(sequence, transportFailureEvidence(error));
     throw networkError();
   }
 
@@ -54,14 +96,33 @@ async function requestJson<T>(path: string, init: RequestInit): Promise<JsonResp
   try {
     body = await response.json();
   } catch {
+    connectivity.reportOutcome(sequence, "server-problem");
     throw invalidResponse(response.status);
   }
 
+  connectivity.reportOutcome(sequence, responseEvidence(response.status));
   if (!response.ok) {
     throw errorFromBody(response, body);
   }
 
   return { status: response.status, body: body as T };
+}
+
+/**
+ * Connectivity evidence (M06-T02 Increment 3a; src/connectivity): any HTTP
+ * response proves the server was reached — a 4xx (401, 403, 404, 429, …) is
+ * ordinary reachability, a 5xx (including 503) is a server problem, never a
+ * disconnection. Only a failed fetch is a network failure, and an intentional
+ * abort is no evidence. Reporting never changes what the caller receives.
+ */
+function responseEvidence(status: number): RequestEvidence {
+  return status >= 500 ? "server-problem" : "response";
+}
+
+function transportFailureEvidence(error: unknown): RequestEvidence {
+  return error instanceof DOMException && error.name === "AbortError"
+    ? "cancelled"
+    : "network-failure";
 }
 
 export async function getJson<T>(path: string): Promise<T> {
@@ -157,22 +218,41 @@ export async function putJsonBody<T>(path: string, payload: unknown): Promise<Js
  *    `INVALID_RESPONSE`); a transport failure is `NETWORK_ERROR`.
  */
 export async function requestNoContent(path: string, init: RequestInit): Promise<void> {
+  const release = accountForRequest(init.method);
+  try {
+    await sendNoContent(path, init);
+  } finally {
+    release();
+  }
+}
+
+async function sendNoContent(path: string, init: RequestInit): Promise<void> {
+  const sequence = connectivity.beginRequest();
   let response: Response;
   try {
     response = await fetch(path, { ...REQUEST_DEFAULTS, ...init });
-  } catch {
+  } catch (error) {
+    connectivity.reportOutcome(sequence, transportFailureEvidence(error));
     throw networkError();
   }
 
-  if (response.status === 204) return;
-  if (response.ok) throw invalidResponse(response.status);
+  if (response.status === 204) {
+    connectivity.reportOutcome(sequence, "response");
+    return;
+  }
+  if (response.ok) {
+    connectivity.reportOutcome(sequence, "server-problem");
+    throw invalidResponse(response.status);
+  }
 
   let body: unknown;
   try {
     body = await response.json();
   } catch {
+    connectivity.reportOutcome(sequence, "server-problem");
     throw invalidResponse(response.status);
   }
+  connectivity.reportOutcome(sequence, responseEvidence(response.status));
   throw errorFromBody(response, body);
 }
 

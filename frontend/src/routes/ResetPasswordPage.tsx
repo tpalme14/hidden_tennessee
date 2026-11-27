@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
 import { resetPassword } from "../api/auth";
 import { ApiError } from "../api/client";
@@ -13,6 +13,10 @@ import {
   type FieldErrors,
 } from "../auth/validation";
 import type { SignInNoticeState } from "./SignInPage";
+import { OnlineOnlyReason } from "../connectivity/OnlineOnlyReason";
+import { useOnlineOnlyAction } from "../connectivity/useOnlineOnlyAction";
+import { updateSafety, type Protection } from "../pwa/updateSafety";
+import { useUnsavedInput } from "../pwa/useUnsavedInput";
 import styles from "./AuthForm.module.css";
 
 type Field = "newPassword" | "confirmPassword";
@@ -71,6 +75,37 @@ export function ResetPasswordPage() {
   const inputs = useRef<Partial<Record<Field, HTMLInputElement | null>>>({});
   const invalidMessage = useRef<HTMLDivElement>(null);
   const movedToInvalid = useRef(false);
+  // M06-T02 Increment 3b-iii: submitting needs the server (OFF-UX-5). Only the
+  // submission is refused while it is unreachable; typing, links, and messages
+  // are unaffected, and nothing is submitted on recovery.
+  const online = useOnlineOnlyAction();
+  // M06-T02 Increment 4b-ii: protected from an update reload (presence only —
+  // never a password or the token): the entered passwords; the captured reset
+  // link while this form holds it; and, once the reset has succeeded, the
+  // completed reset until the page is left (a reload would otherwise report an
+  // incomplete link although the password was changed).
+  const [resetDone, setResetDone] = useState(false);
+  const markFieldsEdited = useUnsavedInput(
+    "new-password",
+    status === "form" && (values.newPassword !== "" || values.confirmPassword !== ""),
+  );
+  const markResetLinkHeld = useUnsavedInput(
+    "reset-link",
+    status === "form" && token !== null && !resetDone,
+  );
+  const completion = useRef<Protection | null>(null);
+  useLayoutEffect(() => {
+    if (resetDone && completion.current === null) {
+      completion.current = updateSafety.protect("password-reset-complete");
+    }
+  }, [resetDone]);
+  useLayoutEffect(() => {
+    const owned = completion;
+    return () => {
+      owned.current?.release();
+      owned.current = null;
+    };
+  }, []);
 
   useEffect(() => {
     // Announce a link rejected after submitting by moving focus to the explanation.
@@ -84,6 +119,8 @@ export function ResetPasswordPage() {
 
   function handleChange(field: Field, value: string) {
     setValues((current) => ({ ...current, [field]: value }));
+    const next = { ...values, [field]: value };
+    markFieldsEdited(next.newPassword !== "" || next.confirmPassword !== "");
     if (field in fieldErrors) {
       setFieldErrors((current) => {
         const next = { ...current };
@@ -95,7 +132,8 @@ export function ResetPasswordPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (submitting.current || token === null) return;
+    // The form's own submit path (button, Enter, or requestSubmit) is guarded.
+    if (submitting.current || token === null || online.unavailable) return;
 
     setFormError(null);
     const result = validate(passwordResetSchema, values);
@@ -142,6 +180,12 @@ export function ResetPasswordPage() {
       return;
     }
 
+    // The completed reset is protected BEFORE the link's protection ends — no gap.
+    if (completion.current === null) {
+      completion.current = updateSafety.protect("password-reset-complete");
+    }
+    markResetLinkHeld(false);
+    setResetDone(true);
     clearResetToken();
     await refresh();
     const state: SignInNoticeState = { passwordReset: true };
@@ -218,9 +262,16 @@ export function ResetPasswordPage() {
               ) : null}
             </div>
 
-            <button type="submit" className={styles.submit} aria-disabled={pending}>
+            <button
+              type="submit"
+              className={styles.submit}
+              aria-disabled={pending || online.unavailable}
+              aria-describedby={online.describedBy}
+              data-pending={pending ? "true" : undefined}
+            >
               {pending ? "Resetting password…" : "Reset password"}
             </button>
+            <OnlineOnlyReason action={online} className={styles.hint} />
           </form>
         </>
       ) : (

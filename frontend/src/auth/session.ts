@@ -4,7 +4,10 @@ import type { AuthUser } from "../api/auth";
 /**
  * The four-state session model (M03-T03 refinement 3). The state is always
  * derived from the backend's session endpoint — never from browser storage
- * (spec §2.5, §3.2):
+ * (spec §2.5, §3.2). Since M06-T03 3c-1a it is published only after the
+ * coordinated offline security checks: while a restriction applies
+ * (`useAccountSecurity().restriction`), an authenticated response is not
+ * restored and the state is `anonymous` (not signed in on this device):
  *
  * - `loading` — the first check has not answered yet;
  * - `anonymous` — the endpoint answered 200 with `null` (confirmed: no valid
@@ -31,9 +34,15 @@ export interface AuthContextValue {
    */
   refresh: () => Promise<void>;
   /**
-   * Signs out of the current session. Resolves — and only then moves the state
-   * to `anonymous` — when the server confirmed it (spec §4.4). Rejects with the
-   * underlying `ApiError` otherwise, leaving the state exactly as it was.
+   * Signs out (M06-T03 3c-1a; Specification 6 OFF-OUT-1). The state moves to
+   * `anonymous` — signed out on this device — synchronously, before any
+   * request; the durable sign-out intent, local cleanup, and the server request
+   * follow. Resolves when the operation has finished, whether or not the server
+   * confirmed it: the outcome (server confirmation, intent, cleanup) is read
+   * from `useAccountSecurity().lastSignOut`, and a failed request is never
+   * reported as a confirmed server sign-out (Specification 3 §4.4). Rejects
+   * only with an `AuthRefusal` when nothing was started (an update in
+   * progress, or no usable cross-tab coordination); the state is then unchanged.
    */
   signOut: () => Promise<void>;
 }

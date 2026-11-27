@@ -10,6 +10,8 @@ import {
 } from "react";
 import { Link } from "react-router";
 import { AuthContext } from "../auth/session";
+import { OnlineOnlyReason } from "../connectivity/OnlineOnlyReason";
+import { useOnlineOnlyAction } from "../connectivity/useOnlineOnlyAction";
 import { MessageText } from "./MessageText";
 import type { MessagePart } from "./messageParts";
 import { tripPath } from "./tripPaths";
@@ -70,6 +72,11 @@ export function TripsAnnouncer({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<Entry | null>(null);
   const [alert, setAlert] = useState<Entry | null>(null);
   const seq = useRef(0);
+  // M06-T02 Increment 3b-ii-a: "Try adding again" needs the server (OFF-UX-5).
+  // Shown unavailable, with its reason OUTSIDE the alert (so the alert is not
+  // re-announced), and refused here as well as by the caller's own guard.
+  // Nothing is retried on recovery.
+  const retryOnline = useOnlineOnlyAction();
 
   useEffect(() => {
     setStatus(null);
@@ -132,14 +139,18 @@ export function TripsAnnouncer({ children }: { children: ReactNode }) {
             <button
               type="button"
               className={styles.button}
-              aria-disabled={alert.retryDisabled ? true : undefined}
-              onClick={alert.onRetry}
+              aria-disabled={alert.retryDisabled || retryOnline.unavailable ? true : undefined}
+              aria-describedby={retryOnline.describedBy}
+              onClick={() => {
+                if (!retryOnline.unavailable) alert.onRetry?.();
+              }}
             >
               Try adding again
             </button>
           ) : null}
         </div>
       ) : null}
+      {alert?.onRetry && verifiedUserId !== null ? <OnlineOnlyReason action={retryOnline} /> : null}
       {children}
     </TripsAnnouncerContext.Provider>
   );

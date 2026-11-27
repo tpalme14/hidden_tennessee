@@ -1,4 +1,7 @@
 import { useId, useRef, useState, type FormEvent } from "react";
+import { OnlineOnlyReason } from "../connectivity/OnlineOnlyReason";
+import { useOnlineOnlyAction } from "../connectivity/useOnlineOnlyAction";
+import { useUnsavedInput } from "../pwa/useUnsavedInput";
 import { validateTripName } from "./tripNameRule";
 import styles from "./CreateTripForm.module.css";
 
@@ -35,10 +38,16 @@ export function CreateTripForm({ busy, onCreate }: CreateTripFormProps) {
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const submitRef = useRef<HTMLButtonElement>(null);
+  // M06-T02 Increment 3b-ii: creating a trip needs the server (OFF-UX-5). The
+  // typed name is kept; nothing is submitted on recovery.
+  const online = useOnlineOnlyAction();
+  // M06-T02 Increment 4b-ii: a typed name is protected from an update reload (presence only).
+  const markNameEdited = useUnsavedInput("trip-name", value.trim() !== "");
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    if (busy) return;
+    // The form's own submit path (button click, Enter, or requestSubmit) is guarded.
+    if (busy || online.unavailable) return;
     const result = validateTripName(value);
     if (!result.ok) {
       setError(result.message);
@@ -67,7 +76,10 @@ export function CreateTripForm({ busy, onCreate }: CreateTripFormProps) {
         className={styles.input}
         aria-invalid={error !== null ? true : undefined}
         aria-describedby={error !== null ? errorId : undefined}
-        onChange={(event) => setValue(event.target.value)}
+        onChange={(event) => {
+          setValue(event.target.value);
+          markNameEdited(event.target.value.trim() !== "");
+        }}
       />
       {error !== null ? (
         <p id={errorId} className={styles.fieldError}>
@@ -78,10 +90,13 @@ export function CreateTripForm({ busy, onCreate }: CreateTripFormProps) {
         ref={submitRef}
         type="submit"
         className={styles.button}
-        aria-disabled={busy ? true : undefined}
+        aria-disabled={busy || online.unavailable ? true : undefined}
+        data-pending={busy ? "true" : undefined}
+        aria-describedby={online.describedBy}
       >
         Create trip
       </button>
+      <OnlineOnlyReason action={online} />
     </form>
   );
 }

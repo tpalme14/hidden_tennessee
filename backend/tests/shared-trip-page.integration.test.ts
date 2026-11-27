@@ -103,6 +103,63 @@ describe("shared-trip page headers", () => {
   });
 });
 
+/**
+ * M06-T02 Increment 2a — percent-encoded forms of the shared-trip page path.
+ * React Router decodes the path before matching, so these display the shared
+ * trip; before the correction the server matched only the raw path and sent
+ * neither header (confirmed in Increment 2 with a real synthetic shared trip).
+ * Synthetic tokens only.
+ */
+describe("percent-encoded shared-trip page paths (Increment 2a)", () => {
+  const ENCODED_FIRST = `%${VALID_TOKEN.charCodeAt(0).toString(16)}${VALID_TOKEN.slice(1)}`;
+
+  it.each([
+    ["an encoded letter in 'shared'", `/%73hared/trips/${VALID_TOKEN}`],
+    ["an encoded letter in 'trips'", `/shared/%74rips/${VALID_TOKEN}`],
+    ["encoded letters in both fixed segments", `/%73hared/%74rips/${VALID_TOKEN}`],
+    ["encoded upper-case letters", `/%53HARED/TRIPS/${VALID_TOKEN}`],
+    ["mixed case with an encoded letter", `/Shar%65d/Trips/${VALID_TOKEN}`],
+    ["an encoded letter and a trailing slash", `/%73hared/trips/${VALID_TOKEN}/`],
+    ["an encoded letter and a query string", `/shared/%74rips/${VALID_TOKEN}?ref=link`],
+    ["an encoded letter and an encoded token character", `/%73hared/trips/${ENCODED_FIRST}`],
+    ["an encoded token character alone (already protected)", `/shared/trips/${ENCODED_FIRST}`],
+    ["the canonical path (unchanged)", `/shared/trips/${VALID_TOKEN}`],
+  ])("%s gets the SPA HTML with both headers", async (_label, url) => {
+    expectPageHeaders(await request(createApp()).get(url));
+  });
+
+  it("an encoded slash between the fixed segments is conservatively protected too (still the SPA)", async () => {
+    // The frontend does not render a shared trip here (React Router does not
+    // decode %2F), but the decoded form names the shared route; the headers
+    // are harmless and no other route contract is affected.
+    expectPageHeaders(await request(createApp()).get(`/shared%2Ftrips/${VALID_TOKEN}`));
+  });
+
+  it("HEAD of an encoded path gets the same headers", async () => {
+    const response = await request(createApp()).head(`/%73hared/trips/${VALID_TOKEN}`);
+    expect(response.status).toBe(200);
+    expect(response.headers["x-robots-tag"]).toBe(ROBOTS);
+    expect(response.headers["cache-control"]).toBe("no-store");
+  });
+
+  it.each([
+    `/%73hared/trips/%E0%A4%A`,
+    "/shared/trips/%",
+    "/%zzshared/trips/a",
+    "/%73hared/trips/a%ZZ",
+  ])("malformed percent-encoding (%s) never causes a server error", async (url) => {
+    const response = await request(createApp()).get(url);
+    expect(response.status).toBeLessThan(500);
+  });
+
+  it.each(["/%74rips", "/%73haredx/trips/a", "/%73hared/trips", "/landm%61rks/x"])(
+    "an encoded unrelated path (%s) keeps its existing headers",
+    async (url) => {
+      expectOrdinaryPage(await request(createApp()).get(url));
+    },
+  );
+});
+
 describe("sharing-setting independence", () => {
   it.each([true, false])("TRIP_SHARING_ENABLED = %s: the same page headers", async (enabled) => {
     vi.resetModules();

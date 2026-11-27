@@ -1,4 +1,6 @@
 import type { Ref } from "react";
+import { OnlineOnlyReason } from "../connectivity/OnlineOnlyReason";
+import { useOnlineOnlyAction } from "../connectivity/useOnlineOnlyAction";
 import styles from "./TripManage.module.css";
 
 /**
@@ -24,6 +26,9 @@ export function DeleteTripConfirm({
   onConfirm,
   onCancel,
 }: DeleteTripConfirmProps) {
+  // M06-T02 Increment 3b-ii: only the deletion itself needs the server
+  // (OFF-UX-5); the confirmation stays open and Cancel stays available.
+  const online = useOnlineOnlyAction();
   return (
     <div className={styles.confirm}>
       <p ref={textRef} tabIndex={-1} className={styles.confirmText}>
@@ -34,8 +39,13 @@ export function DeleteTripConfirm({
         <button
           type="button"
           className={`${styles.button} ${styles.danger}`}
-          aria-disabled={busy ? true : undefined}
-          onClick={(event) => onConfirm(event.currentTarget)}
+          aria-disabled={busy || online.unavailable ? true : undefined}
+          data-pending={busy ? "true" : undefined}
+          aria-describedby={online.describedBy}
+          onClick={(event) => {
+            if (online.unavailable) return;
+            onConfirm(event.currentTarget);
+          }}
         >
           Delete trip permanently
         </button>
@@ -43,6 +53,7 @@ export function DeleteTripConfirm({
           Cancel
         </button>
       </div>
+      <OnlineOnlyReason action={online} className={styles.note} />
     </div>
   );
 }

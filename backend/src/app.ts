@@ -22,11 +22,47 @@ const frontendDistPath = path.resolve(__dirname, "../../frontend/dist");
  * `/shared/trips/`, any number of trailing slashes, case-insensitive. Purely
  * structural — any segment qualifies (valid, malformed, revoked, or unknown
  * token alike), so no lookup, authentication, or sharing setting is
- * involved. Tested against `req.path`, which never includes the query string.
+ * involved. Tested against `req.path`, which never includes the query string,
+ * both raw and percent-decoded (M06-T02 Increment 2a): React Router decodes
+ * the path before matching, so `/%73hared/trips/<token>` also displays the
+ * shared trip and must receive the same headers.
  */
 export const SHARED_TRIP_PAGE_PATH = /^\/shared\/trips\/[^/]+\/*$/i;
 
-export function createApp() {
+/**
+ * Static and PWA infrastructure files (ADR-008 routing contract; M06-T02
+ * Increment 1a): the built `/assets/*` bundle, `/icons/*`, the service worker
+ * script, the web app manifest, and generated Workbox runtime files. Existing
+ * files are served by `express.static` first; a request that reaches the SPA
+ * fallback for one of these paths is for a MISSING file and must get a 404,
+ * never the application's index.html with 200. Case-insensitive; checked
+ * against `req.path` (no query string), raw and percent-decoded, because
+ * `express.static` decodes the path when it looks the file up.
+ */
+const INFRASTRUCTURE_FILE_PATH =
+  /^\/(?:assets\/|icons\/|sw\.js$|manifest\.webmanifest$|workbox-[^/]+\.js$)/i;
+
+/**
+ * True when `pattern` matches the request path as received or after one
+ * percent-decoding pass. Malformed percent-encoding never throws: it simply
+ * cannot match in decoded form.
+ */
+function matchesRawOrDecodedPath(pattern: RegExp, requestPath: string): boolean {
+  if (pattern.test(requestPath)) return true;
+  try {
+    return pattern.test(decodeURIComponent(requestPath));
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * `options.frontendDistPath` exists so tests can serve a controlled build
+ * directory (for example, one guaranteed not to contain `sw.js`); production
+ * always uses the default, the built frontend.
+ */
+export function createApp(options: { frontendDistPath?: string } = {}) {
+  const distPath = options.frontendDistPath ?? frontendDistPath;
   const app = express();
 
   // 0. Client address (M03-T02 Increment 5): Express resolves it through the
@@ -65,7 +101,7 @@ export function createApp() {
   // 5. Static frontend assets (also covers a future root-level service
   //    worker/manifest once M06 adds vite-plugin-pwa — Vite's default build
   //    output already places those at the dist root).
-  app.use(express.static(frontendDistPath));
+  app.use(express.static(distPath));
 
   // 6. SPA fallback — GET only, registered last, for client-side routed
   //    navigation requests only. Never intercepts /api/* (already handled
@@ -75,12 +111,18 @@ export function createApp() {
   //    Cache-Control in place (send 0.19: it sets its own only when none is
   //    present). Defensive measures only — not access control; the token in
   //    the URL is neither read nor logged here.
+  //    A missing static or PWA infrastructure file is a 404, not the SPA
+  //    (ADR-008; see INFRASTRUCTURE_FILE_PATH above).
   app.get("*", (req: Request, res: Response) => {
-    if (SHARED_TRIP_PAGE_PATH.test(req.path)) {
+    if (matchesRawOrDecodedPath(INFRASTRUCTURE_FILE_PATH, req.path)) {
+      res.status(404).json({ error: { code: "NOT_FOUND", message: "Resource not found." } });
+      return;
+    }
+    if (matchesRawOrDecodedPath(SHARED_TRIP_PAGE_PATH, req.path)) {
       res.setHeader("X-Robots-Tag", SHARED_TRIP_ROBOTS_TAG);
       res.setHeader("Cache-Control", SHARED_TRIP_CACHE_CONTROL);
     }
-    res.sendFile(path.join(frontendDistPath, "index.html"), (err) => {
+    res.sendFile(path.join(distPath, "index.html"), (err) => {
       if (err) {
         res.status(404).json({ error: { code: "NOT_FOUND", message: "Resource not found." } });
       }

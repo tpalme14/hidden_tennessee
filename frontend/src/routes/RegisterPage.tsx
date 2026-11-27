@@ -12,6 +12,9 @@ import {
   validate,
   type FieldErrors,
 } from "../auth/validation";
+import { OnlineOnlyReason } from "../connectivity/OnlineOnlyReason";
+import { useOnlineOnlyAction } from "../connectivity/useOnlineOnlyAction";
+import { useUnsavedInput } from "../pwa/useUnsavedInput";
 import styles from "./AuthForm.module.css";
 
 /** Router state the sign-in page (M03-T03 Increment 4) reads to show its confirmation notice. */
@@ -94,6 +97,16 @@ export function RegisterPage() {
   const [pending, setPending] = useState(false);
   const submitting = useRef(false);
   const inputs = useRef<Partial<Record<Field, HTMLInputElement | null>>>({});
+  // M06-T02 Increment 3b-iii: submitting needs the server (OFF-UX-5). Only the
+  // submission is refused while it is unreachable; typing, links, and messages
+  // are unaffected, and nothing is submitted on recovery.
+  const online = useOnlineOnlyAction();
+  // M06-T02 Increment 4b-ii: entered fields are protected from an update reload —
+  // their presence only; no value reaches the registry.
+  const markFieldsEdited = useUnsavedInput(
+    "registration",
+    values.email !== "" || values.password !== "" || values.confirmPassword !== "",
+  );
 
   if (session.status === "authenticated") {
     return <Navigate to={returnTo} replace />;
@@ -106,6 +119,8 @@ export function RegisterPage() {
 
   function handleChange(field: Field, value: string) {
     setValues((current) => ({ ...current, [field]: value }));
+    const next = { ...values, [field]: value };
+    markFieldsEdited(next.email !== "" || next.password !== "" || next.confirmPassword !== "");
     if (field in fieldErrors) {
       setFieldErrors((current) => {
         const next = { ...current };
@@ -117,7 +132,8 @@ export function RegisterPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (submitting.current) return;
+    // The form's own submit path (button, Enter, or requestSubmit) is guarded.
+    if (submitting.current || online.unavailable) return;
 
     setFormError(null);
     const result = validate(registrationSchema, values);
@@ -239,9 +255,16 @@ export function RegisterPage() {
           ) : null}
         </div>
 
-        <button type="submit" className={styles.submit} aria-disabled={pending}>
+        <button
+          type="submit"
+          className={styles.submit}
+          aria-disabled={pending || online.unavailable}
+          aria-describedby={online.describedBy}
+          data-pending={pending ? "true" : undefined}
+        >
           {pending ? "Creating account…" : "Create account"}
         </button>
+        <OnlineOnlyReason action={online} className={styles.hint} />
       </form>
 
       <p className={styles.alternative}>

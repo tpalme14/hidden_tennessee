@@ -5,6 +5,7 @@ import { FavoriteButton } from "../favorites/FavoriteButton";
 import { LoadingState } from "../components/LoadingState";
 import { categoryLabel } from "../map/categoryMarkerStyle";
 import { LandmarkLocationMap } from "../map/LandmarkLocationMap";
+import { OfflineCopyControl, SavedCopyLink } from "../offline/OfflineCopyControl";
 import { ReviewsSection } from "../reviews/ReviewsSection";
 import { AddToTripButton } from "../trips/AddToTripButton";
 import { useLandmarkProfile } from "./useLandmarkProfile";
@@ -54,6 +55,8 @@ export function LandmarkProfilePage() {
         <>
           <h2 id="profile-heading">Landmark Profile</h2>
           <ErrorState message={status.message} onRetry={retry} />
+          {/* OFF-UX-2: a link to a saved copy, never a silent replacement. */}
+          {id !== undefined ? <SavedCopyLink kind="landmark" id={id} /> : null}
         </>
       ) : null}
 
@@ -129,6 +132,8 @@ function FullProfileContent({
           full profile of an active PUBLIC landmark. Keyed by landmark so no
           picker state carries over to another landmark. */}
       <AddToTripButton key={id} landmarkId={id} displayName={displayName} />
+      {/* Save for offline (M06-T03 3e): full profiles only; separate from Favorite. */}
+      <OfflineCopyControl key={`offline-${id}`} kind="landmark" id={id} name={displayName} />
       <LandmarkLocationMap
         latitude={latitude}
         longitude={longitude}

@@ -1,5 +1,7 @@
 import { useMemo, type KeyboardEvent, type RefObject } from "react";
 import { Link } from "react-router";
+import { OnlineOnlyReason } from "../connectivity/OnlineOnlyReason";
+import { useOnlineOnlyAction } from "../connectivity/useOnlineOnlyAction";
 import { ALLOWED_RADII_MILES } from "../map/geo";
 import { categoryLabel } from "../map/categoryMarkerStyle";
 import { MessageText } from "./MessageText";
@@ -75,6 +77,9 @@ export interface NearbyPanelProps {
  */
 export function NearbyPanel({ nearby, headingRef, onClose, adding }: NearbyPanelProps) {
   const { status, radius, origin, shown } = nearby;
+  // M06-T02 Increment 3b-ii: only "Add to this trip" needs the server
+  // (OFF-UX-5); the search, radius, retry, links, and map stay available.
+  const online = useOnlineOnlyAction();
   if (status.kind === "closed" || origin === null) return null;
 
   const statusParts = panelStatusParts(status, origin);
@@ -162,6 +167,9 @@ export function NearbyPanel({ nearby, headingRef, onClose, adding }: NearbyPanel
               stop to add another.
             </p>
           ) : null}
+          {adding !== undefined && shown!.isCurrent && !adding.tripFull ? (
+            <OnlineOnlyReason action={online} className={styles.notice} />
+          ) : null}
           <ul
             className={styles.list}
             aria-label={`Landmarks near Stop ${origin.stopNumber}`}
@@ -190,8 +198,11 @@ export function NearbyPanel({ nearby, headingRef, onClose, adding }: NearbyPanel
                     className={styles.button}
                     data-nearby-add={landmark.id}
                     aria-label={`Add to this trip: ${landmark.display_name}`}
-                    aria-disabled={adding.busy ? true : undefined}
-                    onClick={(event) => adding.onAdd(landmark, event.currentTarget)}
+                    aria-disabled={adding.busy || online.unavailable ? true : undefined}
+                    aria-describedby={online.describedBy}
+                    onClick={(event) => {
+                      if (!online.unavailable) adding.onAdd(landmark, event.currentTarget);
+                    }}
                   >
                     Add to this trip
                   </button>

@@ -11,8 +11,11 @@ import {
 import { useAuth } from "../auth/session";
 import { ErrorState } from "../components/ErrorState";
 import { LoadingState } from "../components/LoadingState";
+import { OnlineOnlyReason } from "../connectivity/OnlineOnlyReason";
+import { useOnlineOnlyAction } from "../connectivity/useOnlineOnlyAction";
 import { ReviewItem } from "./ReviewItem";
 import { EMPTY_DRAFT, ReviewForm, hasDraftContent, type ReviewDraft } from "./ReviewForm";
+import { useUnsavedInput } from "../pwa/useUnsavedInput";
 import styles from "./ReviewsSection.module.css";
 import type { OwnReview } from "./useOwnReview";
 import {
@@ -145,6 +148,22 @@ export function OwnReviewPanel({
   const confirmId = useId();
   const conflictDraftId = useId();
   const unsavedId = useId();
+  // M06-T02 Increment 3b-i: confirming a deletion needs the server (OFF-UX-5);
+  // opening and cancelling the confirmation stay available.
+  const deleteOnline = useOnlineOnlyAction();
+  // M06-T02 Increment 4b-ii: unsaved review drafts are protected from an
+  // application-update reload (their presence only, never their content).
+  const savedReview = own.state.kind === "found" ? own.state.review : null;
+  const editDiffers = (d: ReviewDraft | null) =>
+    d !== null &&
+    (savedReview === null ||
+      d.rating !== savedReview.rating ||
+      d.text !== (savedReview.body ?? ""));
+  const markReviewDraftEdited = useUnsavedInput("review-draft", hasDraftContent(draft));
+  const markReviewEditEdited = useUnsavedInput(
+    "review-edit",
+    mode === "edit" && editDiffers(editDraft),
+  );
 
   // The last signed-in account on this page; a different one clears everything.
   const lastUserId = useRef<string | null>(userId);
@@ -338,7 +357,7 @@ export function OwnReviewPanel({
   }
 
   async function confirmDelete(review: Review) {
-    if (deleting) return;
+    if (deleting || deleteOnline.unavailable) return;
     const startedFor = currentUserId.current;
     beginAction();
     setDeleting(true);
@@ -388,6 +407,7 @@ export function OwnReviewPanel({
       draft={draft}
       onDraftChange={(next) => {
         setDraft(next);
+        markReviewDraftEdited(hasDraftContent(next));
         if (announcement !== "") setAnnouncement("");
       }}
       onSubmit={(value) => void submit(value)}
@@ -448,7 +468,10 @@ export function OwnReviewPanel({
               submitLabel="Save changes"
               submittingLabel="Saving…"
               draft={editDraft}
-              onDraftChange={setEditDraft}
+              onDraftChange={(next) => {
+                setEditDraft(next);
+                markReviewEditEdited(editDiffers(next));
+              }}
               onSubmit={(value) => void saveEdit(review, value)}
               submitting={saving}
               serverError={editError}
@@ -467,8 +490,9 @@ export function OwnReviewPanel({
                   <p>
                     <button
                       type="button"
-                      aria-disabled={deleting ? true : undefined}
+                      aria-disabled={deleting || deleteOnline.unavailable ? true : undefined}
                       aria-busy={deleting ? true : undefined}
+                      aria-describedby={deleteOnline.describedBy}
                       onClick={() => void confirmDelete(review)}
                     >
                       {deleting ? "Deleting…" : "Delete review"}
@@ -477,6 +501,7 @@ export function OwnReviewPanel({
                       Cancel
                     </button>
                   </p>
+                  <OnlineOnlyReason action={deleteOnline} />
                 </div>
               ) : (
                 <p>

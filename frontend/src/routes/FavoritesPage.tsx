@@ -10,6 +10,8 @@ import {
   parseFavoritesPageParam,
 } from "../favorites/favoritesPageParam";
 import { useFavoritesList } from "../favorites/useFavoritesList";
+import { OnlineOnlyReason } from "../connectivity/OnlineOnlyReason";
+import { useOnlineOnlyAction } from "../connectivity/useOnlineOnlyAction";
 import { categoryLabel } from "../map/categoryMarkerStyle";
 import styles from "./FavoritesPage.module.css";
 
@@ -80,6 +82,9 @@ function entryName(entry: FavoriteEntry): string | null {
 export function FavoritesPage() {
   const { session } = useAuth();
   const { remove, isPending } = useFavorites();
+  // M06-T02 Increment 3b-i: removal needs the server (OFF-UX-5). One reason,
+  // shown above the list, describes every Remove button.
+  const online = useOnlineOnlyAction();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const page = parseFavoritesPageParam(searchParams);
@@ -192,7 +197,7 @@ export function FavoritesPage() {
 
   async function handleRemove(entry: FavoriteEntry) {
     const id = entry.landmark_id;
-    if (isPending(id)) return;
+    if (isPending(id) || online.unavailable) return;
     const name = entryName(entry);
     setAlert((a) => (a?.kind === "remove" ? null : a));
     const outcome = await remove(id);
@@ -314,6 +319,7 @@ export function FavoritesPage() {
 
     return (
       <>
+        <OnlineOnlyReason action={online} className={styles.note} />
         <ul className={styles.list} aria-labelledby={HEADING_ID}>
           {state.entries.map((entry, index) => renderEntry(entry, index))}
         </ul>
@@ -374,8 +380,10 @@ export function FavoritesPage() {
           type="button"
           className={styles.button}
           aria-label={removeLabel}
-          aria-disabled={pending ? true : undefined}
+          aria-disabled={pending || online.unavailable ? true : undefined}
           aria-busy={pending ? true : undefined}
+          data-pending={pending ? "true" : undefined}
+          aria-describedby={online.describedBy}
           onFocus={() => {
             lastFocusedRemove.current = id;
           }}

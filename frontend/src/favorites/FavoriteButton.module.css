@@ -38,9 +38,17 @@
   border-color: #7a5b00;
 }
 
+/* M06-T02 Increment 5: aria-disabled alone (for example, the server is
+   unreachable or an update is being applied) is not progress; only genuinely
+   pending work (data-pending, presentation only) shows the progress cursor.
+   Same specificity, so the later data-pending rule wins when both apply. */
 .button[aria-disabled="true"] {
-  cursor: progress;
+  cursor: not-allowed;
   color: #444;
+}
+
+.button[data-pending] {
+  cursor: progress;
 }
 
 .icon {

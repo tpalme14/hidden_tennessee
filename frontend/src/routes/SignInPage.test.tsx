@@ -5,6 +5,11 @@ import { MemoryRouter, Route, Routes, useLocation } from "react-router";
 import { ApiError } from "../api/client";
 import { getSession, register, signIn, signOut } from "../api/auth";
 import { AuthProvider } from "../auth/AuthProvider";
+import { RESTRICTION_MESSAGES } from "../auth/accountSecurity";
+import { openOfflineStateDatabase } from "../offline/db";
+import type { FakeLockManager } from "../offline/testSupport";
+import { updateSafety } from "../pwa/updateSafety";
+import { SAFETY_LOCK_KEY } from "../offline/safetyLock";
 import { TEST_SESSION, TEST_USER, deferred } from "../auth/testFixtures";
 import { RegisterPage } from "./RegisterPage";
 import { SignInPage, SIGN_IN_MESSAGES } from "./SignInPage";
@@ -119,7 +124,7 @@ describe("SignInPage — form", () => {
     mockedSignIn.mockRejectedValue(new ApiError(401, "INVALID_EMAIL_OR_PASSWORD", "x"));
     renderAt("/sign-in");
     await fillAndSubmit(user, "hiker@example.test", "short");
-    expect(mockedSignIn).toHaveBeenCalledWith("hiker@example.test", "short");
+    await waitFor(() => expect(mockedSignIn).toHaveBeenCalledWith("hiker@example.test", "short"));
     expect(document.body).not.toHaveTextContent(/8 to 128|at least 8/);
   });
 });
@@ -140,7 +145,9 @@ describe("SignInPage — registration notice", () => {
 });
 
 describe("SignInPage — success", () => {
-  it("signs in, refreshes the session from the server, then goes home", async () => {
+  // M06-T03 3c-1a: the provider's coordinated sign-in sends the request after
+  // its security checks (asynchronously) and confirms the session itself.
+  it("signs in, confirms the session from the server, then goes home", async () => {
     const user = userEvent.setup({ delay: null });
     renderAt("/sign-in");
     await waitFor(() => expect(mockedGetSession).toHaveBeenCalledTimes(1));
@@ -150,11 +157,11 @@ describe("SignInPage — success", () => {
     mockedGetSession.mockReturnValueOnce(refreshed.promise);
     await fillAndSubmit(user);
 
-    expect(mockedSignIn).toHaveBeenCalledWith("Hiker@Example.test", PASSWORD);
+    await waitFor(() => expect(mockedSignIn).toHaveBeenCalledWith("Hiker@Example.test", PASSWORD));
     // Still here, pending, until the provider's own check confirms the session.
     expect(submitButton()).toHaveTextContent("Signing in…");
     expect(submitButton()).toHaveAttribute("aria-disabled", "true");
-    expect(mockedGetSession).toHaveBeenCalledTimes(2);
+    await waitFor(() => expect(mockedGetSession).toHaveBeenCalledTimes(2));
     expect(screen.queryByTestId("destination")).not.toBeInTheDocument();
 
     refreshed.resolve(TEST_SESSION);
@@ -170,17 +177,31 @@ describe("SignInPage — success", () => {
     await fillAndSubmit(user);
     await user.click(submitButton());
     await user.keyboard("{Enter}");
-    expect(mockedSignIn).toHaveBeenCalledTimes(1);
+    // M06-T03 3c-1 correction: the request is sent by the coordinated sign-in
+    // after its security steps, so wait for it rather than counting at once.
+    await waitFor(() => expect(mockedSignIn).toHaveBeenCalledTimes(1));
 
     mockedGetSession.mockResolvedValue(TEST_SESSION);
     pending.resolve(TEST_USER);
     expect(await screen.findByTestId("destination")).toBeInTheDocument();
+    // A duplicate attempt would have queued behind the first one's tnle-auth
+    // hold and run after it. Wait until every coordinated operation has
+    // settled (no lock held or pending, no update-safety hold), then check
+    // that no delayed duplicate was ever sent. This also keeps unfinished work
+    // from reaching the next test.
+    const locks = navigator.locks as unknown as FakeLockManager;
+    await waitFor(() => {
+      expect(locks.snapshot()).toEqual({ held: [], pending: [] });
+      expect(updateSafety.getSnapshot().operationHolds).toBe(0);
+    });
+    expect(mockedSignIn).toHaveBeenCalledTimes(1);
   });
 
   it("goes to a safe returnTo, keeping its query", async () => {
     const user = userEvent.setup({ delay: null });
     mockedSignIn.mockResolvedValue(TEST_USER);
     renderAt("/sign-in?returnTo=%2Flandmarks%2Fabc%3Ftab%3D1");
+    await waitFor(() => expect(mockedGetSession).toHaveBeenCalledTimes(1));
     mockedGetSession.mockResolvedValue(TEST_SESSION);
     await fillAndSubmit(user);
     expect(await screen.findByTestId("destination")).toHaveTextContent(
@@ -202,6 +223,7 @@ describe("SignInPage — success", () => {
       "href",
       "/register",
     );
+    await waitFor(() => expect(mockedGetSession).toHaveBeenCalledTimes(1));
     mockedGetSession.mockResolvedValue(TEST_SESSION);
     await fillAndSubmit(user);
     expect(await screen.findByTestId("destination")).toHaveTextContent("home:/");
@@ -424,4 +446,81 @@ describe("SignInPage — password reset (Increment 5)", () => {
       expect(screen.queryByRole("status")).not.toBeInTheDocument();
     },
   );
+});
+
+describe("SignInPage — offline security restrictions (M06-T03 3c-1a)", () => {
+  async function seedIntent() {
+    const opened = await openOfflineStateDatabase();
+    if (opened.kind !== "open") throw new Error(opened.kind);
+    await opened.db.put("state", {
+      key: "signout_intent",
+      schema_version: 1,
+      pending: true,
+      created_at: "2026-11-25T09:00:00.000Z",
+    });
+    opened.db.close();
+  }
+
+  it("with D22 present, explains why and sends no credentials (U3)", async () => {
+    const user = userEvent.setup({ delay: null });
+    localStorage.setItem(SAFETY_LOCK_KEY, "true");
+    renderAt("/sign-in");
+    const notice = await screen.findByText(RESTRICTION_MESSAGES["safety-lock"]);
+    expect(notice.closest("[role=status]")).not.toBeNull();
+    await fillAndSubmit(user);
+    expect(submitButton()).toHaveAttribute("aria-disabled", "true");
+    expect(submitButton()).toHaveAccessibleDescription(RESTRICTION_MESSAGES["safety-lock"]);
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(mockedSignIn).not.toHaveBeenCalled();
+    expect(localStorage.getItem(SAFETY_LOCK_KEY)).toBe("true");
+  });
+
+  it("without usable Web Locks, explains the browser limitation and sends nothing (AC-36)", async () => {
+    const user = userEvent.setup({ delay: null });
+    delete (navigator as { locks?: unknown }).locks;
+    renderAt("/sign-in");
+    expect(
+      await screen.findByText(RESTRICTION_MESSAGES["coordination-unavailable"]),
+    ).toBeInTheDocument();
+    await fillAndSubmit(user);
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(mockedSignIn).not.toHaveBeenCalled();
+    expect(mockedGetSession).not.toHaveBeenCalled();
+  });
+
+  it("with a pending sign-out, offers Sign in again: the sign-out is confirmed before credentials are sent", async () => {
+    const user = userEvent.setup({ delay: null });
+    await seedIntent();
+    const order: string[] = [];
+    vi.mocked(signOut).mockImplementation(() => {
+      order.push("sign-out");
+      return Promise.resolve();
+    });
+    mockedSignIn.mockImplementation(() => {
+      order.push("sign-in");
+      return Promise.resolve(TEST_USER);
+    });
+    // A still-valid cookie: the startup check must not restore it (OFF-OUT-4).
+    mockedGetSession.mockResolvedValue(TEST_SESSION);
+    renderAt("/sign-in");
+    expect(await screen.findByRole("button", { name: "Sign in again" })).toBeInTheDocument();
+    await fillAndSubmit(user);
+    expect(await screen.findByTestId("destination")).toHaveTextContent("home:/");
+    expect(order).toEqual(["sign-out", "sign-in"]);
+  });
+
+  it("Sign in again sends no credentials when the sign-out can't be confirmed (AC-35)", async () => {
+    const user = userEvent.setup({ delay: null });
+    await seedIntent();
+    vi.mocked(signOut).mockRejectedValue(new ApiError(0, "NETWORK_ERROR", "offline"));
+    mockedGetSession.mockResolvedValue(TEST_SESSION);
+    renderAt("/sign-in");
+    await screen.findByRole("button", { name: "Sign in again" });
+    await fillAndSubmit(user);
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "The earlier sign-out couldn't be confirmed with the server, so your details weren't sent",
+    );
+    expect(mockedSignIn).not.toHaveBeenCalled();
+    expect(screen.queryByTestId("destination")).not.toBeInTheDocument();
+  });
 });

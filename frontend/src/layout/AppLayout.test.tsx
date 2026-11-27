@@ -37,11 +37,56 @@ function renderShell(session: SessionState, path = "/") {
 
 const primaryNav = () => screen.getByRole("navigation", { name: "Primary" });
 
+describe("AppLayout — notices (M06-T02 Increment 4a)", () => {
+  it("places the update notice after the connectivity banner and before <main>, adding no live region and no control by default", () => {
+    renderShell({ status: "anonymous" });
+    const banner = document.querySelector("[data-connectivity-banner]")!;
+    const notice = document.querySelector("[data-update-notice]")!;
+    const main = screen.getByRole("main");
+    expect(banner.compareDocumentPosition(notice) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(notice.compareDocumentPosition(main) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(notice.querySelectorAll("[aria-live], button")).toHaveLength(0);
+    expect(document.querySelectorAll("[aria-live]")).toHaveLength(0);
+  });
+});
+
+describe("AppLayout — installation affordance (M06-T02 Increment 4d)", () => {
+  it("sits at the end of the header, after the account area, keeping the skip link, notices, and <main> in order", () => {
+    renderShell({ status: "anonymous" });
+    const header = screen.getByRole("banner");
+    const install = document.querySelector("[data-install-affordance]")!;
+    expect(header).toContainElement(install as HTMLElement);
+    expect(header.lastElementChild).toBe(install);
+    const account = within(header).getByRole("navigation", { name: "Account" });
+    expect(
+      account.compareDocumentPosition(install) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    const skip = screen.getByRole("link", { name: "Skip to content" });
+    expect(skip.compareDocumentPosition(header) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    const banner = document.querySelector("[data-connectivity-banner]")!;
+    expect(install.compareDocumentPosition(banner) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(screen.getByRole("main")).toHaveAttribute("id", "main-content");
+  });
+
+  it("without a browser prompt it offers only collapsed guidance: no Install app button, no live region", () => {
+    renderShell({ status: "anonymous" });
+    expect(screen.queryByRole("button", { name: "Install app" })).toBeNull();
+    expect(screen.getByText("Install this app").tagName).toBe("SUMMARY");
+    expect(document.querySelectorAll("[aria-live]")).toHaveLength(0);
+  });
+});
+
 describe("AppLayout — My Favorites navigation", () => {
   it("signed in: Discover then My Favorites, linking to /favorites", async () => {
     renderShell({ status: "authenticated", user: TEST_USER });
     const links = within(primaryNav()).getAllByRole("link");
-    expect(links.map((l) => l.textContent)).toEqual(["Discover", "My Favorites", "My Trips"]);
+    // M06-T03 3e adds the offline library link for signed-in visitors.
+    expect(links.map((l) => l.textContent)).toEqual([
+      "Discover",
+      "My Favorites",
+      "My Trips",
+      "Saved for offline",
+    ]);
     expect(links[1]).toHaveAttribute("href", "/favorites");
     await userEvent.click(links[1]!);
     expect(screen.getByText("Favorites content")).toBeInTheDocument();
